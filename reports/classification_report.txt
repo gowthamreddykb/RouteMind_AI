@@ -1,0 +1,10 @@
+Final model (XGBoost (default)) on TEST set, threshold=0.4
+
+              precision    recall  f1-score   support
+
+    Not late     0.6572    0.6088    0.6321     12182
+        Late     0.6983    0.7404    0.7187     14898
+
+    accuracy                         0.6812     27080
+   macro avg     0.6778    0.6746    0.6754     27080
+weighted avg     0.6798    0.6812    0.6798     27080

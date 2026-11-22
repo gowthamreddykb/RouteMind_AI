@@ -1,0 +1,17 @@
+{
+  "optimal_threshold": 0.1,
+  "cost_assumptions": {
+    "cost_fn": 2.0,
+    "cost_fp": 1.0
+  },
+  "metrics_at_optimal_threshold": {
+    "threshold": 0.1,
+    "precision": 0.5217,
+    "recall": 1.0,
+    "f1": 0.6857,
+    "total_cost": 727.0,
+    "cost_per_order": 0.4783,
+    "flagged_rate": 1.0
+  },
+  "optimized_at": "2026-11-14T14:04:56.048774Z"
+}

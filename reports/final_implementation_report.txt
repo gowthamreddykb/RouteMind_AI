@@ -1,0 +1,28 @@
+FINAL IMPLEMENTATION REPORT
+Order-creation model v1.0.0: FULLY COMPLETED.  Dispatch model: BLOCKED BY UNAVAILABLE DATA (not trained, no artifact saved).
+The two-stage system is NOT complete.
+
+Test set (scored once): accuracy=0.6812 precision=0.6983 recall=0.7404 f1=0.7187 ROC-AUC=0.7720 PR-AUC=0.8374 Brier=0.1830
+Threshold=0.4 (validation-selected; cost/capacity values are ASSUMPTIONS).  Calibration: sigmoid.
+
+CHECKPOINTS
+ checkpoint                               name status                                                                                                                                                                                                 evidence
+          1        Existing project inspection   PASS                                                ZIP extracted; 4 .py files read & compile; 6 CSV reports + PNG reviewed; gap analysis written; DescriptionDataCoSupplyChain.csv NOT provided (documented)
+          2          Dataset loading & quality   PASS                                                                                                180,519 rows x 53 cols; target valid; dates parsed; 0 duplicate rows; missing %% reported with 4 decimals
+          3      Prediction stage availability   PASS                              order_creation_feature_audit, dispatch_feature_audit, prediction_stage_availability_report written; shipping date proven NOT a dispatch timestamp -> dispatch model blocked
+          4                 Leakage prevention   PASS                                                                                                guard passed for 18 approved + 4 review features; target not in X; reports with computed evidence written
+          5                      Data cleaning   PASS                                                                               180,519 rows kept; target and Order Id unchanged; personal columns dropped from cleaned file; nothing imputed before split
+          6                Feature engineering   PASS                                                                                                           23 model features, no duplicates, no missing numeric values, built only from order-time fields
+          7    Group-aware chronological split   PASS                   no Order Id overlap in any pair; chronology preserved; train=126,360 rows/42,160 orders/late 0.549, val=27,079 rows/8,999 orders/late 0.541, test=27,080 rows/14,593 orders/late 0.550
+          8                      Preprocessing   PASS ColumnTransformer fitted on train only (verified by test_preprocessing: imputer medians/scaler means equal train statistics); unknown categories handled; 316 columns after pooling categories <200 rows
+          9                Logistic Regression   PASS                                                                                                                             6 configs (C x class_weight) compared on validation; best val ROC-AUC=0.7267
+         10                   XGBoost + tuning   PASS                                                                     default val AUC=0.7593; 12-trial random search best val AUC=0.7603; tuned only on validation; params in xgboost_best_parameters.json
+         11 Model comparison & test evaluation   PASS                                                 selected 'XGBoost (default)' on VALIDATION; threshold 0.4 chosen on validation; test scored once afterwards: AUC=0.7720, recall=0.7404, precision=0.6983
+         12                        Calibration   PASS                                                                                               method='sigmoid' chosen using older/newer halves of validation only; test Brier raw=0.1831 -> final=0.1830
+         13                SHAP explainability   PASS                      TreeSHAP on selected XGBoost; additivity error 9.54e-07 (base + sum(SHAP) == model output); top features: ['Order Country', 'Type', 'Customer City', 'order_hour', 'Category Name']
+         14                       Model saving   PASS                                                                         saved v1.0.0 to models/order_creation (+versions/v1.0.0); reloaded model reproduces test probabilities exactly; metadata matches
+         15               Prediction functions   PASS                                                                          sample prediction p=0.3916, stage=order_creation; missing field rejected; unknown category handled; dispatch correctly disabled
+         16                    Automated tests   PASS                                                                                                                                                                                      76 passed in 34.05s
+
+Checkpoints with no entry: none skipped. Dispatch-specific items are NOT APPLICABLE / BLOCKED (see models/dispatch/dispatch_requirements.json).
+Not created on purpose: data/processed/dispatch_data.csv, models/dispatch/best_model.joblib.

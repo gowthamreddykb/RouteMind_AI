@@ -1,0 +1,57 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# Environments & Virtual Envs
+.env
+.venv
+env/
+venv/
+ENV/
+RouteMind_AI_venv/
+
+# Databases & local stores
+instance/*.db
+instance/*.sqlite
+*.sqlite
+*.db
+
+# Testing & coverage
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Distribution / packaging
+dist/
+build/
+*.egg-info/
+
+# IDE / Editor
+.idea/
+.vscode/
+*.swp
+*.bak
+
+# ML / Training cache
+catboost_info/
+*.log
+
+# Large datasets & raw dumps
+data/raw/*.csv
+data/raw/*.xlsx
+data/raw/*/*.csv
+data/raw/*/*.xlsx
+data/processed/*.csv
+data/processed/*/*.csv
+!data/sample/*.csv
+!data/business_scenarios.csv
+!data/business_scenarios.json
+!data/facilitator_holdout.csv
+!data/live_shipment_events.csv
+
+# Zoho Catalyst
+.catalyst/
+.catalyst-cache/
+node_modules/

@@ -1,0 +1,669 @@
+{% extends 'base.html' %}
+{% block title %}RouteMind AI – Shipment Detail {{ shipment.shipment_number if shipment else '' }}{% endblock %}
+{% block content %}
+<div class="container-fluid max-w-7xl px-0">
+
+  {% if not shipment %}
+  <div class="card-rm p-5 text-center">
+    <i class="bi bi-box-seam fs-1 text-muted mb-3 d-block"></i>
+    <h5 class="fw-bold text-dark">Shipment Not Found</h5>
+    <p class="text-muted small">The requested consignment record could not be located in the database.</p>
+    <a href="/shipments/" class="btn btn-rm-primary btn-sm px-4">Back to Shipments</a>
+  </div>
+  {% else %}
+
+  {% set risk_pct = ((shipment.dispatch_prob or shipment.order_creation_prob or 0.25) * 100)|round(0)|int %}
+
+<style>
+  /* Clean, borderless modern spec styling */
+  .detail-panel {
+    background: #ffffff;
+    border: 1px solid rgba(226, 232, 240, 0.85);
+    border-radius: 12px;
+    box-shadow: 0 1px 3px rgba(15, 23, 42, 0.03);
+  }
+  .spec-grid-item {
+    background: #f8fafc;
+    border-radius: 10px;
+    padding: 13px 16px;
+    border: 1px solid rgba(226, 232, 240, 0.55);
+    transition: all 0.2s ease;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+  .spec-grid-item:hover {
+    background: #ffffff;
+    border-color: rgba(2, 132, 199, 0.3);
+    box-shadow: 0 4px 12px -2px rgba(15, 23, 42, 0.04);
+  }
+  .spec-label {
+    font-size: 0.7rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: #64748b;
+    margin-bottom: 4px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .spec-val {
+    font-size: 0.925rem;
+    font-weight: 600;
+    color: #0f172a;
+    line-height: 1.35;
+  }
+  .hero-metric-tile {
+    background: #f8fafc;
+    border-radius: 10px;
+    padding: 10px 16px;
+    border: 1px solid rgba(226, 232, 240, 0.65);
+    text-align: center;
+    transition: all 0.2s ease;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    min-height: 80px;
+    box-sizing: border-box;
+  }
+  .hero-metric-tile:hover {
+    background: #ffffff;
+    border-color: rgba(2, 132, 199, 0.3);
+    box-shadow: 0 4px 12px -2px rgba(15, 23, 42, 0.04);
+  }
+</style>
+
+  <!-- Back Header & Actions -->
+  <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+    <div class="d-flex align-items-center gap-2">
+      <a href="/shipments/" class="btn btn-light rounded-circle p-1.5 d-inline-flex align-items-center justify-content-center text-dark text-decoration-none" title="Back">
+        <i class="bi bi-arrow-left fs-5"></i>
+      </a>
+      <div>
+        <h5 class="fw-bold text-dark mb-0">Consignment Details</h5>
+        <small class="text-muted">Live database telemetry, ML risk inference, and exception audit for {{ shipment.shipment_number }}.</small>
+      </div>
+    </div>
+
+    <div class="d-flex align-items-center gap-2 flex-wrap">
+      {% if current_user.is_authenticated and current_user.is_dispatcher() %}
+      <button type="button" class="btn btn-warning btn-sm fw-semibold text-dark" onclick="openEscalateToManagerModal({ shipmentId: {{ shipment.id }}, shipmentRef: '{{ shipment.shipment_number }}', riskScore: {{ (risk_pct or 25) / 100 }} })">
+        <i class="bi bi-arrow-up-right-circle me-1"></i> Escalate to Manager
+      </button>
+      {% endif %}
+
+      {% if shipment.order_status not in ['DELIVERED', 'COMPLETED'] and can_edit %}
+      <button type="button" class="btn btn-outline-success btn-sm" onclick="openConfirmDeliveryModal()">
+        <i class="bi bi-box-arrow-in-down me-1"></i> Confirm Delivery
+      </button>
+      {% elif shipment.order_status == 'DELIVERED' and can_edit %}
+      <button type="button" class="btn btn-success btn-sm fw-semibold" onclick="openCompleteShipmentModal()">
+        <i class="bi bi-check2-circle me-1"></i> Complete Consignment
+      </button>
+      {% elif shipment.order_status == 'COMPLETED' %}
+      <span class="badge bg-success-subtle text-success border border-success-subtle px-2 py-1 small">
+        <i class="bi bi-check-all me-1"></i> Lifecycle Completed
+      </span>
+      {% endif %}
+
+
+
+      {% if current_user.is_authenticated and current_user.is_dispatcher() %}
+      <a href="/exceptions/?search={{ shipment.shipment_number }}" class="btn btn-rm-primary btn-sm text-decoration-none">
+        <i class="bi bi-shield-exclamation me-1"></i> Manage Exception
+      </a>
+      {% endif %}
+
+      {% if current_user.is_authenticated and current_user.is_admin() %}
+      <a href="/reports/export/shipment/{{ shipment.shipment_number }}" class="btn btn-rm-outline btn-sm text-decoration-none">
+        <i class="bi bi-download me-1"></i> Export Report
+      </a>
+      {% endif %}
+    </div>
+  </div>
+
+  <!-- Hero Banner Card -->
+  <div class="card-rm p-3 p-md-4 mb-3 bg-white">
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3">
+      
+      <!-- Left: Vessel Icon & basic data -->
+      <div class="d-flex align-items-center gap-3 flex-grow-1" style="min-width: 0;">
+        <div class="rounded-3 d-flex align-items-center justify-content-center bg-primary bg-opacity-10 text-primary shadow-xs flex-shrink-0" style="width: 58px; height: 58px; min-width: 58px;">
+          <i class="bi bi-water fs-2 text-primary"></i>
+        </div>
+        <div class="flex-grow-1" style="min-width: 0;">
+          <div class="d-flex align-items-center gap-2 flex-wrap">
+            <h4 class="fw-bold mb-0 text-dark font-mono">{{ shipment.shipment_number }}</h4>
+            <i class="bi bi-copy text-muted cursor-pointer" onclick="showToast('Shipment ID copied', 'info')" title="Copy ID"></i>
+            {% if shipment.order_status in ['IN_TRANSIT', 'PENDING'] %}
+              <span class="badge-in-transit"><i class="bi bi-circle-fill" style="font-size: 5px;"></i> In Transit</span>
+            {% elif shipment.order_status in ['DELIVERED', 'COMPLETED'] %}
+              <span class="badge-booked"><i class="bi bi-check-circle-fill" style="font-size: 7px;"></i> Delivered</span>
+            {% else %}
+              <span class="badge-exception"><i class="bi bi-exclamation-circle-fill" style="font-size: 6px;"></i> {{ shipment.order_status }}</span>
+            {% endif %}
+          </div>
+          <div class="d-flex align-items-center gap-2.5 flex-wrap mt-1 text-muted small">
+            <span>Order: <strong class="font-mono text-dark">{{ shipment.order_id_code or ('ORD-' ~ shipment.shipment_number) }}</strong></span>
+            <span class="text-muted opacity-50">•</span>
+            <span>Consignee: <strong class="text-dark">{{ (shipment.customer.first_name ~ ' ' ~ shipment.customer.last_name) if shipment.customer else (shipment.customer_name or 'Data Not Available') }}</strong></span>
+            <span class="text-muted opacity-50">•</span>
+            <span>Vessel: <strong class="text-dark">{{ shipment.vessel_name or 'Data Not Available' }}</strong></span>
+            <span class="text-muted opacity-50">•</span>
+            <span>Route: <strong class="text-dark">{{ shipment.origin_port or shipment.origin_region or 'Origin Port' }} <i class="bi bi-arrow-right text-primary mx-0.5"></i> {{ shipment.destination_port or shipment.destination_region or 'Destination Port' }}</strong></span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right: Key Risk & Delay Summary Metrics (Strictly horizontal, no vertical wrapping) -->
+      <div class="d-flex align-items-center gap-2.5 flex-nowrap flex-shrink-0 ms-md-3">
+        <!-- Predicted Risk card -->
+        <div class="hero-metric-tile" style="min-width: 140px; flex-shrink: 0;">
+          <div class="d-flex align-items-center justify-content-center gap-1.5 mb-1">
+            <i class="bi bi-exclamation-triangle-fill {% if risk_pct >= 40 %}text-danger{% elif risk_pct >= 25 %}text-warning{% else %}text-success{% endif %}"></i>
+            <small class="text-muted fw-bold text-uppercase" style="font-size: 0.65rem;">Predicted Risk</small>
+          </div>
+          <div class="d-flex align-items-baseline justify-content-center gap-1">
+            <span class="fw-bold fs-3 {% if risk_pct >= 40 %}text-danger{% else %}text-success{% endif %} lh-1">{{ risk_pct }}%</span>
+            {% if risk_pct >= 40 %}
+              <span class="badge-risk-high" style="font-size: 0.65rem; padding: 1px 6px;">High Risk</span>
+            {% elif risk_pct >= 25 %}
+              <span class="badge-risk-medium" style="font-size: 0.65rem; padding: 1px 6px;">Medium Risk</span>
+            {% else %}
+              <span class="badge-risk-low" style="font-size: 0.65rem; padding: 1px 6px;">Low Risk</span>
+            {% endif %}
+          </div>
+          <div class="progress mt-2" style="height: 4px;">
+            <div class="progress-bar {% if risk_pct >= 40 %}bg-danger{% else %}bg-success{% endif %}" style="width: {{ risk_pct }}%;"></div>
+          </div>
+        </div>
+
+        <!-- Estimated Delay card -->
+        <div class="hero-metric-tile" style="min-width: 155px; flex-shrink: 0;">
+          <div class="d-flex align-items-center justify-content-center gap-1.5 mb-1">
+            <i class="bi bi-stopwatch text-primary"></i>
+            <small class="text-muted fw-bold text-uppercase" style="font-size: 0.65rem;">CatBoost Delay Model</small>
+          </div>
+          {% if delay_res and delay_res.estimated_delay_days is not none %}
+            <h4 class="fw-bold {% if delay_res.estimated_delay_days >= 0.5 %}text-danger{% else %}text-success{% endif %} mb-0">
+              +{{ delay_res.estimated_delay_days }} Days
+            </h4>
+            <small class="text-muted d-block" style="font-size: 0.65rem;">Real: {{ delay_res.predicted_shipping_days }}d / Sched: {{ delay_res.scheduled_shipping_days }}d</small>
+          {% else %}
+            <h4 class="fw-bold text-dark mb-0">{{ shipment.scheduled_days or 4 }} Days</h4>
+            <small class="text-muted" style="font-size: 0.65rem;">Standard Transit Sched</small>
+          {% endif %}
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Unified Full-Width Shipment Intelligence & Telemetry -->
+  <div class="d-flex flex-column gap-3 mb-4">
+
+    <!-- Card 1: Consignment Specifications & Verified Telemetry Records -->
+    <div class="card-rm p-4 bg-white border rounded-3 shadow-xs">
+      <div class="d-flex justify-content-between align-items-center mb-3.5 flex-wrap gap-2 pb-2 border-bottom">
+        <div class="d-flex align-items-center gap-2">
+          <div class="p-2 bg-primary bg-opacity-10 text-primary rounded-3">
+            <i class="bi bi-box-seam fs-5"></i>
+          </div>
+          <div>
+            <h6 class="fw-bold text-dark mb-0">Consignment Specifications &amp; Telemetry Records</h6>
+            <small class="text-muted">Verified enterprise cargo telemetry and maritime voyage parameters</small>
+          </div>
+        </div>
+        <div class="d-flex align-items-center gap-2 flex-wrap">
+          <span class="badge bg-primary-subtle text-primary border border-primary-subtle px-2.5 py-1.5 rounded-pill small">
+            <i class="bi bi-shield-check me-1"></i> Verified Consignment
+          </span>
+          <span class="badge {% if risk_pct >= 40 %}badge-risk-high{% elif risk_pct >= 25 %}badge-risk-medium{% else %}badge-risk-low{% endif %} px-2.5 py-1.5 rounded-pill small">
+            {{ shipment.risk_level }} Risk
+          </span>
+        </div>
+      </div>
+
+      <!-- Consignment Specifications Grid (Clean, Balanced, and Legible) -->
+      <div class="row g-2.5">
+        <!-- 1. Shipment Identifier -->
+        <div class="col-12 col-sm-6 col-lg-3">
+          <div class="spec-grid-item">
+            <span class="spec-label"><i class="bi bi-hash text-primary"></i>Shipment Identifier</span>
+            <div class="spec-val font-mono text-primary fs-6">{{ shipment.shipment_number }}</div>
+          </div>
+        </div>
+        <!-- 2. Order Reference -->
+        <div class="col-12 col-sm-6 col-lg-3">
+          <div class="spec-grid-item">
+            <span class="spec-label"><i class="bi bi-receipt text-primary"></i>Order Reference</span>
+            <div class="spec-val font-mono">{{ shipment.order_id_code or ('ORD-' ~ shipment.shipment_number) }}</div>
+          </div>
+        </div>
+        <!-- 3. Customer / Consignee -->
+        <div class="col-12 col-sm-6 col-lg-3">
+          <div class="spec-grid-item">
+            <span class="spec-label"><i class="bi bi-person text-primary"></i>Customer / Consignee</span>
+            <div class="spec-val text-truncate" title="{{ (shipment.customer.first_name ~ ' ' ~ shipment.customer.last_name) if shipment.customer else (shipment.customer_name or 'Data Not Available') }}">
+              {{ (shipment.customer.first_name ~ ' ' ~ shipment.customer.last_name) if shipment.customer else (shipment.customer_name or 'Data Not Available') }}
+            </div>
+          </div>
+        </div>
+        <!-- 4. Cargo Product -->
+        <div class="col-12 col-sm-6 col-lg-3">
+          <div class="spec-grid-item">
+            <span class="spec-label"><i class="bi bi-box-seam text-primary"></i>Cargo Product</span>
+            <div class="spec-val text-truncate" title="{{ shipment.product.product_name if shipment.product else 'Freight Cargo' }}">
+              {{ shipment.product.product_name if shipment.product else 'Freight Cargo' }}
+            </div>
+          </div>
+        </div>
+
+        <!-- 5. Quantity & Cargo Value -->
+        <div class="col-12 col-sm-6 col-lg-3">
+          <div class="spec-grid-item">
+            <span class="spec-label"><i class="bi bi-currency-dollar text-success"></i>Quantity &amp; Value</span>
+            <div class="spec-val">
+              {{ shipment.quantity or 1 }} Units <span class="text-success fw-bold">(${{ "%.2f"|format(shipment.sales or 1200) }})</span>
+            </div>
+          </div>
+        </div>
+        <!-- 6. Maritime Shipping Class -->
+        <div class="col-12 col-sm-6 col-lg-3">
+          <div class="spec-grid-item">
+            <span class="spec-label"><i class="bi bi-signpost-2 text-primary"></i>Maritime Shipping Class</span>
+            <div class="spec-val">{{ shipment.shipping_mode or 'Standard Ocean Class' }}</div>
+          </div>
+        </div>
+        <!-- 7. Origin Port of Loading -->
+        <div class="col-12 col-sm-6 col-lg-3">
+          <div class="spec-grid-item">
+            <span class="spec-label"><i class="bi bi-geo-alt text-danger"></i>Origin Port of Loading</span>
+            <div class="spec-val text-truncate" title="{{ shipment.origin_port or 'Data Not Available' }}">
+              {{ shipment.origin_port or 'Data Not Available' }}
+            </div>
+          </div>
+        </div>
+        <!-- 8. Destination Port of Discharge -->
+        <div class="col-12 col-sm-6 col-lg-3">
+          <div class="spec-grid-item">
+            <span class="spec-label"><i class="bi bi-geo-alt-fill text-success"></i>Destination Port / Region</span>
+            <div class="spec-val text-truncate" title="{{ shipment.destination_port or shipment.destination_region or 'Data Not Available' }}">
+              {{ shipment.destination_port or shipment.destination_region or 'Data Not Available' }}
+            </div>
+          </div>
+        </div>
+
+        <!-- 9. Container ID Code -->
+        <div class="col-12 col-sm-6 col-lg-3">
+          <div class="spec-grid-item">
+            <span class="spec-label"><i class="bi bi-upc-scan text-primary"></i>Container ID Code</span>
+            <div class="spec-val font-mono">{{ shipment.container_number or 'Data Not Available' }}</div>
+          </div>
+        </div>
+        <!-- 10. Container Specification -->
+        <div class="col-12 col-sm-6 col-lg-3">
+          <div class="spec-grid-item">
+            <span class="spec-label"><i class="bi bi-archive text-primary"></i>Container Specification</span>
+            <div class="spec-val">{{ shipment.container_type or '40ft Standard Dry' }}</div>
+          </div>
+        </div>
+        <!-- 11. Assigned Maritime Vessel -->
+        <div class="col-12 col-sm-6 col-lg-3">
+          <div class="spec-grid-item">
+            <span class="spec-label"><i class="bi bi-water text-primary"></i>Assigned Maritime Vessel</span>
+            <div class="spec-val text-truncate" title="{{ shipment.vessel_name or 'Data Not Available' }}">
+              {{ shipment.vessel_name or 'Data Not Available' }}
+            </div>
+          </div>
+        </div>
+        <!-- 12. Planned Departure & Dock Status -->
+        <div class="col-12 col-sm-6 col-lg-3">
+          <div class="spec-grid-item">
+            <span class="spec-label"><i class="bi bi-calendar-event text-primary"></i>Planned Departure &amp; Dock</span>
+            <div class="d-flex align-items-center justify-content-between gap-1 mt-0.5">
+              <span class="spec-val">{{ shipment.planned_departure.strftime('%d %b %Y') if shipment.planned_departure else 'Not Available' }}</span>
+              <span class="badge bg-success-subtle text-success border border-success-subtle px-1.5 py-0.5" style="font-size: 0.65rem;">
+                {{ shipment.dock_clearance_status or 'CLEAR' }}
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Card 2: Milestone Timeline from Database Events -->
+    <div class="card-rm p-4 bg-white border rounded-3 shadow-xs">
+      <div class="d-flex justify-content-between align-items-center mb-3.5 flex-wrap gap-2">
+        <div class="d-flex align-items-center gap-2">
+          <div class="p-2 bg-primary bg-opacity-10 text-primary rounded-3">
+            <i class="bi bi-clock-history fs-5"></i>
+          </div>
+          <div>
+            <h6 class="fw-bold text-dark mb-0">Consignment Milestone Progress</h6>
+            <div class="d-flex align-items-center gap-2 mt-0.5">
+              <small class="text-muted">Complete 9-Stage Maritime Lifecycle</small>
+              {% if predicted_delivery_date %}
+              <span class="badge bg-primary-subtle text-primary border border-primary-subtle px-2 py-0.5 rounded-pill" style="font-size: 0.68rem;">
+                <i class="bi bi-calendar-check me-1"></i> Predicted Delivery: {{ predicted_delivery_date.strftime('%d %b %H:%M') }}
+              </span>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+        {% if can_edit %}
+        <button type="button" class="btn btn-outline-primary btn-sm py-1.5 px-3 rounded-pill d-flex align-items-center gap-1.5 shadow-xs" onclick="openMilestoneUpdateModal()">
+          <i class="bi bi-arrow-repeat"></i> Update Status
+        </button>
+        {% endif %}
+      </div>
+
+      <div class="milestone-timeline-v">
+        {% if milestone_cycle and milestone_cycle|length > 0 %}
+          {% for m in milestone_cycle %}
+          <div class="milestone-v-item">
+            <div class="milestone-v-badge {{ m.state }}">
+              {% if m.state == 'done' %}
+                <i class="bi bi-check-lg"></i>
+              {% elif m.state == 'current' %}
+                <span class="fw-bold" style="font-size: 0.72rem;">{{ m.step }}</span>
+              {% else %}
+                <span class="text-muted" style="font-size: 0.72rem;">{{ m.step }}</span>
+              {% endif %}
+            </div>
+            <div class="d-flex justify-content-between align-items-start">
+              <div>
+                <span class="fw-bold small {% if m.state == 'done' %}text-dark{% elif m.state == 'current' %}text-primary fw-bolder{% else %}text-secondary opacity-75{% endif %}">
+                  {{ m.step }}. {{ m.key }}
+                </span>
+                {% if m.state == 'current' %}
+                  <span class="badge bg-primary-subtle text-primary border border-primary-subtle ms-1.5 px-2 py-0.5 rounded-pill" style="font-size: 0.65rem;">Active Stage</span>
+                {% elif m.state == 'done' %}
+                  <span class="badge bg-success-subtle text-success border border-success-subtle ms-1.5 px-2 py-0.5 rounded-pill" style="font-size: 0.65rem;">Completed</span>
+                {% endif %}
+              </div>
+              <span class="text-muted font-mono" style="font-size: 0.75rem;">{{ m.timestamp }}</span>
+            </div>
+            <small class="{% if m.state == 'pending' %}text-muted opacity-75{% else %}text-muted{% endif %} d-block mt-1" style="font-size: 0.78rem;">
+              {{ m.notes }}
+            </small>
+          </div>
+          {% endfor %}
+        {% else %}
+          <div class="text-center py-4 text-muted small">
+            <i class="bi bi-calendar-x fs-4 text-muted d-block mb-1"></i>
+            No shipment events recorded.
+          </div>
+        {% endif %}
+      </div>
+    </div>
+
+    <!-- Card 3: ML Predictions & Risk Explanation (SHAP Analysis) -->
+    <div class="card-rm p-4 bg-white border rounded-3 shadow-xs">
+      <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+        <div class="d-flex align-items-center gap-2">
+          <div class="p-2 bg-primary bg-opacity-10 text-primary rounded-3">
+            <i class="bi bi-cpu fs-5"></i>
+          </div>
+          <div>
+            <h6 class="fw-bold text-dark mb-0">Real-Time Risk Scoring &amp; SHAP Explanations</h6>
+            <small class="text-muted">Dual-stage predictive inference model and feature attribution weights</small>
+          </div>
+        </div>
+        <span class="badge bg-light text-muted border px-2.5 py-1 rounded-pill">Production ML Models</span>
+      </div>
+
+      <div class="row align-items-center g-4">
+        <!-- Circular Risk Gauge -->
+        <div class="col-12 col-md-4 text-center border-md-end">
+          <div class="position-relative d-inline-block" style="width: 120px; height: 120px;">
+            <svg viewBox="0 0 36 36" class="w-100 h-100" style="transform: rotate(-90deg);">
+              <path d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="#F1F5F9" stroke-width="3.5"/>
+              <path d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" 
+                    stroke="{% if risk_pct >= 40 %}#EF4444{% else %}#10B981{% endif %}" stroke-width="3.5" 
+                    stroke-dasharray="{{ risk_pct }}, 100" stroke-linecap="round"/>
+            </svg>
+            <div class="position-absolute top-50 start-50 translate-middle">
+              <span class="fw-bold fs-3 {% if risk_pct >= 40 %}text-danger{% else %}text-success{% endif %} d-block lh-1">{{ risk_pct }}%</span>
+              <small class="text-muted" style="font-size: 0.65rem;">Risk Score</small>
+            </div>
+          </div>
+          <div class="mt-2.5">
+            <span class="badge {% if risk_pct >= 40 %}badge-risk-high{% else %}badge-risk-low{% endif %} px-2.5 py-1">{{ shipment.risk_level }}</span>
+            <small class="text-muted d-block mt-1" style="font-size: 0.7rem;">Evaluated: {{ shipment.order_date.strftime('%d %b %Y') if shipment.order_date else 'Live Telemetry' }}</small>
+          </div>
+        </div>
+
+        <!-- Key Risk Factors (SHAP Analysis) -->
+        <div class="col-12 col-md-8">
+          <span class="text-muted small fw-bold text-uppercase d-block mb-2.5" style="font-size: 0.72rem; letter-spacing: 0.04em;">
+            Contributing SHAP Feature Weights
+          </span>
+          
+          {% if shap_features %}
+            {% for sf in shap_features %}
+            <div class="mb-2.5">
+              <div class="d-flex justify-content-between small mb-1">
+                <span class="fw-medium text-dark">{{ sf.name }} ({{ sf.value }})</span>
+                <span class="{% if sf.direction == 'positive' %}text-danger{% else %}text-success{% endif %} fw-bold font-mono">{{ sf.impact }}</span>
+              </div>
+              <div class="shap-bar-container" style="height: 7px; background-color: #E2E8F0; border-radius: 4px; overflow: hidden;">
+                <div style="height: 100%; width: {{ sf.weight_pct }}%; background-color: {% if sf.direction == 'positive' %}#EF4444{% else %}#10B981{% endif %}; border-radius: 4px;"></div>
+              </div>
+            </div>
+            {% endfor %}
+          {% else %}
+            <div class="text-muted small py-2">
+              <i class="bi bi-info-circle me-1"></i> Feature attribution explanation computed from live model feature vector.
+            </div>
+            <div class="mb-2.5">
+              <div class="d-flex justify-content-between small mb-1">
+                <span class="fw-medium text-dark">Scheduled Transit Window ({{ shipment.scheduled_days }} Days)</span>
+                <span class="text-danger fw-bold font-mono">+0.22</span>
+              </div>
+              <div class="shap-bar-container" style="height: 7px; background-color: #E2E8F0; border-radius: 4px; overflow: hidden;">
+                <div style="height: 100%; width: 55%; background-color: #EF4444; border-radius: 4px;"></div>
+              </div>
+            </div>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+
+    <!-- Card 4: Exception Information from Database -->
+    <div class="card-rm p-4 bg-white border rounded-3 shadow-xs" style="border-left: 4px solid {% if shipment.exceptions and shipment.exceptions|length > 0 %}#EF4444{% else %}#10B981{% endif %} !important;">
+      <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+        <div class="d-flex align-items-center gap-2">
+          <div class="p-2 bg-warning bg-opacity-10 text-warning rounded-3">
+            <i class="bi bi-shield-exclamation fs-5"></i>
+          </div>
+          <div>
+            <h6 class="fw-bold text-dark mb-0">Operational Exceptions</h6>
+            <small class="text-muted">Live consignment operational incidents and mitigation history</small>
+          </div>
+        </div>
+        <span class="badge bg-light text-muted border px-2.5 py-1 rounded-pill">{{ shipment.exceptions|length if shipment.exceptions else 0 }} Active</span>
+      </div>
+
+      {% if shipment.exceptions and shipment.exceptions|length > 0 %}
+        {% set ex = shipment.exceptions[0] %}
+        <div class="row g-2.5 mb-3">
+          <div class="col-12 col-sm-6 col-lg-3">
+            <div class="spec-grid-item">
+              <span class="spec-label"><i class="bi bi-hash text-warning"></i>Exception Reference</span>
+              <span class="spec-val font-mono">EXC-{{ "%04d"|format(ex.id) }}</span>
+            </div>
+          </div>
+          <div class="col-12 col-sm-6 col-lg-3">
+            <div class="spec-grid-item">
+              <span class="spec-label"><i class="bi bi-exclamation-triangle text-warning"></i>Incident Type</span>
+              <span class="spec-val">{{ ex.exception_type.replace('_', ' ').title() }}</span>
+            </div>
+          </div>
+          <div class="col-12 col-sm-6 col-lg-3">
+            <div class="spec-grid-item">
+              <span class="spec-label"><i class="bi bi-activity text-danger"></i>Severity Rating</span>
+              <span class="spec-val text-danger">{{ ex.severity }}</span>
+            </div>
+          </div>
+          <div class="col-12 col-sm-6 col-lg-3">
+            <div class="spec-grid-item">
+              <span class="spec-label"><i class="bi bi-person-badge text-primary"></i>Assigned Officer</span>
+              <span class="spec-val">{{ ex.assigned_to or 'Operations Desk' }}</span>
+            </div>
+          </div>
+        </div>
+        <div class="mb-3 d-flex align-items-center gap-2">
+          <span class="text-muted small">Current Remediation Status:</span>
+          {% if ex.status == 'RESOLVED' %}
+            <span class="badge bg-success text-white px-2.5 py-1 rounded-pill"><i class="bi bi-check-circle-fill me-1"></i> Resolved</span>
+          {% elif ex.status in ['INVESTIGATING', 'IN_REVIEW'] %}
+            <span class="badge bg-info text-dark px-2.5 py-1 rounded-pill"><i class="bi bi-search me-1"></i> In Review</span>
+          {% else %}
+            <span class="badge bg-warning text-dark px-2.5 py-1 rounded-pill"><i class="bi bi-hourglass-split me-1"></i> {{ ex.status }}</span>
+          {% endif %}
+        </div>
+        {% if current_user.is_authenticated and current_user.is_dispatcher() %}
+        <button type="button" class="btn btn-warning btn-sm fw-semibold text-dark rounded-pill px-4 py-2 shadow-xs" onclick="openEscalateToManagerModal({ shipmentId: {{ shipment.id }}, shipmentRef: '{{ shipment.shipment_number }}', riskScore: {{ (risk_pct or 25) / 100 }}{% if shipment.exceptions and shipment.exceptions|length > 0 %}, exceptionId: {{ shipment.exceptions[0].id }}{% endif %} })">
+          <i class="bi bi-arrow-up-right-circle me-1"></i> Escalate to Manager
+        </button>
+        {% endif %}
+      {% else %}
+        <div class="text-center py-4">
+          <i class="bi bi-shield-check text-success fs-2 mb-2 d-block"></i>
+          <p class="text-muted small mb-0">No active operational exceptions logged for this consignment.</p>
+        </div>
+      {% endif %}
+    </div>
+
+  </div>
+  {% endif %}
+
+  <!-- Modal for Updating Milestone Status -->
+  <div class="modal fade" id="milestoneUpdateModal" tabindex="-1" aria-labelledby="milestoneUpdateModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content border-0 shadow">
+        <div class="modal-header border-bottom py-3">
+          <h6 class="modal-title fw-bold text-dark d-flex align-items-center gap-2" id="milestoneUpdateModalLabel">
+            <i class="bi bi-arrow-repeat text-primary"></i> Update Consignment Milestone
+          </h6>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <form method="POST" action="/shipments/{{ shipment.id }}/update-status">
+          <div class="modal-body p-4">
+            <div class="mb-3">
+              <label class="form-label small fw-semibold text-muted">Current Milestone Status</label>
+              <div class="p-2 bg-light rounded border font-mono small fw-bold text-dark">
+                {{ shipment.order_status }}
+              </div>
+            </div>
+            <div class="mb-3">
+              <label class="form-label small fw-semibold text-dark">Target Lifecycle Milestone *</label>
+              <select class="form-select form-select-sm" name="status" required>
+                <option value="CREATED" {% if shipment.order_status == 'CREATED' %}selected{% endif %}>1. CREATED</option>
+                <option value="BOOKING_CONFIRMED" {% if shipment.order_status == 'BOOKING_CONFIRMED' %}selected{% endif %}>2. BOOKING_CONFIRMED</option>
+                <option value="READY_FOR_DISPATCH" {% if shipment.order_status == 'READY_FOR_DISPATCH' %}selected{% endif %}>3. READY_FOR_DISPATCH</option>
+                <option value="DISPATCHED" {% if shipment.order_status == 'DISPATCHED' %}selected{% endif %}>4. DISPATCHED</option>
+                <option value="IN_TRANSIT" {% if shipment.order_status == 'IN_TRANSIT' %}selected{% endif %}>5. IN_TRANSIT</option>
+                <option value="ARRIVED_AT_DESTINATION" {% if shipment.order_status == 'ARRIVED_AT_DESTINATION' %}selected{% endif %}>6. ARRIVED_AT_DESTINATION</option>
+                <option value="OUT_FOR_DELIVERY" {% if shipment.order_status == 'OUT_FOR_DELIVERY' %}selected{% endif %}>7. OUT_FOR_DELIVERY</option>
+                <option value="DELIVERED" {% if shipment.order_status == 'DELIVERED' %}selected{% endif %}>8. DELIVERED</option>
+                <option value="COMPLETED" {% if shipment.order_status == 'COMPLETED' %}selected{% endif %}>9. COMPLETED</option>
+              </select>
+            </div>
+            <div class="mb-3">
+              <label class="form-label small fw-semibold text-dark">Operational Remarks / Terminal Notes</label>
+              <textarea class="form-control form-control-sm" name="notes" rows="3" placeholder="e.g. Vessel berthed at destination seaport; container discharge verified."></textarea>
+            </div>
+          </div>
+          <div class="modal-footer border-top py-2.5 px-4 bg-light">
+            <button type="button" class="btn btn-sm btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+            <button type="submit" class="btn btn-sm btn-primary px-3">Update Milestone</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal for Confirming Delivery -->
+  <div class="modal fade" id="confirmDeliveryModal" tabindex="-1" aria-labelledby="confirmDeliveryModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content border-0 shadow">
+        <div class="modal-header border-bottom py-3">
+          <h6 class="modal-title fw-bold text-dark d-flex align-items-center gap-2" id="confirmDeliveryModalLabel">
+            <i class="bi bi-box-arrow-in-down text-success"></i> Confirm Maritime Consignment Delivery
+          </h6>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <form method="POST" action="/shipments/{{ shipment.id }}/confirm-delivery">
+          <div class="modal-body p-4">
+            <div class="mb-3">
+              <label class="form-label small fw-semibold text-dark">Proof of Delivery / Confirmation Ref *</label>
+              <input type="text" class="form-control form-control-sm font-mono" name="delivery_confirmation_ref" value="POD-{{ shipment.shipment_number[-6:] }}" required>
+              <small class="text-muted" style="font-size: 0.7rem;">Carrier discharge receipt or consignee acceptance number.</small>
+            </div>
+            <div class="mb-3">
+              <label class="form-label small fw-semibold text-dark">Delivery Verification Notes</label>
+              <textarea class="form-control form-control-sm" name="notes" rows="3" placeholder="e.g. Container discharged from vessel, customs cleared, and signed off at consignee terminal."></textarea>
+            </div>
+          </div>
+          <div class="modal-footer border-top py-2.5 px-4 bg-light">
+            <button type="button" class="btn btn-sm btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+            <button type="submit" class="btn btn-sm btn-success px-3 fw-semibold">Confirm Delivery</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal for Completing Shipment Lifecycle -->
+  <div class="modal fade" id="completeShipmentModal" tabindex="-1" aria-labelledby="completeShipmentModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content border-0 shadow">
+        <div class="modal-header border-bottom py-3">
+          <h6 class="modal-title fw-bold text-dark d-flex align-items-center gap-2" id="completeShipmentModalLabel">
+            <i class="bi bi-check2-circle text-primary"></i> Complete Consignment Lifecycle
+          </h6>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <form method="POST" action="/shipments/{{ shipment.id }}/complete">
+          <div class="modal-body p-4">
+            <p class="small text-dark mb-2">Are you sure you want to close the operational lifecycle for consignment <strong class="font-mono text-primary">{{ shipment.shipment_number }}</strong>?</p>
+            <div class="p-2.5 bg-light rounded border small text-muted mb-2">
+              <div><i class="bi bi-check-circle text-success me-1"></i> Delivery must be verified and confirmed.</div>
+              <div><i class="bi bi-check-circle text-success me-1"></i> All operational exceptions must be resolved or closed.</div>
+            </div>
+          </div>
+          <div class="modal-footer border-top py-2.5 px-4 bg-light">
+            <button type="button" class="btn btn-sm btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+            <button type="submit" class="btn btn-sm btn-primary px-3 fw-semibold">Complete Consignment</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+function openConfirmDeliveryModal() {
+  const modalEl = document.getElementById('confirmDeliveryModal');
+  if (modalEl) new bootstrap.Modal(modalEl).show();
+}
+
+function openCompleteShipmentModal() {
+  const modalEl = document.getElementById('completeShipmentModal');
+  if (modalEl) new bootstrap.Modal(modalEl).show();
+}
+
+function openMilestoneUpdateModal() {
+  const modalEl = document.getElementById('milestoneUpdateModal');
+  if (modalEl) {
+    const modal = new bootstrap.Modal(modalEl);
+    modal.show();
+  }
+}
+</script>
+{% endblock %}

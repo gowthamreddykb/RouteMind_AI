@@ -1,0 +1,17 @@
+{
+    "xgboost_improved": {
+        "test_roc_auc": 0.796,
+        "test_pr_auc": 0.8575,
+        "test_accuracy_default_0_5": 0.7321,
+        "test_precision_default_0_5": 0.8743,
+        "test_recall_default_0_5": 0.5995,
+        "test_f1_default_0_5": 0.7113,
+        "test_accuracy_balanced_0_40": 0.6372,
+        "test_precision_balanced_0_40": 0.6136,
+        "test_recall_balanced_0_40": 0.9206,
+        "test_f1_balanced_0_40": 0.7364,
+        "test_brier_score": 0.1682,
+        "optimal_threshold": 0.2,
+        "balanced_operational_threshold": 0.4
+    }
+}

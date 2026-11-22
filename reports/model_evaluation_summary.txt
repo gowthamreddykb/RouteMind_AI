@@ -1,0 +1,32 @@
+MODEL EVALUATION SUMMARY
+======================================================================
+Final model scored ONCE on the untouched test set, after model, threshold and calibration were fixed on validation data.
+
+TEST    : threshold=0.4000, accuracy=0.6812, precision=0.6983, recall=0.7404, f1=0.7187, roc_auc=0.7720, pr_auc=0.8374, brier=0.1830, log_loss=0.5286, TN=7417, FP=4765, FN=3868, TP=11030, flagged_fraction=0.5833
+VALID.  : threshold=0.4000, accuracy=0.6865, precision=0.7381, recall=0.6521, f1=0.6925, roc_auc=0.7593, pr_auc=0.8228, brier=0.1871, log_loss=0.5386, TN=9033, FP=3391, FN=5098, TP=9557, flagged_fraction=0.4782
+
+Risk buckets on test (observed late rate should rise LOW -> HIGH):
+  risk  shipments  late_shipments  observed_late_rate  share_of_shipments
+   LOW       1022             118              0.1155              0.0377
+MEDIUM      10263            3750              0.3654              0.3790
+  HIGH      15795           11030              0.6983              0.5833
+Monotonic increase: True
+
+Recall vs precision trade-off: a missed late shipment (FN) is assumed to cost 2.0x a false alert (FP); the threshold minimises that cost subject to flagging at most 60% of shipments. Late is the majority class (~55%), so a low threshold flags many shipments.
+
+Subgroup performance on test:
+        grouping          group  rows  late_rate  accuracy  recall  precision  roc_auc  false_negatives  false_positives
+   Shipping Mode    First Class  4116     0.9478    0.9478  1.0000     0.9478   0.8826                0              215
+   Shipping Mode       Same Day  1520     0.5329    0.9730  1.0000     0.9518   0.9934                0               41
+   Shipping Mode   Second Class  5395     0.7665    0.7665  1.0000     0.7665   0.5933                0             1260
+   Shipping Mode Standard Class 16049     0.3771    0.5565  0.3609     0.4020   0.5238             3868             3249
+Customer Segment       Consumer 14050     0.5481    0.6744  0.7365     0.6903   0.7673             2029             2545
+Customer Segment      Corporate  8164     0.5479    0.6935  0.7554     0.7059   0.7814             1094             1408
+Customer Segment    Home Office  4866     0.5598    0.6800  0.7265     0.7091   0.7697              745              812
+          Market         Europe 20903     0.5483    0.6824  0.7469     0.6961   0.7739             2901             3738
+          Market          LATAM   557     0.5691    0.6607  0.5647     0.7783   0.7243              138               51
+          Market   Pacific Asia  5620     0.5550    0.6788  0.7342     0.7012   0.7708              829              976
+Period (quarter)         2017Q2  2711     0.5415    0.6540  0.6948     0.6755   0.7220              448              490
+Period (quarter)         2017Q3 15812     0.5515    0.6864  0.7503     0.7018   0.7804             2178             2780
+Period (quarter)         2017Q4  6434     0.5462    0.6770  0.7365     0.6920   0.7687              926             1152
+Period (quarter)         2018Q1  2123     0.5629    0.6896  0.7356     0.7193   0.7788              316              343

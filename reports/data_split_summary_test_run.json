@@ -1,0 +1,12 @@
+{
+  "dataset_key": "test_run",
+  "train_rows": 351,
+  "val_rows": 53,
+  "test_rows": 96,
+  "total_rows": 500,
+  "train_late_rate": 0.5356,
+  "val_late_rate": 0.566,
+  "test_late_rate": 0.5417,
+  "random_state": 42,
+  "split_at": "2026-11-22T14:00:00.031222Z"
+}

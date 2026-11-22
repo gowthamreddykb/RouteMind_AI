@@ -1,0 +1,56 @@
+{
+  "champion_v1.0.0": {
+    "model_load_ms": 5.702927999891472,
+    "cpu_count_in_environment": 1,
+    "single_no_shap": {
+      "mean_ms": 26.141866834482556,
+      "p50_ms": 25.07581300005768,
+      "p95_ms": 32.31633339997871,
+      "max_ms": 44.41923300009876,
+      "throughput_per_s": 38.25281516165269
+    },
+    "single_with_shap": {
+      "mean_ms": 58.632711268974,
+      "p50_ms": 52.75487599999451,
+      "p95_ms": 97.04716725008225,
+      "max_ms": 155.00235499985138,
+      "throughput_per_s": 17.055325915469965
+    },
+    "batch1000_no_shap": {
+      "seconds": 2.0887737030000153,
+      "throughput_per_s": 478.74980356356616
+    },
+    "batch1000_with_shap": {
+      "seconds": 4.220972266999979,
+      "throughput_per_s": 236.9122412431157
+    },
+    "peak_memory_mb_process": 1057.4609375
+  },
+  "candidate_v2.0.0": {
+    "model_load_ms": 6.0488730000543,
+    "cpu_count_in_environment": 1,
+    "single_no_shap": {
+      "mean_ms": 30.604899882754236,
+      "p50_ms": 27.91473949991996,
+      "p95_ms": 42.657702449935194,
+      "max_ms": 61.79953600008048,
+      "throughput_per_s": 32.67450649506934
+    },
+    "single_with_shap": {
+      "mean_ms": 58.422589979311155,
+      "p50_ms": 52.53842599995551,
+      "p95_ms": 85.30973209993822,
+      "max_ms": 143.68295100007344,
+      "throughput_per_s": 17.116666692697535
+    },
+    "batch1000_no_shap": {
+      "seconds": 2.0318474880000394,
+      "throughput_per_s": 492.1629235983191
+    },
+    "batch1000_with_shap": {
+      "seconds": 3.5952837109998654,
+      "throughput_per_s": 278.14216634433427
+    },
+    "peak_memory_mb_process": 1057.4609375
+  }
+}

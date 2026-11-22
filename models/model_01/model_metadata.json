@@ -1,0 +1,20 @@
+{
+    "model_id": "model_01_logistic_regression",
+    "version": "1.0.0",
+    "algorithm": "LogisticRegression (Scikit-Learn)",
+    "training_timestamp": "2026-11-13T22:34:02.946567",
+    "best_hyperparameters": {
+        "C": 0.1,
+        "penalty": "l1",
+        "class_weight": null,
+        "solver": "liblinear"
+    },
+    "features_used": [
+        "Days for shipment (scheduled)",
+        "Order Item Quantity",
+        "Sales",
+        "Type",
+        "Order Region"
+    ],
+    "leakage_audit_passed": true
+}

@@ -1,0 +1,695 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}RouteMind AI – Maritime Operations & Predictive Logistics Control Tower{% endblock %}</title>
+  
+  <!-- Google Fonts: Inter & JetBrains Mono -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  
+  <!-- Bootstrap 5.3.3 & Bootstrap Icons -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+  
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <!-- Prototype Master Stylesheet -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+  {% block extra_css %}{% endblock %}
+</head>
+<body>
+
+  <!-- Top Horizontal Navbar (Exact match to prototype with Centered Navigation) -->
+  {% if not hide_nav and '/auth/' not in request.path and request.path not in ['/auth/login', '/auth/forgot-password'] %}
+  <header class="rm-top-navbar px-3 px-lg-4 d-flex align-items-center justify-content-between" id="appNavbar">
+    
+    <!-- Left Section: Brand Logo -->
+    <div class="d-flex align-items-center gap-2 gap-lg-3">
+      <a href="/" class="d-flex align-items-center gap-2 text-decoration-none me-1">
+        <svg width="30" height="30" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg" class="shrink-0">
+          <rect width="36" height="36" rx="8" fill="#4338CA" />
+          <rect x="9" y="10" width="7" height="5" rx="1" fill="#FFFFFF" fill-opacity="0.92" />
+          <rect x="18" y="10" width="9" height="5" rx="1" fill="#38BDF8" />
+          <rect x="12" y="16.5" width="8" height="4.5" rx="1" fill="#FFFFFF" fill-opacity="0.8" />
+          <path d="M6 22.5H30L27.2 27.5C26.7 28.4 25.7 29 24.7 29H11.3C10.3 29 9.3 28.4 8.8 27.5L6 22.5Z" fill="#FFFFFF" />
+          <path d="M6 31.5C9 30.2 12 30.2 15 31.5C18 32.8 21 32.8 24 31.5C26.5 30.4 28.5 30.4 30 31.2" stroke="#38BDF8" stroke-width="1.6" stroke-linecap="round" />
+        </svg>
+        <span class="fw-semibold tracking-tight text-dark text-nowrap" style="font-size: 1.1rem; letter-spacing: -0.3px;">
+          RouteMind <span style="color: #4338CA;">AI</span>
+        </span>
+      </a>
+    </div>
+
+    <!-- Center Section: All Remaining Navigation Tabs -->
+    <div class="d-none d-md-flex align-items-center justify-content-center mx-auto">
+      <nav class="nav-center-wrapper d-flex align-items-center gap-1" id="topNavTabs">
+        {% set role = current_user.normalized_role if (current_user and current_user.is_authenticated) else '' %}
+
+        {# 1. Dashboard (All authenticated roles) #}
+        <a href="/" class="nav-tab-pill {% if request.path == '/' or request.path == '/dashboard' %}active{% endif %}">
+          <i class="bi bi-bar-chart-line"></i>
+          <span>Dashboard</span>
+        </a>
+
+        {# 2. Shipments (All authenticated roles) #}
+        <a href="/shipments/" class="nav-tab-pill {% if '/shipments' in request.path and request.path != '/shipments/new' %}active{% endif %}">
+          <i class="bi bi-box-seam"></i>
+          <span>Shipments</span>
+        </a>
+
+        {# 3. Exceptions (Dispatcher & Operations Manager) #}
+        {% if role in ['Dispatcher', 'Operations Manager'] %}
+        <a href="/exceptions/" class="nav-tab-pill {% if '/exceptions' in request.path %}active{% endif %}">
+          <i class="bi bi-shield-exclamation"></i>
+          <span>Exceptions</span>
+        </a>
+        {% endif %}
+
+        {# 4. Escalations (Dispatcher & Operations Manager only) #}
+        {% if role in ['Dispatcher', 'Operations Manager'] %}
+        <a href="/escalations/" class="nav-tab-pill {% if '/escalations' in request.path %}active{% endif %}">
+          <i class="bi bi-arrow-up-right-circle"></i>
+          <span>Escalations</span>
+        </a>
+        {% endif %}
+
+        {# 5. Reports (All authenticated roles) #}
+        <a href="/reports/" class="nav-tab-pill {% if '/reports' in request.path %}active{% endif %}">
+          <i class="bi bi-file-earmark-bar-graph"></i>
+          <span>Reports</span>
+        </a>
+
+        {# 6. AI Assistant (All authenticated roles) #}
+        <a href="/ai/assistant" class="nav-tab-pill {% if '/ai' in request.path %}active{% endif %}">
+          <i class="bi bi-robot"></i>
+          <span>AI Assistant</span>
+        </a>
+
+        {# 7. User Management & System Settings (Administrator only) #}
+        {% if role == 'Administrator' %}
+        <a href="/users/" class="nav-tab-pill {% if '/users' in request.path %}active{% endif %}">
+          <i class="bi bi-people"></i>
+          <span>User Management</span>
+        </a>
+        <a href="/admin/settings" class="nav-tab-pill {% if '/admin' in request.path %}active{% endif %}">
+          <i class="bi bi-sliders"></i>
+          <span>System Settings</span>
+        </a>
+        {% endif %}
+      </nav>
+    </div>
+
+    <!-- Right Section: Profile & Actions -->
+    <div class="d-flex align-items-center gap-2">
+      <!-- Mobile Navigation Hamburger -->
+      <button class="btn btn-sm btn-light border d-md-none" type="button" data-bs-toggle="collapse" data-bs-target="#mobileNavCollapse" aria-expanded="false" aria-controls="mobileNavCollapse" aria-label="Toggle navigation">
+        <i class="bi bi-list fs-5"></i>
+      </button>
+
+      {% if current_user and current_user.is_authenticated %}
+        <div class="d-flex align-items-center gap-2 bg-light px-2.5 py-1 rounded-pill border">
+          <div class="user-avatar-badge">
+            {{ current_user.username[:2].upper() }}
+          </div>
+          <span class="small fw-semibold text-dark d-none d-sm-inline">{{ current_user.username.title() }} ({{ current_user.role.title() }})</span>
+        </div>
+        <a href="/auth/logout" class="btn btn-sm btn-outline-danger rounded-pill px-2.5 px-sm-3 py-1">
+          <i class="bi bi-box-arrow-right me-1"></i> <span class="d-none d-sm-inline">Sign Out</span>
+        </a>
+      {% else %}
+        <a href="/auth/login" class="btn btn-sm btn-primary rounded-pill px-3 py-1">
+          <i class="bi bi-person-circle me-1"></i> Sign In
+        </a>
+      {% endif %}
+    </div>
+  </header>
+
+  <!-- Mobile Collapsible Navigation Menu -->
+  <div class="collapse d-md-none bg-white border-bottom shadow-sm px-3 py-2" id="mobileNavCollapse">
+    <nav class="d-flex flex-column gap-1.5">
+      <a href="/" class="nav-tab-pill {% if request.path == '/' or request.path == '/dashboard' %}active{% endif %}">
+        <i class="bi bi-bar-chart-line"></i>
+        <span>Dashboard</span>
+      </a>
+      <a href="/shipments/" class="nav-tab-pill {% if '/shipments' in request.path and request.path != '/shipments/new' %}active{% endif %}">
+        <i class="bi bi-box-seam"></i>
+        <span>Shipments</span>
+      </a>
+      {% if role in ['Dispatcher', 'Operations Manager'] %}
+      <a href="/exceptions/" class="nav-tab-pill {% if '/exceptions' in request.path %}active{% endif %}">
+        <i class="bi bi-shield-exclamation"></i>
+        <span>Exceptions</span>
+      </a>
+      <a href="/escalations/" class="nav-tab-pill {% if '/escalations' in request.path %}active{% endif %}">
+        <i class="bi bi-arrow-up-right-circle"></i>
+        <span>Escalations</span>
+      </a>
+      {% endif %}
+      <a href="/reports/" class="nav-tab-pill {% if '/reports' in request.path %}active{% endif %}">
+        <i class="bi bi-file-earmark-bar-graph"></i>
+        <span>Reports</span>
+      </a>
+      <a href="/ai/assistant" class="nav-tab-pill {% if '/ai' in request.path %}active{% endif %}">
+        <i class="bi bi-robot"></i>
+        <span>AI Assistant</span>
+      </a>
+      {% if role == 'Administrator' %}
+      <a href="/users/" class="nav-tab-pill {% if '/users' in request.path %}active{% endif %}">
+        <i class="bi bi-people"></i>
+        <span>User Management</span>
+      </a>
+      <a href="/admin/settings" class="nav-tab-pill {% if '/admin' in request.path %}active{% endif %}">
+        <i class="bi bi-sliders"></i>
+        <span>System Settings</span>
+      </a>
+      {% endif %}
+    </nav>
+  </div>
+  {% endif %}
+
+  <!-- Main View Container -->
+  <main class="flex-grow-1 p-3 p-lg-4">
+    <div class="container-fluid max-w-7xl px-0">
+      {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+          <div class="mb-3">
+            {% for category, message in messages %}
+              <div class="alert alert-{{ 'danger' if category == 'error' else category }} alert-dismissible fade show d-flex align-items-center gap-2 py-2 px-3 shadow-xs rounded-3 mb-2" role="alert">
+                {% if category == 'success' %}
+                  <i class="bi bi-check-circle-fill text-success fs-5"></i>
+                {% elif category in ['danger', 'error'] %}
+                  <i class="bi bi-exclamation-octagon-fill text-danger fs-5"></i>
+                {% elif category == 'warning' %}
+                  <i class="bi bi-exclamation-triangle-fill text-warning fs-5"></i>
+                {% else %}
+                  <i class="bi bi-info-circle-fill text-info fs-5"></i>
+                {% endif %}
+                <div class="small fw-medium flex-grow-1 text-dark">{{ message }}</div>
+                <button type="button" class="btn-close py-2" data-bs-dismiss="alert" aria-label="Close"></button>
+              </div>
+            {% endfor %}
+          </div>
+        {% endif %}
+      {% endwith %}
+
+      {% block content %}{% endblock %}
+    </div>
+  </main>
+
+  <!-- Bootstrap JS -->
+  <!-- ======================================================== -->
+  <!-- 13. SCREEN 5: MARITIME AI COPILOT -->
+  <!-- ======================================================== -->
+  {% if not hide_nav and '/auth/' not in request.path and request.path not in ['/auth/login', '/auth/forgot-password'] and '/ai-assistant' not in request.path and '/ai/assistant' not in request.path %}
+  <!-- Floating FAB to Open AI Assistant -->
+  <button type="button" class="copilot-fab border-0 d-flex align-items-center justify-content-center text-white" id="copilotFab" title="Open RouteMind AI Copilot" aria-label="Open RouteMind AI Copilot" onclick="toggleCopilot()">
+    <i class="bi bi-robot fs-4 text-white"></i>
+  </button>
+
+  <!-- Floating Copilot Window Popup -->
+  <div class="copilot-window" id="copilotWindow">
+    <!-- Header -->
+    <div class="copilot-header">
+      <div class="d-flex align-items-center gap-2">
+        <div class="rounded-circle bg-primary bg-opacity-25 p-1 d-flex align-items-center justify-content-center" style="width: 28px; height: 28px;">
+          <i class="bi bi-robot text-cyan small"></i>
+        </div>
+        <div>
+          <span class="fw-bold text-white small d-block lh-1">RouteMind AI Copilot</span>
+          <small class="text-success" style="font-size: 0.65rem;"><i class="bi bi-circle-fill" style="font-size: 6px;"></i> Active &bull; ML Assisted</small>
+        </div>
+      </div>
+      <div class="d-flex align-items-center gap-2">
+        <a href="/ai/assistant" class="btn btn-sm text-white-50 p-0" title="Full Screen View">
+          <i class="bi bi-arrows-angle-expand"></i>
+        </a>
+        <button type="button" class="btn btn-sm text-white-50 p-0" onclick="clearCopilotHistory()" title="Clear Chat History">
+          <i class="bi bi-trash3"></i>
+        </button>
+        <button type="button" class="btn btn-sm text-white-50 p-0" onclick="toggleCopilot()" title="Close Copilot">
+          <i class="bi bi-x-lg"></i>
+        </button>
+      </div>
+    </div>
+
+    <!-- Messages Container -->
+    <div class="copilot-body" id="copilotMessages">
+      <div class="copilot-bot-bubble">
+        <div class="fw-bold text-info small mb-1"><i class="bi bi-robot me-1"></i> RouteMind Copilot</div>
+        <div class="small">Hello! I am your maritime operations copilot. You can ask me about consignment delay risks, vessel progress, ML predictions, or operational exceptions.</div>
+      </div>
+    </div>
+
+    <!-- Prompt Chips -->
+    <div class="px-3 pt-2 pb-1 d-flex gap-1.5 flex-wrap" style="background: #0F1E36; border-top: 1px solid rgba(255, 255, 255, 0.05);">
+      {% if current_user and current_user.is_authenticated and current_user.normalized_role == 'Operations Manager' %}
+        <span class="copilot-chip" onclick="sendQuickPrompt('Give all risk segments')">Risk Segments</span>
+        <span class="copilot-chip" onclick="sendQuickPrompt('Which shipping mode has highest delay rate?')">Delay Mode</span>
+        <span class="copilot-chip" onclick="sendQuickPrompt('How many manager escalations are pending?')">Escalations</span>
+        <span class="copilot-chip" onclick="sendQuickPrompt('Show me a donut chart of risks')">Donut Chart</span>
+      {% elif current_user and current_user.is_authenticated and current_user.normalized_role == 'Administrator' %}
+        <span class="copilot-chip" onclick="sendQuickPrompt('What are the production model accuracy metrics?')">Model Metrics</span>
+        <span class="copilot-chip" onclick="sendQuickPrompt('Daily operational summary')">Daily Summary</span>
+        <span class="copilot-chip" onclick="sendQuickPrompt('What is the total sales cargo valuation?')">Cargo Valuation</span>
+        <span class="copilot-chip" onclick="sendQuickPrompt('Show me a scatter plot of SLA vs risk')">Scatter Plot</span>
+      {% else %}
+        <span class="copilot-chip" onclick="sendQuickPrompt('Show all high risk shipments')">High Risk</span>
+        <span class="copilot-chip" onclick="sendQuickPrompt('Explain shipment SHP-10482')">SHP-10482</span>
+        <span class="copilot-chip" onclick="sendQuickPrompt('What should the dispatcher do next?')">Next Steps</span>
+        <span class="copilot-chip" onclick="sendQuickPrompt('Compare SHP-10001 and SHP-10002')">Compare</span>
+      {% endif %}
+    </div>
+
+    <!-- Footer Form -->
+    <div class="copilot-footer">
+      <form id="copilotForm" onsubmit="sendCopilotMessage(event)" class="d-flex gap-2 align-items-center m-0">
+        <textarea id="copilotInput" class="copilot-input form-control-sm text-white" rows="1" style="resize: none; max-height: 80px;" placeholder="Ask RouteMind Copilot..." onkeydown="handleCopilotKey(event)"></textarea>
+        <button type="submit" id="copilotSendBtn" class="btn btn-primary btn-sm rounded-circle d-flex align-items-center justify-content-center p-0 flex-shrink-0" style="width: 34px; height: 34px;" title="Send Message">
+          <i class="bi bi-send-fill text-white small" id="copilotSendIcon"></i>
+          <span class="spinner-border spinner-border-sm text-white d-none" id="copilotSpinner" style="width: 14px; height: 14px;"></span>
+        </button>
+      </form>
+    </div>
+  </div>
+  {% endif %}
+
+  <script>
+  let copilotConvId = sessionStorage.getItem('routemind_copilot_conv_id') ? parseInt(sessionStorage.getItem('routemind_copilot_conv_id')) : null;
+
+  function toggleCopilot() {
+    const win = document.getElementById('copilotWindow');
+    if (!win) {
+      window.location.href = '/ai/assistant';
+      return;
+    }
+    const isOpen = win.classList.toggle('open');
+    if (isOpen) {
+      const input = document.getElementById('copilotInput');
+      if (input) {
+        input.focus();
+        setTimeout(() => {
+          const container = document.getElementById('copilotMessages');
+          if (container) container.scrollTop = container.scrollHeight;
+        }, 50);
+      }
+    }
+  }
+
+  function sendQuickPrompt(promptText) {
+    const input = document.getElementById('copilotInput');
+    if (input) {
+      input.value = promptText;
+      sendCopilotMessage();
+    }
+  }
+
+  function handleCopilotKey(e) {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      sendCopilotMessage();
+    }
+  }
+
+  function parseMarkdownToHtml(md) {
+    if (!md) return '';
+    let html = md;
+
+    // Tables
+    const tableRegex = /\|(.+)\|[\r\n]+\|[-:\s|]+\|[\r\n]+((?:\|.+\|[\r\n]*)+)/g;
+    html = html.replace(tableRegex, function(match, headerRow, bodyRows) {
+      const headers = headerRow.split('|').map(h => h.trim()).filter(h => h.length > 0);
+      let thead = '<thead><tr>' + headers.map(h => '<th class="p-1">' + h + '</th>').join('') + '</tr></thead>';
+      
+      const rows = bodyRows.trim().split(/[\r\n]+/).map(r => {
+        const cells = r.split('|').map(c => c.trim()).filter(c => c.length > 0);
+        return '<tr>' + cells.map(c => '<td class="p-1">' + c + '</td>').join('') + '</tr>';
+      }).join('');
+      
+      return '<div class="table-responsive my-2"><table class="table table-bordered table-sm font-mono text-white" style="font-size:0.75rem; background:rgba(0,0,0,0.2);">' + thead + '<tbody>' + rows + '</tbody></table></div>';
+    });
+
+    // Headers
+    html = html.replace(/^### (.*$)/gim, '<h6 class="fw-bold text-info mt-2 mb-1">$1</h6>');
+    html = html.replace(/^## (.*$)/gim, '<h6 class="fw-bold text-white mt-2 mb-1">$1</h6>');
+
+    // Bold & Italics
+    html = html.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+    html = html.replace(/\*(.*?)\*/g, '<em>$1</em>');
+
+    // Inline Code
+    html = html.replace(/`([^`]+)`/g, '<code class="px-1 py-0.5 rounded bg-black bg-opacity-40 text-info font-mono" style="font-size:0.8rem;">$1</code>');
+
+    // Bullet points
+    html = html.replace(/^[•\-\*] (.*$)/gim, '<div class="ms-2 mb-1">&bull; $1</div>');
+
+    // Links
+    html = html.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" class="text-cyan text-decoration-none fw-semibold">$1</a>');
+
+    // Blockquotes
+    html = html.replace(/^> (.*$)/gim, '<div class="p-2 my-1 rounded bg-dark border-start border-3 border-info text-light small">$1</div>');
+
+    // Newlines
+    html = html.replace(/\n\n/g, '<br><br>');
+    return html;
+  }
+
+  function appendUserMessage(msg) {
+    const container = document.getElementById('copilotMessages');
+    if (!container) return;
+    const div = document.createElement('div');
+    div.className = 'copilot-user-bubble';
+    div.textContent = msg;
+    container.appendChild(div);
+    container.scrollTop = container.scrollHeight;
+  }
+
+  function appendBotMessage(msg, chartPayload) {
+    const container = document.getElementById('copilotMessages');
+    if (!container) return;
+    const div = document.createElement('div');
+    div.className = 'copilot-bot-bubble';
+    
+    let chartHtml = '';
+    let canvasId = '';
+    if (chartPayload && (chartPayload.chart_type || chartPayload.kpis)) {
+      canvasId = 'copilot_chart_' + Math.random().toString(36).substr(2, 9);
+      chartHtml = `
+        <div class="mt-2 pt-2 border-top border-secondary">
+          <small class="text-cyan fw-bold d-block mb-1">${chartPayload.title || 'Dynamic Telemetry'}</small>
+          <div style="position: relative; height: 180px; width: 100%;">
+            <canvas id="${canvasId}"></canvas>
+          </div>
+        </div>
+      `;
+    }
+
+    div.innerHTML = '<div class="fw-bold text-info small mb-1"><i class="bi bi-robot me-1"></i> RouteMind Copilot</div><div>' + parseMarkdownToHtml(msg) + '</div>' + chartHtml;
+    container.appendChild(div);
+    container.scrollTop = container.scrollHeight;
+
+    if (canvasId && chartPayload && chartPayload.data) {
+      setTimeout(() => {
+        try {
+          const el = document.getElementById(canvasId);
+          if (el && typeof Chart !== 'undefined') {
+            const ctx = el.getContext('2d');
+            const cType = chartPayload.chart_type === 'horizontalBar' ? 'bar' : (chartPayload.chart_type === 'kpi' ? 'doughnut' : chartPayload.chart_type);
+            const cOpts = chartPayload.options || {};
+            if (chartPayload.chart_type === 'horizontalBar') {
+              cOpts.indexAxis = 'y';
+            }
+            new Chart(ctx, {
+              type: cType,
+              data: chartPayload.data,
+              options: cOpts
+            });
+          }
+        } catch (e) {
+          console.warn('Floating chart err:', e);
+        }
+      }, 50);
+    }
+  }
+
+  function clearCopilotHistory() {
+    const container = document.getElementById('copilotMessages');
+    if (container) {
+      container.innerHTML = `
+        <div class="copilot-bot-bubble">
+          <div class="fw-bold text-info small mb-1"><i class="bi bi-robot me-1"></i> RouteMind Copilot</div>
+          <div class="small">Session refreshed. How can I assist you with your maritime fleet operations?</div>
+        </div>
+      `;
+    }
+    if (copilotConvId) {
+      fetch('/api/chat/clear', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ conversation_id: copilotConvId })
+      }).catch(e => console.log(e));
+      copilotConvId = null;
+      sessionStorage.removeItem('routemind_copilot_conv_id');
+    }
+  }
+
+  function sendCopilotMessage(e) {
+    if (e && e.preventDefault) e.preventDefault();
+    const input = document.getElementById('copilotInput');
+    if (!input) return;
+    const text = input.value.trim();
+    if (!text) return;
+
+    const sendBtn = document.getElementById('copilotSendBtn');
+    const sendIcon = document.getElementById('copilotSendIcon');
+    const spinner = document.getElementById('copilotSpinner');
+
+    appendUserMessage(text);
+    input.value = '';
+
+    if (sendBtn) sendBtn.disabled = true;
+    if (sendIcon) sendIcon.classList.add('d-none');
+    if (spinner) spinner.classList.remove('d-none');
+
+    fetch('/api/chat', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        message: text,
+        conversation_id: copilotConvId
+      })
+    })
+    .then(function(res) {
+      if (!res.ok) throw new Error('HTTP ' + res.status);
+      return res.json();
+    })
+    .then(function(data) {
+      if (data.conversation_id) {
+        copilotConvId = data.conversation_id;
+        sessionStorage.setItem('routemind_copilot_conv_id', copilotConvId);
+      }
+      appendBotMessage(data.response || data.message || "Query evaluated successfully.", data.chart_payload);
+    })
+    .catch(function(err) {
+      appendBotMessage("Operational notice: AI Assistant could not complete query evaluation. Please verify database connectivity and try again.");
+    })
+    .finally(function() {
+      if (sendBtn) sendBtn.disabled = false;
+      if (sendIcon) sendIcon.classList.remove('d-none');
+      if (spinner) spinner.classList.add('d-none');
+      if (input) input.focus();
+    });
+  }
+  </script>
+
+  <!-- Modal: Escalate to Manager -->
+  <div class="modal fade" id="escalateToManagerModal" tabindex="-1" aria-labelledby="escToMgrTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content border-0 shadow-lg rounded-4">
+        <div class="modal-header border-bottom px-4 py-3 bg-light">
+          <div>
+            <h5 class="modal-title fw-bold text-dark mb-0" id="escToMgrTitle">
+              <i class="bi bi-arrow-up-right-circle text-warning me-1.5"></i> Escalate Consignment to Manager
+            </h5>
+            <small class="text-muted">Route high-risk operational incident directly to Operations Manager queue</small>
+          </div>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <form id="escalateToManagerForm" onsubmit="submitEscalationForm(event)">
+          <div class="modal-body p-4">
+            <input type="hidden" id="esc_form_shipment_id" name="shipment_id" required>
+            <input type="hidden" id="esc_form_exception_id" name="exception_id">
+            <input type="hidden" id="esc_form_priority" name="priority" value="HIGH">
+            <input type="hidden" id="esc_form_reason" name="reason" value="Operational risk escalation for supervisory review">
+            <input type="hidden" id="esc_form_remarks" name="dispatcher_remarks" value="">
+
+            <!-- Confirmation Banner -->
+            <div class="alert alert-warning border-0 d-flex align-items-center mb-3 p-3 rounded-3 shadow-sm">
+              <i class="bi bi-exclamation-triangle-fill text-warning fs-3 me-3 flex-shrink-0"></i>
+              <div>
+                <div class="fw-bold text-dark">Confirm Escalation to Manager</div>
+                <div class="small text-muted">Are you sure you want to escalate consignment <strong id="esc_disp_shipment_ref" class="text-dark font-mono">--</strong> to the Operations Manager for priority review?</div>
+              </div>
+            </div>
+
+            <!-- Auto-recorded info box -->
+            <div class="p-3 bg-light rounded-3 border">
+              <div class="row g-2 text-xs">
+                <div class="col-6">
+                  <span class="text-muted d-block">Shipment ID:</span>
+                  <span class="fw-bold text-dark font-mono" id="esc_disp_shipment_ref_box">--</span>
+                </div>
+                <div class="col-6">
+                  <span class="text-muted d-block">Calculated Risk Score:</span>
+                  <span class="badge bg-danger text-white" id="esc_disp_risk_score">--</span>
+                </div>
+                <div class="col-6">
+                  <span class="text-muted d-block">Escalated By:</span>
+                  <span class="fw-semibold text-dark">{{ current_user.username if current_user and current_user.is_authenticated else 'Dispatcher' }}</span>
+                </div>
+                <div class="col-6">
+                  <span class="text-muted d-block">Escalation Date:</span>
+                  <span class="fw-semibold text-dark" id="esc_disp_date">Today</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="modal-footer border-top px-4 py-3 bg-light d-flex justify-content-end gap-2">
+            <button type="button" class="btn btn-outline-secondary btn-sm px-3" data-bs-dismiss="modal">Cancel</button>
+            <button type="submit" class="btn btn-warning btn-sm px-4 fw-semibold text-dark" id="btnSubmitEscalation">
+              <i class="bi bi-send-check me-1"></i> Send to Manager
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <script>
+  let escToMgrModalInstance = null;
+  function openEscalateToManagerModal(opts) {
+    if (!opts) return;
+    document.getElementById('esc_form_shipment_id').value = opts.shipmentId || '';
+    document.getElementById('esc_form_exception_id').value = opts.exceptionId || '';
+    const ref = opts.shipmentRef || ('SHP-' + opts.shipmentId);
+    document.getElementById('esc_disp_shipment_ref').textContent = ref;
+    const refBox = document.getElementById('esc_disp_shipment_ref_box');
+    if (refBox) refBox.textContent = ref;
+
+    const rScore = parseFloat(opts.riskScore || 0.0);
+    const pct = (rScore > 1 ? rScore : rScore * 100).toFixed(1);
+    const rBadge = document.getElementById('esc_disp_risk_score');
+    rBadge.textContent = pct + '%';
+    rBadge.className = 'badge ' + (pct >= 70 ? 'bg-danger text-white' : pct >= 40 ? 'bg-warning text-dark' : 'bg-success text-white');
+
+    const priInput = document.getElementById('esc_form_priority');
+    if (priInput) {
+      priInput.value = (pct >= 75) ? 'CRITICAL' : (pct >= 40 ? 'HIGH' : 'MEDIUM');
+    }
+
+    const todayStr = new Date().toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' });
+    document.getElementById('esc_disp_date').textContent = todayStr;
+
+    if (!escToMgrModalInstance) {
+      escToMgrModalInstance = new bootstrap.Modal(document.getElementById('escalateToManagerModal'));
+    }
+    escToMgrModalInstance.show();
+  }
+
+  async function submitEscalationForm(e) {
+    e.preventDefault();
+    const btn = document.getElementById('btnSubmitEscalation');
+    btn.disabled = true;
+    btn.innerHTML = '<span class="spinner-border spinner-border-sm me-1"></span> Sending to Manager...';
+
+    const priEl = document.getElementById('esc_form_priority');
+    const reasonEl = document.getElementById('esc_form_reason');
+    const remarksEl = document.getElementById('esc_form_remarks');
+
+    const payload = {
+      shipment_id: parseInt(document.getElementById('esc_form_shipment_id').value),
+      exception_id: document.getElementById('esc_form_exception_id').value ? parseInt(document.getElementById('esc_form_exception_id').value) : null,
+      priority: (priEl && priEl.value) ? priEl.value : 'HIGH',
+      reason: (reasonEl && reasonEl.value) ? reasonEl.value.trim() : 'Operational risk escalation for supervisory review',
+      dispatcher_remarks: (remarksEl && remarksEl.value) ? remarksEl.value.trim() : ''
+    };
+
+    try {
+      const res = await fetch('/escalations/create', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Failed to submit escalation.');
+
+      if (escToMgrModalInstance) escToMgrModalInstance.hide();
+      if (typeof showToast === 'function') {
+        showToast(data.message || 'Shipment escalated to Operations Manager.', 'success');
+      } else {
+        alert(data.message || 'Shipment escalated to Operations Manager.');
+      }
+      setTimeout(() => { window.location.href = '/escalations/'; }, 800);
+    } catch (err) {
+      alert(err.message || 'Failed to escalate shipment.');
+      btn.disabled = false;
+      btn.innerHTML = '<i class="bi bi-send-check me-1"></i> Send to Manager';
+    }
+  }
+  </script>
+
+  <!-- Modal: Add / Edit Shipment -->
+  <div class="modal fade" id="shipmentFormModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content border-0 shadow-lg rounded-4">
+        <div class="modal-header border-bottom">
+          <h5 class="modal-title fw-bold" id="shipmentModalTitle">Add New Maritime Shipment</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body p-4">
+          <form id="newShipmentForm" onsubmit="handleShipmentSubmit(event)">
+            <div class="row g-3">
+              <div class="col-md-6">
+                <label class="form-label small fw-semibold">Customer Name</label>
+                <input type="text" class="form-control form-control-sm" required placeholder="e.g. Meridian Imports">
+              </div>
+              <div class="col-md-6">
+                <label class="form-label small fw-semibold">Order Reference</label>
+                <input type="text" class="form-control form-control-sm font-mono" required placeholder="ORD-XXXX">
+              </div>
+              <div class="col-md-6">
+                <label class="form-label small fw-semibold">Origin Port</label>
+                <input type="text" class="form-control form-control-sm" required placeholder="Chennai Port, India">
+              </div>
+              <div class="col-md-6">
+                <label class="form-label small fw-semibold">Destination Port</label>
+                <input type="text" class="form-control form-control-sm" required placeholder="Singapore Port, Singapore">
+              </div>
+              <div class="col-md-4">
+                <label class="form-label small fw-semibold">Container ID</label>
+                <input type="text" class="form-control form-control-sm font-mono" placeholder="MSCUXXXXXX-X">
+              </div>
+              <div class="col-md-4">
+                <label class="form-label small fw-semibold">Container Type</label>
+                <select class="form-select form-select-sm">
+                  <option>40 ft High Cube</option>
+                  <option>20 ft Standard</option>
+                  <option>40 ft Reefer</option>
+                </select>
+              </div>
+              <div class="col-md-4">
+                <label class="form-label small fw-semibold">Vessel Name</label>
+                <input type="text" class="form-control form-control-sm" placeholder="MV Ocean Crest">
+              </div>
+            </div>
+            <div class="mt-4 text-end">
+              <button type="button" class="btn btn-rm-outline btn-sm me-2" data-bs-dismiss="modal">Cancel</button>
+              <button type="submit" class="btn btn-rm-primary btn-sm px-4">Save Consignment</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Container -->
+  <div class="position-fixed bottom-0 start-50 translate-middle-x p-3" style="z-index: 1090;">
+    <div id="liveToast" class="toast align-items-center text-white border-0 shadow-lg" role="alert">
+      <div class="d-flex">
+        <div class="toast-body small fw-semibold" id="toastMessage">Action completed successfully.</div>
+        <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bootstrap 5 Bundle JS -->
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+  {% block extra_js %}{% endblock %}
+</body>
+</html>

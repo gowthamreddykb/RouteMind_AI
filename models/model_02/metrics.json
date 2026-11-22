@@ -1,0 +1,10 @@
+{
+    "test_accuracy": 0.7083,
+    "test_roc_auc": 0.7725,
+    "test_pr_auc": 0.8358,
+    "test_f1": 0.6698,
+    "test_precision": 0.8891,
+    "test_recall": 0.5373,
+    "test_brier_score": 0.1798,
+    "optimal_threshold": 0.1
+}

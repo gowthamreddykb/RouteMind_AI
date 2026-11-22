@@ -1,0 +1,6 @@
+shipment_id,Shipping Mode,Days for shipment (scheduled),Order-to-Ship Time,Order Region,Market,Department Name,Customer Segment,Sales,Quantity,Order Item Product Price,Late_delivery_risk
+SHP-SMPL-001,Standard Class,4,1.5,Western Europe,Europe,Fan Shop,Consumer,120.0,1,120.0,0
+SHP-SMPL-002,First Class,1,3.5,Western Europe,Europe,Apparel,Consumer,240.0,2,120.0,1
+SHP-SMPL-003,Second Class,2,2.0,Central America,LATAM,Golf,Corporate,150.0,1,150.0,0
+SHP-SMPL-004,Same Day,0,1.2,US Center,USCA,Footwear,Consumer,85.0,1,85.0,1
+SHP-SMPL-005,Standard Class,4,4.5,South America,LATAM,Outdoors,Home Office,310.0,3,103.33,1

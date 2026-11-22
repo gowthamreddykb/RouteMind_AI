@@ -1,0 +1,27 @@
+{
+    "model_id": "model_03_improved",
+    "training_date": "2026-11-14T08:22:10.425614",
+    "train_rows": 46026,
+    "val_rows": 9862,
+    "test_rows": 9864,
+    "features": [
+        "Days for shipment (scheduled)",
+        "Total_Quantity",
+        "Total_Sales",
+        "Total_Discount",
+        "Max_Item_Price",
+        "Item_Count",
+        "Sales_Per_Item",
+        "Scheduled_Days_x_Item_Count",
+        "Order_Hour",
+        "Order_DayOfWeek",
+        "Order_Month",
+        "Is_Weekend",
+        "Shipping Mode",
+        "Order Region",
+        "Market",
+        "Customer Segment",
+        "Primary_Category",
+        "Primary_Department"
+    ]
+}

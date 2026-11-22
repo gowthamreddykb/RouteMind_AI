@@ -1,0 +1,19 @@
+Feature Name,Order Creation Availability,Dispatch Availability,Data Type,Leakage Risk,Missing Percentage,Decision,Reason
+Type,Yes,Yes,Categorical,Low,0.0,Include,Payment type is chosen when the order is placed.
+Days for shipment (scheduled),Yes,Yes,Numerical,Low,0.0,Include,"Promised duration, known at order time. NOTE: 1-to-1 with Shipping Mode (0/1/2/4 days), so partly redundant; kept as scheduled_days."
+Category Name,Yes,Yes,Categorical,Low,0.0,Include,"Product category, known at order time."
+Customer City,Yes,Yes,Categorical,Low,0.0,Include,563 values; rare categories must be grouped in the encoder.
+Customer Country,Yes,Yes,Categorical,Low,0.0,Include,Only 2 values (Puerto Rico / EE. UU.). Low information.
+Customer Segment,Yes,Yes,Categorical,Low,0.0,Include,Customer attribute known at order time.
+Customer State,Yes,Yes,Categorical,Low,0.0,Include,Known at order time.
+Department Name,Yes,Yes,Categorical,Low,0.0,Include,Known at order time.
+Market,Yes,Yes,Categorical,Low,0.0,Include,Destination market.
+Order Country,Yes,Yes,Categorical,Low,0.0,Include,164 values; rare categories grouped in the encoder.
+order date (DateOrders),Yes,Yes,Date,Low,0.0,Include,Order timestamp; used to derive calendar features and for the chronological split. Raw timestamp itself is not passed to the model.
+Order Item Discount Rate,Yes,Yes,Numerical,Low,0.0,Include,Known at order time; used for discount_level.
+Order Item Product Price,Yes,Yes,Numerical,Low,0.0,Include,Unit price at order time.
+Order Item Quantity,Yes,Yes,Numerical,Low,0.0,Include,Quantity ordered.
+Sales,Yes,Yes,Numerical,Low,0.0,Include,Item price x quantity (verified); used for order_value.
+Order Region,Yes,Yes,Categorical,Low,0.0,Include,Destination region.
+Product Name,Yes,Yes,Categorical,Low,0.0,Include,"118 values - moderate cardinality, known at order time."
+Shipping Mode,Yes,Yes,Categorical,Low,0.0,Include,Chosen by customer at order time. Strongest signal in the data.

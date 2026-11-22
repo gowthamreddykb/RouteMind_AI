@@ -1,0 +1,11 @@
+partition,column,pct_rows_with_value_unseen_in_train
+val,Product Name,3.0
+val,Category Name,1.51
+val,Department Name,0.0
+val,Customer City,0.0
+val,Order Country,0.0
+test,Product Name,36.97
+test,Category Name,33.99
+test,Department Name,17.54
+test,Customer City,0.01
+test,Order Country,0.0

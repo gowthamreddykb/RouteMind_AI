@@ -1,0 +1,39 @@
+{
+  "passed": true,
+  "checks": {
+    "roc_auc_not_worse": true,
+    "pr_auc_not_worse": true,
+    "brier_not_worse": true,
+    "recall_same_alert_rate_not_worse": true,
+    "worst_subgroup_auc_not_worse": true,
+    "latency_p95_within_limit": true
+  },
+  "champion": {
+    "roc_auc": 0.7649621704242887,
+    "pr_auc": 0.8438496864371009,
+    "brier": 0.18152034247485838,
+    "recall_at_champion_alert_rate": 0.6521323780279767,
+    "worst_subgroup_auc": 0.4981555454962684,
+    "p95_latency_ms": 16.697837999993222
+  },
+  "challenger": {
+    "roc_auc": 0.7728858644300647,
+    "pr_auc": 0.8474281868738476,
+    "brier": 0.1787464087621735,
+    "recall_at_champion_alert_rate": 0.6573865574889116,
+    "worst_subgroup_auc": 0.4875627435242752,
+    "p95_latency_ms": 21.735964599974977
+  },
+  "criteria": {
+    "max_auc_drop": 0.002,
+    "max_prauc_drop": 0.002,
+    "max_brier_increase": 0.002,
+    "max_recall_drop_same_alerts": 0.01,
+    "max_worst_group_auc_drop": 0.02,
+    "max_p95_latency_ratio": 2.0
+  },
+  "evaluated_rows": 25913,
+  "alert_rate_used": 0.4794504688766256,
+  "evaluated_at": "2026-11-07T11:05:00.432179+00:00",
+  "note": "Evaluated on VALIDATION-period eligible rows (the final test period stays untouched)."
+}

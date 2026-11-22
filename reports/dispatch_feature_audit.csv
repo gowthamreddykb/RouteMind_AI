@@ -1,0 +1,54 @@
+Original column name,Data type,Missing count,Missing percentage,Prediction stage,Available at prediction time,Leakage risk,Final decision,Reason
+Type,str,0,0.0,Dispatch,Yes,Low,Include,Payment type is chosen when the order is placed. (Order-time feature carried into dispatch stage.)
+Days for shipment (scheduled),int64,0,0.0,Dispatch,Yes,Low,Include,"Promised duration, known at order time. NOTE: 1-to-1 with Shipping Mode (0/1/2/4 days), so partly redundant; kept as scheduled_days. (Order-time feature carried into dispatch stage.)"
+Shipping Mode,str,0,0.0,Dispatch,Yes,Low,Include,Chosen by customer at order time. Strongest signal in the data. (Order-time feature carried into dispatch stage.)
+order date (DateOrders),str,0,0.0,Dispatch,Yes,Low,Include,Order timestamp; used to derive calendar features and for the chronological split. Raw timestamp itself is not passed to the model. (Order-time feature carried into dispatch stage.)
+Category Id,int64,0,0.0,Dispatch,Yes,Low,Exclude,"Identifier code. Verified NOT strictly 1-to-1 with Category Name (51 ids vs 50 names: one name maps to two ids), but the extra id carries no business meaning; Category Name is kept instead. (Order-time feature carried into dispatch stage.)"
+Category Name,str,0,0.0,Dispatch,Yes,Low,Include,"Product category, known at order time. (Order-time feature carried into dispatch stage.)"
+Department Id,int64,0,0.0,Dispatch,Yes,Low,Exclude,Identifier code; Department Name carries the same information. (Order-time feature carried into dispatch stage.)
+Department Name,str,0,0.0,Dispatch,Yes,Low,Include,Known at order time. (Order-time feature carried into dispatch stage.)
+Product Card Id,int64,0,0.0,Dispatch,Yes,Low,Exclude,Identifier code; Product Name carries the same information (1-to-1). (Order-time feature carried into dispatch stage.)
+Product Category Id,int64,0,0.0,Dispatch,Yes,Low,Exclude,Identical to Category Id in 100% of rows. (Order-time feature carried into dispatch stage.)
+Product Name,str,0,0.0,Dispatch,Yes,Low,Include,"118 values - moderate cardinality, known at order time. (Order-time feature carried into dispatch stage.)"
+Product Price,float64,0,0.0,Dispatch,Yes,Low,Exclude,Identical to Order Item Product Price in 100% of rows. (Order-time feature carried into dispatch stage.)
+Order Item Product Price,float64,0,0.0,Dispatch,Yes,Low,Include,Unit price at order time. (Order-time feature carried into dispatch stage.)
+Order Item Quantity,int64,0,0.0,Dispatch,Yes,Low,Include,Quantity ordered. (Order-time feature carried into dispatch stage.)
+Customer Segment,str,0,0.0,Dispatch,Yes,Low,Include,Customer attribute known at order time. (Order-time feature carried into dispatch stage.)
+Customer City,str,0,0.0,Dispatch,Yes,Low,Include,563 values; rare categories must be grouped in the encoder. (Order-time feature carried into dispatch stage.)
+Customer Country,str,0,0.0,Dispatch,Yes,Low,Include,Only 2 values (Puerto Rico / EE. UU.). Low information. (Order-time feature carried into dispatch stage.)
+Customer State,str,0,0.0,Dispatch,Yes,Low,Include,Known at order time. (Order-time feature carried into dispatch stage.)
+Market,str,0,0.0,Dispatch,Yes,Low,Include,Destination market. (Order-time feature carried into dispatch stage.)
+Order City,str,0,0.0,Dispatch,Yes,Low,Exclude,"3,597 values - very high cardinality. Decide by validation ablation, with rare-category grouping. | RESOLVED by validation ablation: validation AUC base=0.7593, best variant '+all review'=0.7597; adopted only if gain >= 0.002 (Order-time feature carried into dispatch stage.)"
+Order Country,str,0,0.0,Dispatch,Yes,Low,Include,164 values; rare categories grouped in the encoder. (Order-time feature carried into dispatch stage.)
+Order Region,str,0,0.0,Dispatch,Yes,Low,Include,Destination region. (Order-time feature carried into dispatch stage.)
+Order State,str,0,0.0,Dispatch,Yes,Low,Exclude,"1,089 values - high cardinality. Decide by validation ablation. | RESOLVED by validation ablation: validation AUC base=0.7593, best variant '+all review'=0.7597; adopted only if gain >= 0.002 (Order-time feature carried into dispatch stage.)"
+Latitude,float64,0,0.0,Dispatch,Conditional,Medium,Exclude,"VERIFIED to be the CUSTOMER location (e.g. Order City Bekasi, Indonesia has lat 18.25 = Puerto Rico), NOT the destination. Available at order time but duplicates Customer City/State. Decide by ablation. | RESOLVED by validation ablation: validation AUC base=0.7593, best variant '+all review'=0.7597; adopted only if gain >= 0.002 (Order-time feature carried into dispatch stage.)"
+Longitude,float64,0,0.0,Dispatch,Conditional,Medium,Exclude,"Same as Latitude: customer location, not destination. | RESOLVED by validation ablation: validation AUC base=0.7593, best variant '+all review'=0.7597; adopted only if gain >= 0.002 (Order-time feature carried into dispatch stage.)"
+Order Item Discount,float64,0,0.0,Dispatch,Yes,Low,Exclude,Equals Discount Rate x Sales (redundant). (Order-time feature carried into dispatch stage.)
+Order Item Discount Rate,float64,0,0.0,Dispatch,Yes,Low,Include,Known at order time; used for discount_level. (Order-time feature carried into dispatch stage.)
+Sales,float64,0,0.0,Dispatch,Yes,Low,Include,Item price x quantity (verified); used for order_value. (Order-time feature carried into dispatch stage.)
+Order Item Total,float64,0,0.0,Dispatch,Yes,Low,Exclude,Sales minus discount (matches in 97.4% rows) - redundant combination of included fields. (Order-time feature carried into dispatch stage.)
+Late_delivery_risk,int64,0,0.0,Dispatch,No,High,Exclude,Target variable - must never appear in X.
+Days for shipping (real),int64,0,0.0,Dispatch,No,High,Exclude,"Actual shipping duration. Verified: every late row (target=1) has real > scheduled (100%), and the rule real > scheduled reproduces the target in 97.55% of all rows (the other 2.45% are cancelled/fraud orders labelled 0)."
+Delivery Status,str,0,0.0,Dispatch,No,High,Exclude,Reveals delivery outcome; 'Late delivery' == target 1 in 100% of rows (verified).
+Order Status,str,0,0.0,Dispatch,No,Medium,Exclude,"May reflect events after order creation (e.g. CANCELED, COMPLETE)."
+Customer Email,str,0,0.0,Dispatch,No,Medium,Exclude,Personal information; not predictive.
+Customer Password,str,0,0.0,Dispatch,No,Medium,Exclude,Credential; must never be used.
+Customer Fname,str,0,0.0,Dispatch,No,Medium,Exclude,Personal information.
+Customer Lname,str,8,0.0044,Dispatch,No,Medium,Exclude,Personal information.
+Customer Street,str,0,0.0,Dispatch,No,Medium,Exclude,Personal address information.
+Customer Id,int64,0,0.0,Dispatch,No,Medium,Exclude,Record identifier; keep only for joins/grouping.
+Order Customer Id,int64,0,0.0,Dispatch,No,Medium,Exclude,Duplicate customer identifier.
+Order Id,int64,0,0.0,Dispatch,No,Medium,Exclude,Used for grouping the split only.
+Order Item Id,int64,0,0.0,Dispatch,No,Medium,Exclude,Row identifier.
+Customer Zipcode,float64,3,0.0017,Dispatch,No,Medium,Exclude,"Postal code; sparse/high-cardinality, not approved for first model."
+Order Zipcode,float64,155679,86.2397,Dispatch,No,Medium,Exclude,86.24% missing (verified).
+Order Item Cardprod Id,int64,0,0.0,Dispatch,No,Medium,Exclude,Identical to Product Card Id in 100% of rows (verified).
+Product Description,float64,180519,100.0,Dispatch,No,Medium,Exclude,100% missing (verified).
+Product Image,str,0,0.0,Dispatch,No,Medium,Exclude,"URL/text, one value per product, not predictive."
+Product Status,int64,0,0.0,Dispatch,No,Medium,Exclude,Single constant value (verified).
+Order Profit Per Order,float64,0,0.0,Dispatch,No,Medium,Exclude,Profit is finalised after the order is fulfilled.
+Order Item Profit Ratio,float64,0,0.0,Dispatch,No,Medium,Exclude,Profit is finalised after the order is fulfilled.
+Benefit per order,float64,0,0.0,Dispatch,No,Medium,Exclude,Profit/benefit is finalised after the order is fulfilled.
+Sales per customer,float64,0,0.0,Dispatch,No,Medium,Exclude,Aggregate; not an order-time value.
+shipping date (DateOrders),str,0,0.0,Dispatch,No,High,Exclude,"NOT a genuine dispatch timestamp: it equals order date + actual shipping days (0/1 days -> 0.5, 2->2.0, ... 6->6.0). Using it, or dispatch_* / hours_to_dispatch derived from it, would leak the delivery outcome."

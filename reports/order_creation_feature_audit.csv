@@ -1,0 +1,54 @@
+Original column name,Data type,Missing count,Missing percentage,Prediction stage,Available at prediction time,Leakage risk,Final decision,Reason
+Type,str,0,0.0,Order creation,Yes,Low,Include,Payment type is chosen when the order is placed.
+Days for shipment (scheduled),int64,0,0.0,Order creation,Yes,Low,Include,"Promised duration, known at order time. NOTE: 1-to-1 with Shipping Mode (0/1/2/4 days), so partly redundant; kept as scheduled_days."
+Shipping Mode,str,0,0.0,Order creation,Yes,Low,Include,Chosen by customer at order time. Strongest signal in the data.
+order date (DateOrders),str,0,0.0,Order creation,Yes,Low,Include,Order timestamp; used to derive calendar features and for the chronological split. Raw timestamp itself is not passed to the model.
+Category Id,int64,0,0.0,Order creation,Yes,Low,Exclude,"Identifier code. Verified NOT strictly 1-to-1 with Category Name (51 ids vs 50 names: one name maps to two ids), but the extra id carries no business meaning; Category Name is kept instead."
+Category Name,str,0,0.0,Order creation,Yes,Low,Include,"Product category, known at order time."
+Department Id,int64,0,0.0,Order creation,Yes,Low,Exclude,Identifier code; Department Name carries the same information.
+Department Name,str,0,0.0,Order creation,Yes,Low,Include,Known at order time.
+Product Card Id,int64,0,0.0,Order creation,Yes,Low,Exclude,Identifier code; Product Name carries the same information (1-to-1).
+Product Category Id,int64,0,0.0,Order creation,Yes,Low,Exclude,Identical to Category Id in 100% of rows.
+Product Name,str,0,0.0,Order creation,Yes,Low,Include,"118 values - moderate cardinality, known at order time."
+Product Price,float64,0,0.0,Order creation,Yes,Low,Exclude,Identical to Order Item Product Price in 100% of rows.
+Order Item Product Price,float64,0,0.0,Order creation,Yes,Low,Include,Unit price at order time.
+Order Item Quantity,int64,0,0.0,Order creation,Yes,Low,Include,Quantity ordered.
+Customer Segment,str,0,0.0,Order creation,Yes,Low,Include,Customer attribute known at order time.
+Customer City,str,0,0.0,Order creation,Yes,Low,Include,563 values; rare categories must be grouped in the encoder.
+Customer Country,str,0,0.0,Order creation,Yes,Low,Include,Only 2 values (Puerto Rico / EE. UU.). Low information.
+Customer State,str,0,0.0,Order creation,Yes,Low,Include,Known at order time.
+Market,str,0,0.0,Order creation,Yes,Low,Include,Destination market.
+Order City,str,0,0.0,Order creation,Yes,Low,Exclude,"3,597 values - very high cardinality. Decide by validation ablation, with rare-category grouping. | RESOLVED by validation ablation: validation AUC base=0.7593, best variant '+all review'=0.7597; adopted only if gain >= 0.002"
+Order Country,str,0,0.0,Order creation,Yes,Low,Include,164 values; rare categories grouped in the encoder.
+Order Region,str,0,0.0,Order creation,Yes,Low,Include,Destination region.
+Order State,str,0,0.0,Order creation,Yes,Low,Exclude,"1,089 values - high cardinality. Decide by validation ablation. | RESOLVED by validation ablation: validation AUC base=0.7593, best variant '+all review'=0.7597; adopted only if gain >= 0.002"
+Latitude,float64,0,0.0,Order creation,Conditional,Medium,Exclude,"VERIFIED to be the CUSTOMER location (e.g. Order City Bekasi, Indonesia has lat 18.25 = Puerto Rico), NOT the destination. Available at order time but duplicates Customer City/State. Decide by ablation. | RESOLVED by validation ablation: validation AUC base=0.7593, best variant '+all review'=0.7597; adopted only if gain >= 0.002"
+Longitude,float64,0,0.0,Order creation,Conditional,Medium,Exclude,"Same as Latitude: customer location, not destination. | RESOLVED by validation ablation: validation AUC base=0.7593, best variant '+all review'=0.7597; adopted only if gain >= 0.002"
+Order Item Discount,float64,0,0.0,Order creation,Yes,Low,Exclude,Equals Discount Rate x Sales (redundant).
+Order Item Discount Rate,float64,0,0.0,Order creation,Yes,Low,Include,Known at order time; used for discount_level.
+Sales,float64,0,0.0,Order creation,Yes,Low,Include,Item price x quantity (verified); used for order_value.
+Order Item Total,float64,0,0.0,Order creation,Yes,Low,Exclude,Sales minus discount (matches in 97.4% rows) - redundant combination of included fields.
+Late_delivery_risk,int64,0,0.0,Order creation,No,High,Exclude,Target variable - must never appear in X.
+Days for shipping (real),int64,0,0.0,Order creation,No,High,Exclude,"Actual shipping duration. Verified: every late row (target=1) has real > scheduled (100%), and the rule real > scheduled reproduces the target in 97.55% of all rows (the other 2.45% are cancelled/fraud orders labelled 0)."
+Delivery Status,str,0,0.0,Order creation,No,High,Exclude,Reveals delivery outcome; 'Late delivery' == target 1 in 100% of rows (verified).
+Order Status,str,0,0.0,Order creation,No,Medium,Exclude,"May reflect events after order creation (e.g. CANCELED, COMPLETE)."
+Customer Email,str,0,0.0,Order creation,No,Medium,Exclude,Personal information; not predictive.
+Customer Password,str,0,0.0,Order creation,No,Medium,Exclude,Credential; must never be used.
+Customer Fname,str,0,0.0,Order creation,No,Medium,Exclude,Personal information.
+Customer Lname,str,8,0.0044,Order creation,No,Medium,Exclude,Personal information.
+Customer Street,str,0,0.0,Order creation,No,Medium,Exclude,Personal address information.
+Customer Id,int64,0,0.0,Order creation,No,Medium,Exclude,Record identifier; keep only for joins/grouping.
+Order Customer Id,int64,0,0.0,Order creation,No,Medium,Exclude,Duplicate customer identifier.
+Order Id,int64,0,0.0,Order creation,No,Medium,Exclude,Used for grouping the split only.
+Order Item Id,int64,0,0.0,Order creation,No,Medium,Exclude,Row identifier.
+Customer Zipcode,float64,3,0.0017,Order creation,No,Medium,Exclude,"Postal code; sparse/high-cardinality, not approved for first model."
+Order Zipcode,float64,155679,86.2397,Order creation,No,Medium,Exclude,86.24% missing (verified).
+Order Item Cardprod Id,int64,0,0.0,Order creation,No,Medium,Exclude,Identical to Product Card Id in 100% of rows (verified).
+Product Description,float64,180519,100.0,Order creation,No,Medium,Exclude,100% missing (verified).
+Product Image,str,0,0.0,Order creation,No,Medium,Exclude,"URL/text, one value per product, not predictive."
+Product Status,int64,0,0.0,Order creation,No,Medium,Exclude,Single constant value (verified).
+Order Profit Per Order,float64,0,0.0,Order creation,No,Medium,Exclude,Profit is finalised after the order is fulfilled.
+Order Item Profit Ratio,float64,0,0.0,Order creation,No,Medium,Exclude,Profit is finalised after the order is fulfilled.
+Benefit per order,float64,0,0.0,Order creation,No,Medium,Exclude,Profit/benefit is finalised after the order is fulfilled.
+Sales per customer,float64,0,0.0,Order creation,No,Medium,Exclude,Aggregate; not an order-time value.
+shipping date (DateOrders),str,0,0.0,Order creation,No,High,Exclude,"VERIFIED: equals order date + actual shipping days (2 days -> exactly 2.0 days, etc.). It is a delivery-duration proxy, NOT a real dispatch timestamp. Excluded from BOTH models."

@@ -1,0 +1,47 @@
+{
+  "models": [
+    {
+      "model_id": "routemind_order_creation_random_forest",
+      "model_name": "RouteMind Order_Creation RandomForestClassifier",
+      "model_version": "2.1.0",
+      "prediction_stage": "order_creation",
+      "dataset_version": "dataco_v2_new_excel",
+      "algorithm": "RandomForestClassifier",
+      "artifact_location": "C:\\gowtham_mithraz\\RouteMind_AI project\\models\\order_creation_reference_pipeline\\routemind_order_creation_random_forest.joblib",
+      "feature_schema_location": "C:\\gowtham_mithraz\\RouteMind_AI project\\models\\order_creation_reference_pipeline\\feature_schema.json",
+      "decision_threshold": 0.1,
+      "evaluation_metrics": {
+        "model_name": "Random Forest",
+        "decision_threshold": 0.1,
+        "test_sample_size": 2916,
+        "confusion_matrix": {
+          "TN": 0,
+          "FP": 1411,
+          "FN": 0,
+          "TP": 1505
+        },
+        "risk_buckets": [
+          {
+            "Risk Bucket": "Low Risk (<35%)",
+            "Volume": 11,
+            "Observed Late Delivery Rate": 0.5454545454545454
+          },
+          {
+            "Risk Bucket": "Medium Risk (35-65%)",
+            "Volume": 2111,
+            "Observed Late Delivery Rate": 0.38275698720985313
+          },
+          {
+            "Risk Bucket": "High Risk (>65%)",
+            "Volume": 794,
+            "Observed Late Delivery Rate": 0.8702770780856424
+          }
+        ],
+        "monotonic_risk_gradient": false,
+        "evaluated_at": "2026-11-14T14:04:56.265540Z"
+      },
+      "registered_at": "2026-11-14T14:04:56.570895Z",
+      "approval_status": "APPROVED_FOR_STAGING"
+    }
+  ]
+}

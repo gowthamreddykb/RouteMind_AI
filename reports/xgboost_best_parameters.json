@@ -1,0 +1,18 @@
+{
+  "subsample": 1.0,
+  "scale_pos_weight": 0.8201,
+  "reg_lambda": 10,
+  "reg_alpha": 1.0,
+  "n_estimators": 600,
+  "min_child_weight": 20,
+  "max_depth": 4,
+  "learning_rate": 0.03,
+  "gamma": 0,
+  "colsample_bytree": 0.5,
+  "best_iteration": 218,
+  "early_stopping_rounds": 30,
+  "tree_method": "hist",
+  "random_state": 42,
+  "selection_metric": "validation ROC-AUC",
+  "n_search_iterations": 2
+}

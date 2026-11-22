@@ -1,0 +1,4 @@
+outcome,rows,share_pct,original_label_late_rate,used_in_lateness_model
+LATE,98977,54.8291,1.0,True
+ON_TIME,73788,40.8755,0.0,True
+CANCELLED,7754,4.2954,0.0,False

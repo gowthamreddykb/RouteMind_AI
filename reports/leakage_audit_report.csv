@@ -1,0 +1,29 @@
+Excluded column,Category,Reason,Evidence (computed)
+Late_delivery_risk,Target,Target variable - must never appear in X.,
+Days for shipping (real),Target leakage,"Actual shipping duration. Verified: every late row (target=1) has real > scheduled (100%), and the rule real > scheduled reproduces the target in 97.55% of all rows (the other 2.45% are cancelled/fraud orders labelled 0).",late == (real > scheduled) in 97.55% of rows
+Delivery Status,Target leakage,Reveals delivery outcome; 'Late delivery' == target 1 in 100% of rows (verified).,'Late delivery' rows have target=1 in 100.0% of cases; all other statuses have target=0
+Order Status,Post-order information,"May reflect events after order creation (e.g. CANCELED, COMPLETE).","late rate by status {'CANCELED': 0.0, 'CLOSED': 0.566, 'COMPLETE': 0.575, 'ON_HOLD': 0.556, 'PAYMENT_REVIEW': 0.572, 'PENDING': 0.579, 'PENDING_PAYMENT': 0.575, 'PROCESSING': 0.571, 'SUSPECTED_FRAUD': 0.0}: CANCELED and SUSPECTED_FRAUD are always 0 -> status is a post-order outcome that leaks the label"
+Customer Email,Personal data,Personal information; not predictive.,
+Customer Password,Personal data,Credential; must never be used.,
+Customer Fname,Personal data,Personal information.,
+Customer Lname,Personal data,Personal information.,
+Customer Street,Personal data,Personal address information.,
+Customer Id,Identifier,Record identifier; keep only for joins/grouping.,"20,652 distinct ids; identifier"
+Order Customer Id,Identifier,Duplicate customer identifier.,
+Order Id,Identifier,Used for grouping the split only.,
+Order Item Id,Identifier,Row identifier.,
+Customer Zipcode,Initially excluded,"Postal code; sparse/high-cardinality, not approved for first model.",3 missing; 995 distinct codes
+Order Zipcode,Initially excluded,86.24% missing (verified).,86.2397% missing
+Order Item Cardprod Id,Initially excluded,Identical to Product Card Id in 100% of rows (verified).,identical to Product Card Id in 100.0% of rows
+Product Description,Initially excluded,100% missing (verified).,"180,519 of 180,519 values missing"
+Product Image,Initially excluded,"URL/text, one value per product, not predictive.",
+Product Status,Initially excluded,Single constant value (verified).,"1 distinct value(s): [0] (constant, no information)"
+Order Profit Per Order,Initially excluded,Profit is finalised after the order is fulfilled.,identical to 'Benefit per order' in 100.0% of rows; correlation with target -0.004; profit is only final after fulfilment
+Order Item Profit Ratio,Initially excluded,Profit is finalised after the order is fulfilled.,correlation with target -0.002; derived from profit (post-fulfilment)
+Benefit per order,Initially excluded,Profit/benefit is finalised after the order is fulfilled.,duplicate of Order Profit Per Order (see above)
+Sales per customer,Initially excluded,Aggregate; not an order-time value.,identical to 'Order Item Total' in 100.0% of rows (not a true per-customer aggregate; redundant)
+shipping date (DateOrders),Target leakage (discovered),"VERIFIED: equals order date + actual shipping days (2 days -> exactly 2.0 days, etc.). It is a delivery-duration proxy, NOT a real dispatch timestamp. Excluded from BOTH models.","gap (shipping date - order date, days) by Days for shipping (real): 0->0.5..0.5; 1->0.5..0.5; 2->2.0..2.0; 3->3.0..3.0; 4->4.0..4.0; 5->5.0..5.0; 6->6.0..6.0; correlation with real duration 0.9974 => derived from the outcome, not a dispatch event"
+Order City (conditionally approved),Review,"3,597 values - very high cardinality. Decide by validation ablation, with rare-category grouping.",see validation ablation in training_summary / report
+Order State (conditionally approved),Review,"1,089 values - high cardinality. Decide by validation ablation.",see validation ablation in training_summary / report
+Latitude (conditionally approved),Review,"VERIFIED to be the CUSTOMER location (e.g. Order City Bekasi, Indonesia has lat 18.25 = Puerto Rico), NOT the destination. Available at order time but duplicates Customer City/State. Decide by ablation.",see validation ablation in training_summary / report
+Longitude (conditionally approved),Review,"Same as Latitude: customer location, not destination.",see validation ablation in training_summary / report

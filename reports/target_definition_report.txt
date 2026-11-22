@@ -1,0 +1,40 @@
+TARGET DEFINITION REPORT
+======================================================================
+Target version: target_v2 (eligible completed deliveries; cancelled/fraud kept out of the lateness model)
+
+Original label Late_delivery_risk: 1 = late, 0 = not late (as supplied by DataCo).
+Independent re-derivation: late iff 'Days for shipping (real)' > 'Days for shipment (scheduled)'.
+  agreement on ALL rows:            97.5498%
+  agreement on ELIGIBLE rows:       100.0000%  (ON_TIME + LATE)
+  The only disagreements are 'Shipping canceled' rows (Order Status CANCELED / SUSPECTED_FRAUD): they have a real>scheduled duration
+  but the original label is 0 (not late). A cancelled order was never delivered, so it is neither late nor on time.
+
+Outcome summary:
+  outcome  rows  share_pct  original_label_late_rate  used_in_lateness_model
+     LATE 98977    54.8291                       1.0                    True
+  ON_TIME 73788    40.8755                       0.0                    True
+CANCELLED  7754     4.2954                       0.0                   False
+
+Order Status x Delivery Status (counts):
+Delivery Status  Advance shipping  Late delivery  Shipping canceled  Shipping on time
+Order Status                                                                         
+CANCELED                        0              0               3692                 0
+CLOSED                       4809          11109                  0              3698
+COMPLETE                    14136          34199                  0             11156
+ON_HOLD                      2413           5450                  0              1941
+PAYMENT_REVIEW                420           1082                  0               391
+PENDING                      4857          11712                  0              3658
+PENDING_PAYMENT              9588          22922                  0              7322
+PROCESSING                   5369          12503                  0              4030
+SUSPECTED_FRAUD                 0              0               4062                 0
+
+Findings:
+ - CANCELLED (Delivery Status = 'Shipping canceled') == Order Status CANCELED + SUSPECTED_FRAUD: always labelled 0 -> label noise for a lateness model.
+ - Order Status values PENDING / ON_HOLD / PROCESSING / PAYMENT_REVIEW coexist with recorded delivery durations, so Order Status cannot be used to
+   decide 'undelivered'. No row lacks a delivery duration, hence UNDELIVERED = 0 and UNKNOWN = 0 in this file.
+ - Timestamps: no actual-delivery / scheduled-delivery timestamps and no timezone exist -> timestamp comparison BLOCKED; duration comparison used.
+ - 'shipping date (DateOrders)' = order date + real duration (see leakage audit): it is a delivery-time proxy, never a feature. It is used ONLY to know WHEN an
+   outcome became known when building historical-rate features (an order's outcome is available only after its delivery).
+
+Decision: the binary lateness model is trained and evaluated on ON_TIME + LATE rows only. CANCELLED rows are kept in the data and reported
+separately; a cancellation-risk model would be a different prediction task and is not built here.

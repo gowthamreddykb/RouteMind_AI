@@ -1,0 +1,58 @@
+DATA QUALITY REPORT
+============================================================
+Rows: 180,519   Columns: 53   encoding=cp1252 (UTF-8 failed)
+
+Missing values (count and % with 4 decimals; a rounded 0.0000% may still be a real missing count):
+  Customer Lname: 8 missing = 0.0044%
+  Customer Zipcode: 3 missing = 0.0017%
+  Order Zipcode: 155,679 missing = 86.2397%
+  Product Description: 180,519 missing = 100.0000%
+
+Key checks:
+  rows: 180519
+  columns: 53
+  fully_duplicated_rows: 0
+  duplicated_Order_Item_Id: 0
+  unique_orders: 65752
+  orders_with_multiple_item_rows: 45902
+  max_items_in_one_order: 5
+  orders_with_inconsistent_target: 0
+  unparseable_order_dates: 0
+  order_date_min: 2015-01-01 00:00:00
+  order_date_max: 2018-01-31 23:38:00
+  target_late_rate: 0.5483
+  invalid_target_values: 0
+
+Numerical statistics (selected):
+            Sales  Order Item Product Price  Order Item Quantity  Order Item Discount Rate  Days for shipment (scheduled)
+count  180519.000                180519.000           180519.000                180519.000                     180519.000
+mean      203.772                   141.233                2.128                     0.102                          2.932
+std       132.273                   139.732                1.453                     0.070                          1.374
+min         9.990                     9.990                1.000                     0.000                          0.000
+25%       119.980                    50.000                1.000                     0.040                          2.000
+50%       199.920                    59.990                1.000                     0.100                          4.000
+75%       299.950                   199.990                3.000                     0.160                          4.000
+max      1999.990                  1999.990                5.000                     0.250                          4.000
+
+Categorical cardinality (unique values):
+  Type: 4
+  Delivery Status: 4
+  Category Name: 50
+  Customer City: 563
+  Customer Country: 2
+  Customer Email: 1
+  Customer Fname: 782
+  Customer Lname: 1,109
+  Customer Password: 1
+  Customer Segment: 3
+  Customer State: 46
+  Department Name: 11
+  Market: 5
+  Order City: 3,597
+  Order Country: 164
+  Order Region: 23
+  Order State: 1,089
+  Order Status: 9
+  Product Image: 118
+  Product Name: 118
+  Shipping Mode: 4

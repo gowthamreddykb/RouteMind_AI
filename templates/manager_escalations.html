@@ -1,0 +1,827 @@
+{% extends 'base.html' %}
+{% block title %}RouteMind AI – Manager Escalations{% endblock %}
+{% block extra_css %}
+<style>
+  /* Remove scrollbars cleanly across cards and containers */
+  .table-responsive, .kpi-stat-card, [style*="overflow"] {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+  .table-responsive::-webkit-scrollbar, .kpi-stat-card::-webkit-scrollbar, [style*="overflow"]::-webkit-scrollbar {
+    display: none;
+  }
+</style>
+{% endblock %}
+{% block content %}
+<div class="container-fluid max-w-7xl px-0">
+
+  <!-- Header Section -->
+  <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+    <div>
+      <div class="d-flex align-items-center gap-2">
+        <h4 class="fw-bold text-dark mb-0">Manager Escalations</h4>
+        <span class="badge bg-primary-subtle text-primary border border-primary-subtle rounded-pill px-2.5 py-1">Supervisory Desk</span>
+      </div>
+      <p class="text-muted small mb-0 mt-1">Direct operational escalation queue for high-risk maritime shipments and SLA exceptions.</p>
+    </div>
+    <div class="d-flex align-items-center gap-2">
+      {% if is_manager %}
+      <span class="badge bg-success-subtle text-success border border-success-subtle p-2 rounded-3">
+        <i class="bi bi-shield-check me-1"></i> Manager Resolution Authority Active
+      </span>
+      {% elif is_dispatcher %}
+      <span class="badge bg-info-subtle text-info border border-info-subtle p-2 rounded-3">
+        <i class="bi bi-person-check me-1"></i> Dispatcher Escalation Scope
+      </span>
+      {% else %}
+      <span class="badge bg-light text-muted border p-2 rounded-3">
+        <i class="bi bi-eye me-1"></i> Administrative Governance View
+      </span>
+      {% endif %}
+    </div>
+  </div>
+
+  <!-- KPI Summary Cards matching Dashboard KPIs & Exact Record Statuses -->
+  <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-xl-5 g-3 mb-4">
+    <div class="col">
+      <a href="/escalations/" class="text-decoration-none">
+        <div class="kpi-stat-card card-rm-hover p-3 bg-white rounded-3 border {% if not current_status %}border-primary shadow-xs ring-1{% else %}shadow-xs{% endif %} h-100">
+          <div class="d-flex align-items-center gap-2.5">
+            <div class="kpi-stat-icon-wrapper bg-primary bg-opacity-10 text-primary p-2.5 rounded-3">
+              <i class="bi bi-arrow-up-right-circle fs-4"></i>
+            </div>
+            <div>
+              <span class="text-muted small d-block">Total Escalated</span>
+              <h3 class="fw-bold mb-0 text-dark">{{ kpis.total|default(0) }}</h3>
+              <small class="text-primary fw-semibold"><i class="bi bi-layers"></i> All Consignments</small>
+            </div>
+          </div>
+        </div>
+      </a>
+    </div>
+
+    <div class="col">
+      <a href="/escalations/?status=PENDING" class="text-decoration-none">
+        <div class="kpi-stat-card card-rm-hover p-3 bg-white rounded-3 border {% if current_status == 'PENDING' %}border-warning shadow-xs ring-1{% else %}shadow-xs{% endif %} h-100">
+          <div class="d-flex align-items-center gap-2.5">
+            <div class="kpi-stat-icon-wrapper bg-warning bg-opacity-10 text-warning p-2.5 rounded-3">
+              <i class="bi bi-clock-history fs-4"></i>
+            </div>
+            <div>
+              <span class="text-muted small d-block">Pending Review</span>
+              <h3 class="fw-bold mb-0 text-warning">{{ kpis.pending|default(0) }}</h3>
+              <small class="text-warning fw-semibold"><i class="bi bi-hourglass-split"></i> Awaiting Manager</small>
+            </div>
+          </div>
+        </div>
+      </a>
+    </div>
+
+    <div class="col">
+      <a href="/escalations/?status=UNDER_REVIEW" class="text-decoration-none">
+        <div class="kpi-stat-card card-rm-hover p-3 bg-white rounded-3 border {% if current_status == 'UNDER_REVIEW' %}border-info shadow-xs ring-1{% else %}shadow-xs{% endif %} h-100">
+          <div class="d-flex align-items-center gap-2.5">
+            <div class="kpi-stat-icon-wrapper bg-info bg-opacity-10 text-info p-2.5 rounded-3">
+              <i class="bi bi-search fs-4"></i>
+            </div>
+            <div>
+              <span class="text-muted small d-block">Under Review</span>
+              <h3 class="fw-bold mb-0 text-info">{{ kpis.under_review|default(0) }}</h3>
+              <small class="text-info fw-semibold"><i class="bi bi-eye"></i> Active Investigation</small>
+            </div>
+          </div>
+        </div>
+      </a>
+    </div>
+
+    <div class="col">
+      <a href="/escalations/?status=IN_PROGRESS" class="text-decoration-none">
+        <div class="kpi-stat-card card-rm-hover p-3 bg-white rounded-3 border {% if current_status == 'IN_PROGRESS' %}border-primary shadow-xs ring-1{% else %}shadow-xs{% endif %} h-100">
+          <div class="d-flex align-items-center gap-2.5">
+            <div class="kpi-stat-icon-wrapper bg-primary bg-opacity-10 text-primary p-2.5 rounded-3">
+              <i class="bi bi-gear-wide-connected fs-4"></i>
+            </div>
+            <div>
+              <span class="text-muted small d-block">In Progress</span>
+              <h3 class="fw-bold mb-0 text-primary">{{ kpis.in_progress|default(0) }}</h3>
+              <small class="text-primary fw-semibold"><i class="bi bi-arrow-repeat"></i> Active Triage</small>
+            </div>
+          </div>
+        </div>
+      </a>
+    </div>
+
+    <div class="col">
+      <a href="/escalations/?status=RESOLVED" class="text-decoration-none">
+        <div class="kpi-stat-card card-rm-hover p-3 bg-white rounded-3 border {% if current_status == 'RESOLVED' %}border-success shadow-xs ring-1{% else %}shadow-xs{% endif %} h-100">
+          <div class="d-flex align-items-center gap-2.5">
+            <div class="kpi-stat-icon-wrapper bg-success bg-opacity-10 text-success p-2.5 rounded-3">
+              <i class="bi bi-check-circle fs-4"></i>
+            </div>
+            <div>
+              <span class="text-muted small d-block">Resolved</span>
+              <h3 class="fw-bold mb-0 text-success">{{ kpis.resolved|default(0) }}</h3>
+              <small class="text-success fw-semibold"><i class="bi bi-shield-check"></i> Audit Closed</small>
+            </div>
+          </div>
+        </div>
+      </a>
+    </div>
+  </div>
+
+  <!-- Status Filters & Controls -->
+  <div class="card-rm p-3 mb-4 bg-white border rounded-3">
+    <div class="d-flex align-items-center justify-content-between flex-wrap gap-2">
+      <!-- Status Pills -->
+      <div class="d-flex align-items-center gap-1.5 flex-wrap">
+        <a href="/escalations/" class="btn btn-sm {% if not current_status %}btn-primary text-white fw-semibold{% else %}btn-outline-secondary{% endif %} rounded-pill px-3 py-1">
+          All ({{ kpis.total }})
+        </a>
+        <a href="/escalations/?status=PENDING" class="btn btn-sm {% if current_status == 'PENDING' %}btn-warning text-dark fw-semibold{% else %}btn-outline-secondary{% endif %} rounded-pill px-3 py-1">
+          <i class="bi bi-hourglass-split me-1"></i> Pending ({{ kpis.pending }})
+        </a>
+        <a href="/escalations/?status=UNDER_REVIEW" class="btn btn-sm {% if current_status == 'UNDER_REVIEW' %}btn-info text-dark fw-semibold{% else %}btn-outline-secondary{% endif %} rounded-pill px-3 py-1">
+          <i class="bi bi-search me-1"></i> Under Review ({{ kpis.under_review }})
+        </a>
+        <a href="/escalations/?status=IN_PROGRESS" class="btn btn-sm {% if current_status == 'IN_PROGRESS' %}btn-primary text-white fw-semibold{% else %}btn-outline-secondary{% endif %} rounded-pill px-3 py-1">
+          <i class="bi bi-arrow-repeat me-1"></i> In Progress ({{ kpis.in_progress }})
+        </a>
+        <a href="/escalations/?status=RESOLVED" class="btn btn-sm {% if current_status == 'RESOLVED' %}btn-success text-white fw-semibold{% else %}btn-outline-secondary{% endif %} rounded-pill px-3 py-1">
+          <i class="bi bi-check-circle me-1"></i> Resolved ({{ kpis.resolved }})
+        </a>
+      </div>
+
+      <!-- Priority Filter Dropdown -->
+      <div class="d-flex align-items-center gap-2">
+        <label class="small text-muted mb-0 fw-semibold">Priority:</label>
+        <select class="form-select form-select-sm" style="width: 140px;" onchange="filterPriority(this.value)">
+          <option value="" {% if not current_priority %}selected{% endif %}>All</option>
+          <option value="CRITICAL" {% if current_priority == 'CRITICAL' %}selected{% endif %}>Critical</option>
+          <option value="HIGH" {% if current_priority == 'HIGH' %}selected{% endif %}>High</option>
+          <option value="MEDIUM" {% if current_priority == 'MEDIUM' %}selected{% endif %}>Medium</option>
+          <option value="LOW" {% if current_priority == 'LOW' %}selected{% endif %}>Low</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <!-- Escalations Data Table -->
+  <div class="card-rm p-0 overflow-hidden bg-white border rounded-3 shadow-xs mb-4">
+    <div class="table-responsive">
+      <table class="table table-hover align-middle mb-0 text-sm">
+        <thead class="table-light text-muted small text-uppercase">
+          <tr>
+            <th class="ps-4">ID</th>
+            <th>Shipment Ref</th>
+            <th>Priority</th>
+            <th>Risk Score</th>
+            <th>Reason &amp; Remarks</th>
+            <th>Escalated By</th>
+            <th>Status</th>
+            <th class="text-end pe-4">Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% if escalations %}
+            {% for esc in escalations %}
+            <tr>
+              <td class="ps-4 font-mono fw-bold text-dark">#ESC-{{ "%04d"|format(esc.id) }}</td>
+              <td>
+                <a href="/shipments/{{ esc.shipment_id }}" class="text-decoration-none fw-semibold text-primary font-mono">
+                  {{ esc.shipment.shipment_identifier if esc.shipment else ('SHP-' ~ esc.shipment_id) }}
+                </a>
+              </td>
+              <td>
+                {% if esc.priority == 'CRITICAL' %}
+                  <span class="badge bg-danger text-white px-2 py-1">Critical</span>
+                {% elif esc.priority == 'HIGH' %}
+                  <span class="badge bg-warning text-dark px-2 py-1">High</span>
+                {% elif esc.priority == 'MEDIUM' %}
+                  <span class="badge bg-primary text-white px-2 py-1">Medium</span>
+                {% else %}
+                  <span class="badge bg-secondary text-white px-2 py-1">Low</span>
+                {% endif %}
+              </td>
+              <td>
+                {% set r_val = (esc.risk_score * 100)|round(1) if esc.risk_score else 0.0 %}
+                {% if r_val >= 70 %}
+                  <span class="badge bg-danger text-white">{{ r_val }}%</span>
+                {% elif r_val >= 40 %}
+                  <span class="badge bg-warning text-dark">{{ r_val }}%</span>
+                {% else %}
+                  <span class="badge bg-success text-white">{{ r_val }}%</span>
+                {% endif %}
+              </td>
+              <td style="max-width: 320px;">
+                <div class="fw-semibold text-dark text-truncate" title="{{ esc.reason }}">{{ esc.reason }}</div>
+                {% if esc.dispatcher_remarks %}
+                <small class="text-muted text-truncate d-block" title="{{ esc.dispatcher_remarks }}">
+                  <i class="bi bi-chat-text me-1"></i>{{ esc.dispatcher_remarks }}
+                </small>
+                {% endif %}
+              </td>
+              <td>
+                <div class="small fw-semibold text-dark">{{ esc.escalated_by_name }}</div>
+                <small class="text-muted">{{ esc.created_at.strftime('%b %d, %H:%M') if esc.created_at else '--' }}</small>
+              </td>
+              <td>
+                {% if esc.status == 'PENDING' %}
+                  <span class="badge bg-warning text-dark px-2.5 py-1 rounded-pill shadow-xs">
+                    <i class="bi bi-hourglass-split me-1"></i> Pending
+                  </span>
+                {% elif esc.status == 'UNDER_REVIEW' %}
+                  <span class="badge bg-info text-dark px-2.5 py-1 rounded-pill shadow-xs">
+                    <i class="bi bi-search me-1"></i> Under Review
+                  </span>
+                {% elif esc.status == 'IN_PROGRESS' %}
+                  <span class="badge bg-primary text-white px-2.5 py-1 rounded-pill shadow-xs">
+                    <i class="bi bi-arrow-repeat me-1"></i> In Progress
+                  </span>
+                {% elif esc.status == 'RESOLVED' %}
+                  <span class="badge bg-success text-white px-2.5 py-1 rounded-pill shadow-xs">
+                    <i class="bi bi-check-circle-fill me-1"></i> Resolved
+                  </span>
+                {% else %}
+                  <span class="badge bg-secondary text-white px-2.5 py-1 rounded-pill shadow-xs">{{ esc.status }}</span>
+                {% endif %}
+              </td>
+              <td class="text-end pe-4">
+                <button type="button" class="btn btn-sm btn-rm-primary py-1 px-2.5" onclick="openActionModal({{ esc.id }})">
+                  <i class="bi bi-sliders me-1"></i> Review &amp; Action
+                </button>
+              </td>
+            </tr>
+            {% endfor %}
+          {% else %}
+            <tr>
+              <td colspan="8" class="text-center py-5 text-muted">
+                <div class="d-flex flex-column align-items-center">
+                  <i class="bi bi-inbox fs-1 text-secondary mb-2"></i>
+                  <span class="fw-semibold">No escalations found for your account</span>
+                  <small class="text-muted">Only consignments assigned to you or escalated by you appear in your operational queue.</small>
+                </div>
+              </td>
+            </tr>
+          {% endif %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+</div>
+
+<!-- Lifecycle Stepper Styles -->
+<style>
+.stepper-line {
+  height: 3px;
+  background-color: #e2e8f0;
+  transition: all 0.3s ease;
+}
+.stepper-line.active {
+  background-color: #10b981;
+}
+.step-circle {
+  width: 38px;
+  height: 38px;
+  background-color: #f8fafc;
+  color: #64748b;
+  font-size: 0.95rem;
+  border: 2px solid #cbd5e1;
+  transition: all 0.3s ease;
+}
+.stepper-step.completed .step-circle {
+  background-color: #10b981;
+  border-color: #10b981;
+  color: #ffffff;
+}
+.stepper-step.active .step-circle {
+  background-color: #2563eb;
+  border-color: #2563eb;
+  color: #ffffff;
+  box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.2);
+}
+.stepper-step.active.status-pending .step-circle {
+  background-color: #f59e0b;
+  border-color: #f59e0b;
+  box-shadow: 0 0 0 4px rgba(245, 158, 11, 0.2);
+}
+.stepper-step.active.status-under-review .step-circle {
+  background-color: #06b6d4;
+  border-color: #06b6d4;
+  box-shadow: 0 0 0 4px rgba(6, 182, 212, 0.2);
+}
+.stepper-step.active.status-in-progress .step-circle {
+  background-color: #2563eb;
+  border-color: #2563eb;
+  box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.2);
+}
+.stepper-step.active.status-resolved .step-circle {
+  background-color: #10b981;
+  border-color: #10b981;
+  box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.2);
+}
+</style>
+
+<!-- Escalation Lifecycle Management Modal -->
+<div class="modal fade" id="escalationActionModal" tabindex="-1" aria-labelledby="escModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-dialog-centered">
+    <div class="modal-content border-0 shadow-lg rounded-4 overflow-hidden">
+      <div class="modal-header border-bottom px-4 py-3 bg-light">
+        <div class="d-flex align-items-center gap-2">
+          <div class="kpi-stat-icon-wrapper bg-primary bg-opacity-10 text-primary p-2 rounded-3">
+            <i class="bi bi-diagram-3-fill fs-5"></i>
+          </div>
+          <div>
+            <h5 class="modal-title fw-bold text-dark mb-0" id="escModalLabel">Escalation Lifecycle Management</h5>
+            <small class="text-muted" id="escModalSub">Supervisory workflow progression from Pending to Resolved</small>
+          </div>
+        </div>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+
+      <div class="modal-body p-4">
+        <!-- 4-Stage Lifecycle Stepper -->
+        <div class="p-3 rounded-3 mb-3" style="background: #f8fafc; border: 1px solid rgba(226, 232, 240, 0.7);">
+          <div class="d-flex align-items-center justify-content-between position-relative px-2">
+            <div class="stepper-step text-center flex-fill" id="step_pending">
+              <div class="step-circle mx-auto mb-1 rounded-circle d-flex align-items-center justify-content-center">
+                <i class="bi bi-hourglass-split"></i>
+              </div>
+              <span class="step-label small fw-semibold">1. Pending</span>
+            </div>
+            <div class="stepper-line flex-fill mx-1" id="line_1"></div>
+            <div class="stepper-step text-center flex-fill" id="step_under_review">
+              <div class="step-circle mx-auto mb-1 rounded-circle d-flex align-items-center justify-content-center">
+                <i class="bi bi-search"></i>
+              </div>
+              <span class="step-label small fw-semibold">2. Under Review</span>
+            </div>
+            <div class="stepper-line flex-fill mx-1" id="line_2"></div>
+            <div class="stepper-step text-center flex-fill" id="step_in_progress">
+              <div class="step-circle mx-auto mb-1 rounded-circle d-flex align-items-center justify-content-center">
+                <i class="bi bi-gear-wide-connected"></i>
+              </div>
+              <span class="step-label small fw-semibold">3. In Progress</span>
+            </div>
+            <div class="stepper-line flex-fill mx-1" id="line_3"></div>
+            <div class="stepper-step text-center flex-fill" id="step_resolved">
+              <div class="step-circle mx-auto mb-1 rounded-circle d-flex align-items-center justify-content-center">
+                <i class="bi bi-check-circle-fill"></i>
+              </div>
+              <span class="step-label small fw-semibold">4. Resolved</span>
+            </div>
+          </div>
+          <div class="mt-2 text-center small text-muted border-top pt-2" style="border-color: rgba(226, 232, 240, 0.6) !important;">
+            Current Lifecycle State: <span class="fw-bold" id="stepper_status_text">--</span>
+          </div>
+        </div>
+
+        <!-- Quick Lifecycle Action Card -->
+        <div class="p-3 rounded-3 bg-white mb-3 shadow-xs" id="quick_lifecycle_card" style="border: 1px solid rgba(226, 232, 240, 0.7);">
+          <div class="d-flex align-items-center justify-content-between flex-wrap gap-2">
+            <div>
+              <span class="fw-bold text-dark d-block" id="lifecycle_stage_title"><i class="bi bi-lightning-charge text-warning me-1"></i> Quick Progression Action</span>
+              <small class="text-muted" id="lifecycle_stage_hint">Advance this consignment to the next lifecycle stage.</small>
+            </div>
+            <div class="d-flex align-items-center gap-2 flex-wrap" id="quick_action_buttons">
+              <!-- Dynamically populated by JS based on current status -->
+            </div>
+          </div>
+        </div>
+
+        <!-- Consignment Details Overview Tiles (Clean, Aligned, Soft Borders) -->
+        <div class="row g-2 mb-3">
+          <div class="col-sm-3">
+            <div class="p-2.5 rounded-3 h-100" style="background: #f8fafc; border: 1px solid rgba(226, 232, 240, 0.65);">
+              <span class="text-muted small d-block mb-1" style="font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.03em;">Shipment Ref</span>
+              <span class="fw-bold text-primary font-mono fs-6" id="m_shipment_ref">--</span>
+            </div>
+          </div>
+          <div class="col-sm-2">
+            <div class="p-2.5 rounded-3 text-center h-100" style="background: #f8fafc; border: 1px solid rgba(226, 232, 240, 0.65);">
+              <span class="text-muted small d-block mb-1" style="font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.03em;">Priority</span>
+              <div id="m_priority_badge">--</div>
+            </div>
+          </div>
+          <div class="col-sm-2">
+            <div class="p-2.5 rounded-3 text-center h-100" style="background: #f8fafc; border: 1px solid rgba(226, 232, 240, 0.65);">
+              <span class="text-muted small d-block mb-1" style="font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.03em;">Risk Score</span>
+              <div id="m_risk_badge">--</div>
+            </div>
+          </div>
+          <div class="col-sm-2">
+            <div class="p-2.5 rounded-3 text-center h-100" style="background: #f8fafc; border: 1px solid rgba(226, 232, 240, 0.65);">
+              <span class="text-muted small d-block mb-1" style="font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.03em;">Status</span>
+              <div id="m_status_badge">--</div>
+            </div>
+          </div>
+          <div class="col-sm-3">
+            <div class="p-2.5 rounded-3 h-100" style="background: #f8fafc; border: 1px solid rgba(226, 232, 240, 0.65);">
+              <span class="text-muted small d-block mb-1" style="font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.03em;">Assigned Specialist</span>
+              <span class="fw-medium text-dark small" id="m_assigned_badge">--</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Escalation Notes -->
+        <div class="mb-3">
+          <label class="form-label small fw-bold text-muted text-uppercase mb-1" style="font-size: 0.7rem; letter-spacing: 0.03em;">Escalation Reason</label>
+          <div class="p-2.5 rounded-3 text-dark small" id="m_reason_box" style="background: #f8fafc; border: 1px solid rgba(226, 232, 240, 0.65);">--</div>
+        </div>
+
+        <div class="mb-3" id="m_dispatcher_remarks_group">
+          <label class="form-label small fw-bold text-muted text-uppercase mb-1" style="font-size: 0.7rem; letter-spacing: 0.03em;">Dispatcher Remarks</label>
+          <div class="p-2.5 rounded-3 text-secondary small fst-italic" id="m_dispatcher_remarks_box" style="background: #f8fafc; border: 1px solid rgba(226, 232, 240, 0.65);">--</div>
+        </div>
+
+        <!-- Resolution View (for Resolved escalations) -->
+        <div class="p-3 bg-success bg-opacity-10 border border-success-subtle rounded-3 mb-3" id="m_resolution_view_group" style="display: none;">
+          <h6 class="fw-bold text-success mb-1"><i class="bi bi-shield-check me-1"></i> Verified Resolution Details</h6>
+          <div class="small text-dark" id="m_resolution_view_text">--</div>
+        </div>
+
+        <!-- Operational Action & Transition Form -->
+        <div class="p-3 rounded-3 bg-white mb-3 shadow-xs" style="border: 1px solid rgba(226, 232, 240, 0.7);">
+          <h6 class="fw-bold text-dark mb-3">
+            <i class="bi bi-sliders text-primary me-1"></i> Operational Lifecycle Controls
+          </h6>
+
+          <form id="managerActionForm" onsubmit="submitLifecycleAction(event)" class="row g-3">
+            <input type="hidden" id="modal_esc_id" name="escalation_id">
+
+            <div class="col-md-6">
+              <label class="form-label small fw-semibold">Target Lifecycle State</label>
+              <select class="form-select form-select-sm" id="m_input_status" name="status" onchange="handleStatusChange(this.value)">
+                <option value="PENDING">1. Pending (Awaiting Triage)</option>
+                <option value="UNDER_REVIEW">2. Under Review (Active Investigation)</option>
+                <option value="IN_PROGRESS">3. In Progress (Mitigation Executing)</option>
+                <option value="RESOLVED">4. Resolved (Audit Closed)</option>
+              </select>
+            </div>
+
+            <div class="col-md-6">
+              <label class="form-label small fw-semibold">Operational Specialist</label>
+              <select class="form-select form-select-sm" id="m_input_assignee" name="assigned_to_name">
+                <option value="">-- Keep Current Assignee --</option>
+                {% if assignable_users %}
+                  {% for u in assignable_users %}
+                    <option value="{{ u.full_name or u.username }}">{{ u.full_name or u.username }} ({{ u.role }})</option>
+                  {% endfor %}
+                {% endif %}
+              </select>
+            </div>
+
+            <div class="col-12">
+              <label class="form-label small fw-semibold">Operational Directives &amp; Remarks</label>
+              <textarea class="form-control form-control-sm" id="m_input_remarks" name="manager_remarks" rows="2" placeholder="Investigation findings, carrier notices, or mitigation actions taken..."></textarea>
+            </div>
+
+            <div class="col-12" id="resolution_notes_group">
+              <label class="form-label small fw-semibold">Resolution Notes <span class="text-danger" id="resolution_req_star">*</span></label>
+              <textarea class="form-control form-control-sm" id="m_input_resolution" name="resolution_notes" rows="2" placeholder="Detailed summary of how the delay, route variance, or operational issue was successfully resolved..."></textarea>
+            </div>
+
+            <div class="col-12 text-end pt-2">
+              <button type="submit" class="btn btn-rm-primary btn-sm px-4 fw-semibold" id="btn_save_lifecycle">
+                <i class="bi bi-check2-circle me-1"></i> Apply Lifecycle Update
+              </button>
+            </div>
+          </form>
+        </div>
+
+        <!-- Escalation History & Timestamps -->
+        <div class="mt-4">
+          <h6 class="fw-bold text-dark mb-2">
+            <i class="bi bi-clock-history text-secondary me-1"></i> Audit Trail &amp; Transition History
+          </h6>
+          <div class="p-3 bg-light rounded-3 border" style="max-height: 220px; overflow-y: auto;">
+            <ul class="list-unstyled mb-0" id="m_history_list">
+              <li class="small text-muted">Loading audit history...</li>
+            </ul>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="modal-footer border-top px-4 py-2 bg-light">
+        <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+function filterPriority(val) {
+  const url = new URL(window.location.href);
+  if (val) {
+    url.searchParams.set('priority', val);
+  } else {
+    url.searchParams.delete('priority');
+  }
+  window.location.href = url.toString();
+}
+
+let activeEscalationModal = null;
+let currentEscalationData = null;
+
+function handleStatusChange(status) {
+  const resGroup = document.getElementById('resolution_notes_group');
+  const resStar = document.getElementById('resolution_req_star');
+  if (status === 'RESOLVED') {
+    resGroup.classList.add('bg-warning', 'bg-opacity-10', 'p-2', 'rounded-3');
+    resStar.style.display = 'inline';
+  } else {
+    resGroup.classList.remove('bg-warning', 'bg-opacity-10', 'p-2', 'rounded-3');
+    resStar.style.display = 'none';
+  }
+}
+
+function updateStepperUI(status) {
+  const steps = {
+    'PENDING': document.getElementById('step_pending'),
+    'UNDER_REVIEW': document.getElementById('step_under_review'),
+    'IN_PROGRESS': document.getElementById('step_in_progress'),
+    'RESOLVED': document.getElementById('step_resolved')
+  };
+  const lines = {
+    1: document.getElementById('line_1'),
+    2: document.getElementById('line_2'),
+    3: document.getElementById('line_3')
+  };
+
+  // Reset classes
+  Object.values(steps).forEach(s => {
+    s.className = 'stepper-step text-center flex-fill';
+  });
+  Object.values(lines).forEach(l => l.classList.remove('active'));
+
+  const statusText = document.getElementById('stepper_status_text');
+
+  if (status === 'PENDING') {
+    steps.PENDING.classList.add('active', 'status-pending');
+    statusText.textContent = 'Stage 1 of 4: Pending Supervisory Review';
+    statusText.className = 'fw-bold text-warning';
+  } else if (status === 'UNDER_REVIEW') {
+    steps.PENDING.classList.add('completed');
+    steps.UNDER_REVIEW.classList.add('active', 'status-under-review');
+    lines[1].classList.add('active');
+    statusText.textContent = 'Stage 2 of 4: Active Operational Review';
+    statusText.className = 'fw-bold text-info';
+  } else if (status === 'IN_PROGRESS') {
+    steps.PENDING.classList.add('completed');
+    steps.UNDER_REVIEW.classList.add('completed');
+    steps.IN_PROGRESS.classList.add('active', 'status-in-progress');
+    lines[1].classList.add('active');
+    lines[2].classList.add('active');
+    statusText.textContent = 'Stage 3 of 4: Operational Mitigation In Progress';
+    statusText.className = 'fw-bold text-primary';
+  } else if (status === 'RESOLVED') {
+    steps.PENDING.classList.add('completed');
+    steps.UNDER_REVIEW.classList.add('completed');
+    steps.IN_PROGRESS.classList.add('completed');
+    steps.RESOLVED.classList.add('completed', 'status-resolved');
+    lines[1].classList.add('active');
+    lines[2].classList.add('active');
+    lines[3].classList.add('active');
+    statusText.textContent = 'Stage 4 of 4: Issue Resolved & Audit Closed';
+    statusText.className = 'fw-bold text-success';
+  }
+}
+
+function updateQuickActions(esc) {
+  const container = document.getElementById('quick_action_buttons');
+  const title = document.getElementById('lifecycle_stage_title');
+  const hint = document.getElementById('lifecycle_stage_hint');
+  container.innerHTML = '';
+
+  if (esc.status === 'PENDING') {
+    title.innerHTML = '<i class="bi bi-hourglass-split text-warning me-1"></i> Awaiting Supervisory Triage';
+    hint.textContent = 'Take ownership and advance this consignment to active review.';
+    container.innerHTML = `
+      <button type="button" class="btn btn-sm btn-info text-dark fw-semibold" onclick="executeQuickTransition(${esc.id}, 'UNDER_REVIEW')">
+        <i class="bi bi-search me-1"></i> Advance to Under Review
+      </button>
+    `;
+  } else if (esc.status === 'UNDER_REVIEW') {
+    title.innerHTML = '<i class="bi bi-search text-info me-1"></i> Under Active Review';
+    hint.textContent = 'Begin operational mitigation triage or resolve directly if issue is mitigated.';
+    container.innerHTML = `
+      <button type="button" class="btn btn-sm btn-primary fw-semibold" onclick="executeQuickTransition(${esc.id}, 'IN_PROGRESS')">
+        <i class="bi bi-gear-wide-connected me-1"></i> Start Triage (In Progress)
+      </button>
+      <button type="button" class="btn btn-sm btn-success fw-semibold" onclick="triggerResolveMode()">
+        <i class="bi bi-check-circle me-1"></i> Resolve Escalation
+      </button>
+    `;
+  } else if (esc.status === 'IN_PROGRESS') {
+    title.innerHTML = '<i class="bi bi-gear-wide-connected text-primary me-1"></i> Operational Mitigation In Progress';
+    hint.textContent = 'Mitigation is executing. Enter resolution notes and mark as resolved.';
+    container.innerHTML = `
+      <button type="button" class="btn btn-sm btn-success fw-semibold" onclick="triggerResolveMode()">
+        <i class="bi bi-check-circle-fill me-1"></i> Complete &amp; Resolve Escalation
+      </button>
+    `;
+  } else if (esc.status === 'RESOLVED') {
+    title.innerHTML = '<i class="bi bi-check-circle-fill text-success me-1"></i> Escalation Resolved';
+    hint.textContent = 'This escalation is closed. You can reopen it if further mitigation is required.';
+    container.innerHTML = `
+      <button type="button" class="btn btn-sm btn-outline-warning fw-semibold" onclick="executeQuickTransition(${esc.id}, 'UNDER_REVIEW')">
+        <i class="bi bi-arrow-counterclockwise me-1"></i> Reopen Escalation
+      </button>
+    `;
+  }
+}
+
+function triggerResolveMode() {
+  const stSelect = document.getElementById('m_input_status');
+  stSelect.value = 'RESOLVED';
+  handleStatusChange('RESOLVED');
+  const resInput = document.getElementById('m_input_resolution');
+  resInput.focus();
+  resInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
+}
+
+async function executeQuickTransition(escId, targetStatus) {
+  let remarks = '';
+  if (targetStatus === 'UNDER_REVIEW') {
+    remarks = 'Supervisory review commenced by operational specialist.';
+  } else if (targetStatus === 'IN_PROGRESS') {
+    remarks = 'Operational triage actions deployed (carrier / route follow-up).';
+  } else if (targetStatus === 'RESOLVED') {
+    triggerResolveMode();
+    return;
+  }
+
+  try {
+    const res = await fetch(`/escalations/${escId}/transition`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        status: targetStatus,
+        remarks: remarks
+      })
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || 'Failed to advance escalation lifecycle.');
+    window.location.reload();
+  } catch (err) {
+    alert(err.message || 'Failed to update lifecycle stage.');
+  }
+}
+
+async function openActionModal(escId) {
+  try {
+    const res = await fetch(`/escalations/${escId}`);
+    if (!res.ok) throw new Error('Failed to load escalation details');
+    const esc = await res.json();
+    currentEscalationData = esc;
+
+    document.getElementById('escModalLabel').textContent = `Escalation #ESC-${String(esc.id).padStart(4, '0')}`;
+    document.getElementById('m_shipment_ref').textContent = esc.shipment_identifier;
+    
+    // Priority badge
+    const pEl = document.getElementById('m_priority_badge');
+    pEl.innerHTML = `<span class="badge ${esc.priority === 'CRITICAL' ? 'bg-danger text-white' : esc.priority === 'HIGH' ? 'bg-warning text-dark' : 'bg-primary text-white'}">${esc.priority}</span>`;
+
+    // Risk badge
+    const rVal = (esc.risk_score * 100).toFixed(1);
+    const rEl = document.getElementById('m_risk_badge');
+    rEl.innerHTML = `<span class="badge ${rVal >= 70 ? 'bg-danger text-white' : rVal >= 40 ? 'bg-warning text-dark' : 'bg-success text-white'}">${rVal}%</span>`;
+
+    // Status badge
+    const sEl = document.getElementById('m_status_badge');
+    let sBadgeClass = 'bg-secondary text-white';
+    let sIcon = 'bi-info-circle';
+    if (esc.status === 'PENDING') {
+      sBadgeClass = 'bg-warning text-dark';
+      sIcon = 'bi-hourglass-split';
+    } else if (esc.status === 'UNDER_REVIEW') {
+      sBadgeClass = 'bg-info text-dark';
+      sIcon = 'bi-search';
+    } else if (esc.status === 'IN_PROGRESS') {
+      sBadgeClass = 'bg-primary text-white';
+      sIcon = 'bi-gear-wide-connected';
+    } else if (esc.status === 'RESOLVED') {
+      sBadgeClass = 'bg-success text-white';
+      sIcon = 'bi-check-circle-fill';
+    }
+    sEl.innerHTML = `<span class="badge ${sBadgeClass}"><i class="bi ${sIcon} me-1"></i>${esc.status.replace('_', ' ')}</span>`;
+
+    // Assigned Officer badge
+    const aEl = document.getElementById('m_assigned_badge');
+    if (aEl) {
+      aEl.textContent = esc.assigned_to || 'Unassigned';
+    }
+
+    document.getElementById('m_reason_box').textContent = esc.reason;
+    
+    const remGroup = document.getElementById('m_dispatcher_remarks_group');
+    if (esc.dispatcher_remarks) {
+      remGroup.style.display = 'block';
+      document.getElementById('m_dispatcher_remarks_box').textContent = esc.dispatcher_remarks;
+    } else {
+      remGroup.style.display = 'none';
+    }
+
+    // Update Visual Stepper and Quick Actions
+    updateStepperUI(esc.status);
+    updateQuickActions(esc);
+
+    // Form inputs
+    const idInput = document.getElementById('modal_esc_id');
+    if (idInput) idInput.value = esc.id;
+
+    const stSelect = document.getElementById('m_input_status');
+    if (stSelect) {
+      stSelect.value = esc.status;
+      handleStatusChange(esc.status);
+    }
+
+    const asSelect = document.getElementById('m_input_assignee');
+    if (asSelect) {
+      asSelect.value = esc.assigned_to !== 'Unassigned' ? esc.assigned_to : '';
+    }
+
+    const remInput = document.getElementById('m_input_remarks');
+    if (remInput) remInput.value = esc.manager_remarks || '';
+
+    const resInput = document.getElementById('m_input_resolution');
+    if (resInput) resInput.value = esc.resolution_notes || '';
+
+    // Resolution details card for closed items
+    const resView = document.getElementById('m_resolution_view_group');
+    if (resView) {
+      if (esc.resolution_notes) {
+        resView.style.display = 'block';
+        document.getElementById('m_resolution_view_text').textContent = esc.resolution_notes;
+      } else {
+        resView.style.display = 'none';
+      }
+    }
+
+    // Audit History list
+    const histList = document.getElementById('m_history_list');
+    histList.innerHTML = '';
+    if (esc.history && esc.history.length > 0) {
+      esc.history.forEach(h => {
+        const li = document.createElement('li');
+        li.className = 'mb-2 pb-2 border-bottom border-light';
+        li.innerHTML = `
+          <div class="d-flex justify-content-between align-items-center">
+            <span class="badge bg-light text-dark border small fw-semibold">${h.action}</span>
+            <small class="text-muted">${h.timestamp || ''}</small>
+          </div>
+          <div class="small text-dark mt-1">${h.notes || ''}</div>
+          <small class="text-muted fst-italic">Logged by: ${h.performed_by}</small>
+        `;
+        histList.appendChild(li);
+      });
+    } else {
+      histList.innerHTML = '<li class="small text-muted">No historical updates recorded yet.</li>';
+    }
+
+    if (!activeEscalationModal) {
+      activeEscalationModal = new bootstrap.Modal(document.getElementById('escalationActionModal'));
+    }
+    activeEscalationModal.show();
+  } catch (err) {
+    alert(err.message || 'Error loading escalation details.');
+  }
+}
+
+async function submitLifecycleAction(e) {
+  e.preventDefault();
+  const escId = document.getElementById('modal_esc_id').value;
+  const newStatus = document.getElementById('m_input_status').value;
+  const assignee = document.getElementById('m_input_assignee').value.trim();
+  const remarks = document.getElementById('m_input_remarks').value.trim();
+  const resolution = document.getElementById('m_input_resolution').value.trim();
+
+  if (newStatus === 'RESOLVED' && !resolution) {
+    alert('Please enter resolution notes before resolving this escalation.');
+    document.getElementById('m_input_resolution').focus();
+    return;
+  }
+
+  try {
+    const res = await fetch(`/escalations/${escId}/transition`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        status: newStatus,
+        remarks: remarks,
+        resolution_notes: resolution,
+        assigned_to_name: assignee
+      })
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || 'Failed to apply lifecycle action.');
+
+    if (activeEscalationModal) activeEscalationModal.hide();
+    window.location.reload();
+  } catch (err) {
+    alert(err.message || 'Failed to submit lifecycle action.');
+  }
+}
+</script>
+{% endblock %}

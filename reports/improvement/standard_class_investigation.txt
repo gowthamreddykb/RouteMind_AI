@@ -1,0 +1,27 @@
+STANDARD CLASS INVESTIGATION
+======================================================================
+
+1) Delivery pattern by shipping mode (real days distribution; late = real > scheduled):
+ shipping_mode   rows  scheduled_days  late_rate                             real_days_distribution
+   First Class  26513               1   1.000000                                           {2: 1.0}
+      Same Day   9293               0   0.479285                               {0: 0.521, 1: 0.479}
+  Second Class  33806               2   0.798290       {2: 0.202, 3: 0.2, 4: 0.2, 5: 0.2, 6: 0.198}
+Standard Class 103153               4   0.397691 {2: 0.202, 3: 0.201, 4: 0.199, 5: 0.196, 6: 0.202}
+
+2) Standard Class class distribution (late rate): train=0.399 (n=72,074), val=0.397 (n=15,723), test=0.394 (n=15,356)
+3) Standard Class late rate by quarter (temporal stability): min=0.388 max=0.408
+
+4) Late-rate spread across feature levels INSIDE Standard Class (overall 0.399); small spread = little separating signal:
+         feature  levels_with_>=300_rows  min_late_rate  max_late_rate  spread
+   Order Country                      42          0.294          0.507   0.213
+    Order Region                      22          0.308          0.453   0.145
+   Category Name                      16          0.383          0.416   0.033
+            Type                       4          0.388          0.402   0.013
+          Market                       5          0.393          0.402   0.009
+ Department Name                       6          0.397          0.406   0.008
+Customer Segment                       3          0.396          0.400   0.005
+
+5) Test ROC-AUC INSIDE Standard Class: final model = 0.5121; dedicated Standard-Class-only model = 0.5210
+   (0.50 = no better than chance). A dedicated subgroup model is NOT justified unless it clearly beats the main model on independent data.
+
+CONCLUSION: No order-time feature separates late from on-time Standard Class shipments: the available features contain almost no signal within this mode. The dataset has no carrier, warehouse, route-leg, weather or dispatch-event columns that could explain it (these would be new data, not something to invent).

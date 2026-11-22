@@ -1,0 +1,21 @@
+workflow_stage,implementation / gap,status
+1 Data loading,load_data.load_dataset,COMPLETE
+2 Data validation,data_analysis.inspect,COMPLETE
+3 Data cleaning,data_cleaning.clean_data,COMPLETE
+4 Target validation,data_cleaning.clean_data (0/1 + per-order consistency only; NO outcome-category/eligibility logic),PARTIAL - improvement required
+5 Leakage detection,feature_audit.assert_no_prohibited,COMPLETE
+6 Feature selection,feature_audit.build_audits,COMPLETE
+7 Feature engineering,feature_engineering.engineer_order_features (calendar + order features; NO historical-rate features),PARTIAL - improvement required
+8 Splitting,data_splitting.group_chronological_split (single split; NO multi-period backtests),PARTIAL - improvement required
+9 Preprocessing,data_preprocessing.build_preprocessor,COMPLETE
+10 Model training,model_training.train_logistic / fit_xgb,COMPLETE
+11 Hyper-parameter tuning,"hyperparameter_tuning.random_search (validation only; NO time-aware CV, NO imbalance experiment)",PARTIAL - improvement required
+12 Model comparison,main.compare_and_select,COMPLETE
+13 Threshold optimisation,model_evaluation.select_threshold (single cost assumption; no 0.20-0.60 grid report),PARTIAL - improvement required
+14 Calibration,model_calibration.choose_calibration,COMPLETE
+15 Evaluation,"model_evaluation.* (subgroups by mode/segment/market/quarter only; no unseen-product/category, region, FN/FP reports)",PARTIAL - improvement required
+16 Explainability,shap_explainability.explain_rows,COMPLETE
+17 Serialisation,model_saving.save_stage_model (versioned; NO registry/approval/rollback),PARTIAL - improvement required
+18 Model loading,prediction.load_model (cached; no registry awareness),PARTIAL - improvement required
+19 Prediction,"prediction.predict_at_order_creation (no controlled-error wrapper, no failure logging)",PARTIAL - improvement required
+20 Reporting,main.write_summaries,COMPLETE

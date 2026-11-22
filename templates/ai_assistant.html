@@ -1,0 +1,528 @@
+{% extends 'base.html' %}
+{% block title %}AI Logistics Copilot | RouteMind AI{% endblock %}
+{% block content %}
+<div class="container-fluid max-w-6xl px-0 d-flex flex-column" style="height: calc(100vh - 105px); max-height: calc(100vh - 105px);">
+
+  <!-- Sleek Header Bar (Compact & Fixed at top, zero wasted vertical space) -->
+  <div class="d-flex align-items-center justify-content-between py-2 px-3 mb-2 rounded-3 shadow-xs border bg-white flex-shrink-0">
+    <div class="d-flex align-items-center gap-2.5">
+      <div class="rounded-3 bg-primary bg-opacity-10 text-primary p-2 d-flex align-items-center justify-content-center" style="width: 38px; height: 38px;">
+        <i class="bi bi-robot fs-5"></i>
+      </div>
+      <div>
+        <h6 class="fw-bold mb-0 text-dark">Maritime AI Copilot &amp; Operations Assistant</h6>
+        <small class="text-muted" style="font-size: 0.72rem;">Dual-stage predictive inference &bull; SHAP feature attribution &bull; Real-time telemetry</small>
+      </div>
+    </div>
+    <div class="d-flex align-items-center gap-2">
+      <span class="badge bg-success-subtle text-success border border-success-subtle px-2.5 py-1 rounded-pill small d-none d-sm-inline-flex align-items-center gap-1">
+        <i class="bi bi-circle-fill" style="font-size: 7px;"></i> {{ current_user.username }} ({{ current_user.normalized_role }})
+      </span>
+      <button class="btn btn-sm btn-outline-secondary rounded-pill px-3 py-1 d-flex align-items-center gap-1.5" onclick="clearChat()" title="Start New Conversation">
+        <i class="bi bi-plus-circle"></i> <span class="d-none d-sm-inline">New Conversation</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Main Chat Container (Flexibly fills screen; input bar firmly docked at bottom) -->
+  <div class="card-rm p-0 border shadow-xs rounded-4 overflow-hidden d-flex flex-column flex-grow-1 bg-white position-relative" style="min-height: 0;">
+
+    <!-- Chat Messages Scroll Area (Internally scrollable; latest message visible at bottom) -->
+    <div id="chatMessages" class="flex-grow-1 p-3 p-md-4 overflow-y-auto d-flex flex-column gap-3" style="background: #F8FAFC; min-height: 0;">
+      <!-- Welcome Greeting -->
+      <div class="d-flex align-items-start gap-2 max-w-75">
+        <div class="rounded-circle bg-primary bg-opacity-10 text-primary p-2 d-flex align-items-center justify-content-center flex-shrink-0" style="width: 36px; height: 36px;">
+          <i class="bi bi-robot"></i>
+        </div>
+        <div class="card-rm p-3 shadow-none border bg-white rounded-4" style="max-width: 85%;">
+          <div class="fw-bold text-dark small mb-1">RouteMind Copilot</div>
+          <div class="text-secondary small leading-relaxed">
+            Welcome, {{ current_user.username }}. I am your maritime operations intelligence assistant. You can ask me about shipment delay risks, dual-stage ML model performance, carrier SLA breach escalations, or container dwell time anomalies across active ocean shipping corridors.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Suggestion Chips (Dynamic by User Role) -->
+    <div class="px-3 px-md-4 py-2 bg-white border-top border-light d-flex gap-1.5 flex-wrap align-items-center flex-shrink-0" id="suggestionChipsContainer">
+      <span class="text-muted small fw-semibold"><i class="bi bi-lightbulb"></i> Suggested:</span>
+      {% if current_user.normalized_role == 'Operations Manager' %}
+        <button type="button" class="btn btn-sm btn-light border py-1 px-2.5 text-secondary small rounded-pill" onclick="usePrompt('Give all risk segments')">
+          Fleet Risk Segments
+        </button>
+        <button type="button" class="btn btn-sm btn-light border py-1 px-2.5 text-secondary small rounded-pill" onclick="usePrompt('Which shipping mode has highest delay rate?')">
+          Mode Delay Analysis
+        </button>
+        <button type="button" class="btn btn-sm btn-light border py-1 px-2.5 text-secondary small rounded-pill" onclick="usePrompt('How many manager escalations are pending?')">
+          Pending Escalations
+        </button>
+        <button type="button" class="btn btn-sm btn-light border py-1 px-2.5 text-secondary small rounded-pill" onclick="usePrompt('Which region has the most high-risk shipments?')">
+          Regional Bottlenecks
+        </button>
+        <button type="button" class="btn btn-sm btn-light border py-1 px-2.5 text-secondary small rounded-pill" onclick="usePrompt('Show me a donut chart of risks')">
+          <i class="bi bi-pie-chart text-primary me-1"></i> Donut Chart
+        </button>
+      {% elif current_user.normalized_role == 'Administrator' %}
+        <button type="button" class="btn btn-sm btn-light border py-1 px-2.5 text-secondary small rounded-pill" onclick="usePrompt('What are the production model accuracy metrics?')">
+          Production Model Metrics
+        </button>
+        <button type="button" class="btn btn-sm btn-light border py-1 px-2.5 text-secondary small rounded-pill" onclick="usePrompt('Daily operational summary')">
+          System Operations Summary
+        </button>
+        <button type="button" class="btn btn-sm btn-light border py-1 px-2.5 text-secondary small rounded-pill" onclick="usePrompt('What is the total sales cargo valuation?')">
+          Cargo Sales Valuation
+        </button>
+        <button type="button" class="btn btn-sm btn-light border py-1 px-2.5 text-secondary small rounded-pill" onclick="usePrompt('Show me a scatter plot of SLA vs risk')">
+          <i class="bi bi-diagram-3 text-primary me-1"></i> SLA Scatter Plot
+        </button>
+        <button type="button" class="btn btn-sm btn-light border py-1 px-2.5 text-secondary small rounded-pill" onclick="usePrompt('How many exceptions are open?')">
+          Exception Desk Audit
+        </button>
+      {% elif current_user.normalized_role == 'Customer Support' %}
+        <button type="button" class="btn btn-sm btn-light border py-1 px-2.5 text-secondary small rounded-pill" onclick="usePrompt('Explain status of shipment SHP-10001')">
+          Check SHP-10001
+        </button>
+        <button type="button" class="btn btn-sm btn-light border py-1 px-2.5 text-secondary small rounded-pill" onclick="usePrompt('Why is SHP-10002 delayed?')">
+          Why SHP-10002 Late?
+        </button>
+        <button type="button" class="btn btn-sm btn-light border py-1 px-2.5 text-secondary small rounded-pill" onclick="usePrompt('Draft customer message for SHP-10002')">
+          Draft Client Advisory
+        </button>
+        <button type="button" class="btn btn-sm btn-light border py-1 px-2.5 text-secondary small rounded-pill" onclick="usePrompt('What percentage of shipments are delivered?')">
+          Delivered %
+        </button>
+      {% else %}
+        <!-- Dispatcher / Operations Analyst -->
+        <button type="button" class="btn btn-sm btn-light border py-1 px-2.5 text-secondary small rounded-pill" onclick="usePrompt('Show all high risk shipments')">
+          High Risk Shipments
+        </button>
+        <button type="button" class="btn btn-sm btn-light border py-1 px-2.5 text-secondary small rounded-pill" onclick="usePrompt('Explain shipment SHP-10482')">
+          Explain SHP-10482
+        </button>
+        <button type="button" class="btn btn-sm btn-light border py-1 px-2.5 text-secondary small rounded-pill" onclick="usePrompt('What should the dispatcher do next?')">
+          Dispatcher Next Steps
+        </button>
+        <button type="button" class="btn btn-sm btn-light border py-1 px-2.5 text-secondary small rounded-pill" onclick="usePrompt('Compare SHP-10001 and SHP-10002')">
+          Compare 10001 &amp; 10002
+        </button>
+        <button type="button" class="btn btn-sm btn-light border py-1 px-2.5 text-secondary small rounded-pill" onclick="usePrompt('Show me a chart of delay distribution')">
+          <i class="bi bi-bar-chart text-primary me-1"></i> Delay Histogram
+        </button>
+      {% endif %}
+    </div>
+
+    <!-- Chat Input Form (STRICTLY FIXED AT BOTTOM - NEVER MOVES WHILE SCROLLING) -->
+    <div class="p-2.5 p-md-3 bg-white border-top flex-shrink-0 shadow-sm" style="position: sticky; bottom: 0; z-index: 20;">
+      <form id="chatForm" onsubmit="sendChatMessage(event)" class="d-flex gap-2 align-items-end mb-1">
+        <textarea id="chatInput" rows="1" class="form-control rounded-4 px-3 py-2 small" style="resize: none; max-height: 100px; overflow-y: auto;" placeholder="Ask about delay risks, ocean transit models, or exception handling... (Press Enter to send, Shift+Enter for newline)" onkeydown="handleMainChatKey(event)" oninput="autoGrowInput(this)"></textarea>
+        <button id="sendBtn" type="submit" class="btn btn-rm-primary px-4 py-2 d-flex align-items-center gap-1.5 flex-shrink-0 rounded-4" style="height: 40px;">
+          <span id="btnText">Send</span>
+          <i id="btnIcon" class="bi bi-send-fill small"></i>
+          <span id="btnSpinner" class="spinner-border spinner-border-sm d-none"></span>
+        </button>
+      </form>
+      <div class="d-flex justify-content-between align-items-center px-1">
+        <small class="text-muted" style="font-size: 0.7rem;">Enter to send &bull; Shift+Enter for new line &bull; Multi-turn conversational memory active</small>
+        <small class="text-muted d-none d-sm-inline" style="font-size: 0.7rem;">Grounded on real database telemetry</small>
+      </div>
+    </div>
+
+  </div>
+
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+let currentConversationId = null;
+
+function autoGrowInput(element) {
+  element.style.height = "auto";
+  element.style.height = (Math.min(element.scrollHeight, 120)) + "px";
+}
+
+function handleMainChatKey(e) {
+  if (e.key === 'Enter' && !e.shiftKey) {
+    e.preventDefault();
+    sendChatMessage(e);
+  }
+}
+
+function usePrompt(text) {
+  const input = document.getElementById('chatInput');
+  input.value = text;
+  autoGrowInput(input);
+  input.focus();
+  sendChatMessage();
+}
+
+function clearChat() {
+  const box = document.getElementById('chatMessages');
+  box.replaceChildren();
+  
+  // Re-append welcome
+  const wrapper = document.createElement('div');
+  wrapper.className = 'd-flex align-items-start gap-2 max-w-75';
+  
+  const iconDiv = document.createElement('div');
+  iconDiv.className = 'rounded-circle bg-primary bg-opacity-10 text-primary p-2 d-flex align-items-center justify-content-center';
+  iconDiv.style.cssText = 'width: 36px; height: 36px; flex-shrink: 0;';
+  iconDiv.innerHTML = '<i class="bi bi-robot"></i>';
+  
+  const msgCard = document.createElement('div');
+  msgCard.className = 'card-rm p-3 shadow-none border bg-white rounded-4';
+  msgCard.style.maxWidth = '85%';
+  
+  const header = document.createElement('div');
+  header.className = 'fw-bold text-dark small mb-1';
+  header.textContent = 'RouteMind Copilot';
+  
+  const body = document.createElement('div');
+  body.className = 'text-secondary small leading-relaxed';
+  body.textContent = 'New operational session started. How can I assist you with your maritime shipments today?';
+  
+  msgCard.appendChild(header);
+  msgCard.appendChild(body);
+  wrapper.appendChild(iconDiv);
+  wrapper.appendChild(msgCard);
+  box.appendChild(wrapper);
+
+  if (currentConversationId) {
+    fetch('/api/chat/clear', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ conversation_id: currentConversationId })
+    }).catch(e => console.log(e));
+    currentConversationId = null;
+  }
+}
+
+function parseMarkdownToHtml(md) {
+  if (!md) return '';
+  let html = md.trim();
+
+  // Tables
+  const tableRegex = /\|(.+)\|[\r\n]+\|[-:\s|]+\|[\r\n]+((?:\|.+\|[\r\n]*)+)/g;
+  html = html.replace(tableRegex, function(match, headerRow, bodyRows) {
+    const headers = headerRow.split('|').map(h => h.trim()).filter(h => h.length > 0);
+    let thead = '<thead class="table-light"><tr>' + headers.map(h => '<th class="py-1 px-2 small">' + h + '</th>').join('') + '</tr></thead>';
+    
+    const rows = bodyRows.trim().split(/[\r\n]+/).map(r => {
+      const cells = r.split('|').map(c => c.trim()).filter(c => c.length > 0);
+      return '<tr>' + cells.map(c => '<td class="py-1 px-2 small">' + c + '</td>').join('') + '</tr>';
+    }).join('');
+    
+    return '<div class="table-responsive my-2 rounded border"><table class="table table-hover table-sm mb-0 font-mono" style="font-size:0.8rem;">' + thead + '<tbody>' + rows + '</tbody></table></div>';
+  });
+
+  // Headers
+  html = html.replace(/^### (.*$)/gim, '<h6 class="fw-bold text-dark mt-2 mb-1">$1</h6>');
+  html = html.replace(/^## (.*$)/gim, '<h5 class="fw-bold text-dark mt-2 mb-1">$1</h5>');
+
+  // Bold & Italics
+  html = html.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+  html = html.replace(/\*(.*?)\*/g, '<em>$1</em>');
+
+  // Inline Code
+  html = html.replace(/`([^`]+)`/g, '<code class="px-1 py-0.5 rounded bg-light border text-primary font-mono" style="font-size:0.82rem;">$1</code>');
+
+  // Bullet points
+  html = html.replace(/^[•\-\*] (.*$)/gim, '<div class="ms-2 mb-1">&bull; $1</div>');
+
+  // Numbered lists
+  html = html.replace(/^([0-9]+)\. (.*$)/gim, '<div class="ms-2 mb-1"><strong>$1.</strong> $2</div>');
+
+  // Blockquotes (Executive Summaries)
+  html = html.replace(/^> (.*$)/gim, '<div class="p-2.5 my-2 rounded bg-light border-start border-4 border-primary text-dark small">$1</div>');
+
+  // Code blocks
+  html = html.replace(/```([\s\S]*?)```/g, '<pre class="p-2 bg-light rounded border font-mono small text-dark my-2 overflow-x-auto"><code>$1</code></pre>');
+
+  // Links
+  html = html.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" class="text-primary text-decoration-none fw-semibold"><i class="bi bi-box-arrow-up-right me-1 small"></i>$1</a>');
+
+  // Clean newlines & prevent trailing gaps
+  html = html.replace(/\n{3,}/g, '\n\n');
+  html = html.replace(/\n\n/g, '<br><br>');
+  html = html.replace(/(<br\s*\/?>\s*){3,}/gi, '<br><br>');
+  html = html.replace(/(<br\s*\/?>\s*)+$/gi, '');
+  return html;
+}
+
+function appendUserMessage(text) {
+  const box = document.getElementById('chatMessages');
+  
+  const wrapper = document.createElement('div');
+  wrapper.className = 'd-flex align-items-end justify-content-end gap-2';
+  
+  const msgCard = document.createElement('div');
+  msgCard.className = 'p-3 rounded-4 shadow-sm text-white';
+  msgCard.style.cssText = 'background: #4338CA; max-width: 75%; word-break: break-word;';
+  
+  const header = document.createElement('div');
+  header.className = 'fw-semibold text-white-50 small mb-1 text-end';
+  header.textContent = 'You';
+  
+  const body = document.createElement('div');
+  body.className = 'small leading-relaxed';
+  body.textContent = text;
+  
+  msgCard.appendChild(header);
+  msgCard.appendChild(body);
+  wrapper.appendChild(msgCard);
+  box.appendChild(wrapper);
+  box.scrollTop = box.scrollHeight;
+}
+
+function appendBotMessage(sender, text, chartPayload) {
+  const box = document.getElementById('chatMessages');
+  
+  const wrapper = document.createElement('div');
+  wrapper.className = 'd-flex align-items-start gap-2 max-w-75';
+  
+  const iconDiv = document.createElement('div');
+  iconDiv.className = 'rounded-circle bg-primary bg-opacity-10 text-primary p-2 d-flex align-items-center justify-content-center';
+  iconDiv.style.cssText = 'width: 36px; height: 36px; flex-shrink: 0;';
+  iconDiv.innerHTML = '<i class="bi bi-robot"></i>';
+  
+  const msgCard = document.createElement('div');
+  msgCard.className = 'card-rm p-3 shadow-none border bg-white rounded-4';
+  msgCard.style.maxWidth = '88%';
+  
+  const header = document.createElement('div');
+  header.className = 'fw-bold text-dark small mb-1.5 d-flex align-items-center justify-content-between';
+  header.innerHTML = '<span>' + (sender || 'RouteMind Copilot') + '</span><span class="badge bg-light text-muted border" style="font-size:0.65rem;"><i class="bi bi-database-check text-success me-1"></i>Grounded Telemetry</span>';
+  
+  const body = document.createElement('div');
+  body.className = 'text-secondary small leading-relaxed';
+  body.innerHTML = parseMarkdownToHtml(text);
+  
+  msgCard.appendChild(header);
+  msgCard.appendChild(body);
+
+  // Render Dynamic Chart.js Visualization ONLY if valid chartPayload data is present (no empty gaps)
+  const hasChart = Boolean(
+    chartPayload && (
+      (chartPayload.chart_type && chartPayload.data && (
+        (Array.isArray(chartPayload.data.labels) && chartPayload.data.labels.length > 0) ||
+        (Array.isArray(chartPayload.data.datasets) && chartPayload.data.datasets.length > 0)
+      )) ||
+      (Array.isArray(chartPayload.kpis) && chartPayload.kpis.length > 0) ||
+      (chartPayload.confusion_matrix && typeof chartPayload.confusion_matrix === 'object')
+    )
+  );
+
+  if (hasChart) {
+    const chartCard = document.createElement('div');
+    chartCard.className = 'mt-2.5 pt-2.5 border-top bg-light p-3 rounded-3';
+    
+    const canvasId = 'chart_' + Math.random().toString(36).substr(2, 9);
+    
+    // Header for Chart
+    if (chartPayload.title) {
+      const cHeader = document.createElement('div');
+      cHeader.className = 'd-flex justify-content-between align-items-center mb-2 flex-wrap gap-1';
+      const cleanTitle = (chartPayload.title || 'chart').replace(/'/g, "\\'");
+      cHeader.innerHTML = `
+        <div>
+          <span class="fw-bold text-dark small d-block">${chartPayload.title}</span>
+          ${chartPayload.subtitle ? `<span class="text-muted" style="font-size:0.7rem;">${chartPayload.subtitle}</span>` : ''}
+        </div>
+        <div class="d-flex align-items-center gap-1.5 flex-wrap">
+          <button type="button" class="btn btn-sm btn-light border py-0.5 px-2 rounded-pill small text-secondary" style="font-size:0.68rem;" onclick="exportChartPng('${canvasId}', '${cleanTitle}')" title="Download Chart as PNG Image">
+            <i class="bi bi-download me-1"></i>PNG
+          </button>
+          <button type="button" class="btn btn-sm btn-light border py-0.5 px-2 rounded-pill small text-secondary" style="font-size:0.68rem;" onclick="exportChartCsv('${canvasId}', '${cleanTitle}')" title="Export Dataset as CSV Spreadsheet">
+            <i class="bi bi-filetype-csv me-1"></i>CSV
+          </button>
+          <span class="badge bg-primary-subtle text-primary border border-primary-subtle py-1 px-2" style="font-size:0.65rem;">
+            <i class="bi bi-graph-up me-1"></i>Dynamic Visual
+          </span>
+        </div>
+      `;
+      chartCard.appendChild(cHeader);
+    }
+
+    // KPI Cards inside Chart Payload
+    if (chartPayload.kpis && chartPayload.kpis.length) {
+      const kpiRow = document.createElement('div');
+      kpiRow.className = 'row g-2 mb-2';
+      chartPayload.kpis.forEach(k => {
+        const col = document.createElement('div');
+        col.className = 'col-6 col-sm';
+        const bgTone = k.tone === 'danger' ? 'bg-danger-subtle text-danger border-danger-subtle' :
+                       k.tone === 'warning' ? 'bg-warning-subtle text-dark border-warning-subtle' :
+                       k.tone === 'success' ? 'bg-success-subtle text-success border-success-subtle' :
+                       'bg-primary-subtle text-primary border-primary-subtle';
+        col.innerHTML = `
+          <div class="p-2 rounded-2 border ${bgTone} text-center">
+            <div class="fw-bold font-mono" style="font-size: 0.95rem;">${k.value}</div>
+            <div class="text-muted" style="font-size: 0.68rem;">${k.label}</div>
+          </div>
+        `;
+        kpiRow.appendChild(col);
+      });
+      chartCard.appendChild(kpiRow);
+    }
+
+    // Confusion Matrix Grid
+    if (chartPayload.confusion_matrix) {
+      const cm = chartPayload.confusion_matrix;
+      const cmDiv = document.createElement('div');
+      cmDiv.className = 'my-2 p-2 bg-white rounded border';
+      cmDiv.innerHTML = `
+        <div class="d-flex justify-content-between align-items-center mb-1">
+          <span class="small fw-semibold text-dark">${cm.model_name} Confusion Matrix</span>
+          <span class="badge bg-light text-muted border font-mono">ROC-AUC: ${cm.roc_auc}</span>
+        </div>
+        <div class="row g-1 text-center font-mono small" style="font-size:0.75rem;">
+          <div class="col-6"><div class="p-2 bg-success-subtle text-success rounded border"><strong>True Positives (TP):</strong> ${cm.tp}</div></div>
+          <div class="col-6"><div class="p-2 bg-danger-subtle text-danger rounded border"><strong>False Positives (FP):</strong> ${cm.fp}</div></div>
+          <div class="col-6"><div class="p-2 bg-danger-subtle text-danger rounded border"><strong>False Negatives (FN):</strong> ${cm.fn}</div></div>
+          <div class="col-6"><div class="p-2 bg-success-subtle text-success rounded border"><strong>True Negatives (TN):</strong> ${cm.tn}</div></div>
+        </div>
+      `;
+      chartCard.appendChild(cmDiv);
+    }
+
+    // Render Canvas if standard chart
+    if (chartPayload.chart_type && ['doughnut', 'pie', 'bar', 'horizontalBar', 'line', 'scatter'].includes(chartPayload.chart_type) && chartPayload.data) {
+      const canvasWrapper = document.createElement('div');
+      canvasWrapper.style.cssText = 'position: relative; height: 240px; width: 100%;';
+      const canvas = document.createElement('canvas');
+      canvas.id = canvasId;
+      canvasWrapper.appendChild(canvas);
+      chartCard.appendChild(canvasWrapper);
+
+      setTimeout(() => {
+        try {
+          const el = document.getElementById(canvasId);
+          if (el && typeof Chart !== 'undefined') {
+            const ctx = el.getContext('2d');
+            const cType = chartPayload.chart_type === 'horizontalBar' ? 'bar' : chartPayload.chart_type;
+            const cOpts = chartPayload.options || {};
+            if (chartPayload.chart_type === 'horizontalBar') {
+              cOpts.indexAxis = 'y';
+            }
+            new Chart(ctx, {
+              type: cType,
+              data: chartPayload.data,
+              options: cOpts
+            });
+          }
+        } catch (err) {
+          console.warn('Chart initialization error:', err);
+        }
+      }, 60);
+    }
+
+    msgCard.appendChild(chartCard);
+  }
+
+  wrapper.appendChild(iconDiv);
+  wrapper.appendChild(msgCard);
+  box.appendChild(wrapper);
+  box.scrollTop = box.scrollHeight;
+}
+
+async function sendChatMessage(e) {
+  if (e && e.preventDefault) e.preventDefault();
+  const input = document.getElementById('chatInput');
+  const msg = input.value.trim();
+  if (!msg) return;
+
+  const sendBtn = document.getElementById('sendBtn');
+  const btnText = document.getElementById('btnText');
+  const btnSpinner = document.getElementById('btnSpinner');
+  const btnIcon = document.getElementById('btnIcon');
+
+  appendUserMessage(msg);
+  input.value = '';
+  input.style.height = 'auto';
+
+  // Loading state
+  sendBtn.disabled = true;
+  btnSpinner.classList.remove('d-none');
+  btnIcon.classList.add('d-none');
+  btnText.textContent = 'Analyzing...';
+
+  try {
+    const res = await fetch('/api/chat', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        message: msg,
+        conversation_id: currentConversationId
+      })
+    });
+    
+    if (!res.ok) {
+      throw new Error('AI service responded with HTTP status ' + res.status);
+    }
+    
+    const data = await res.json();
+    if (data.conversation_id) {
+      currentConversationId = data.conversation_id;
+    }
+    appendBotMessage(data.sender, data.response || data.message, data.chart_payload);
+  } catch (err) {
+    appendBotMessage('RouteMind Copilot', 'Operational notice: Unable to complete query inference. Please verify database connectivity or try again.');
+  } finally {
+    sendBtn.disabled = false;
+    btnSpinner.classList.add('d-none');
+    btnIcon.classList.remove('d-none');
+    btnText.textContent = 'Send';
+    input.focus();
+  }
+}
+
+function exportChartPng(canvasId, title) {
+  const canvas = document.getElementById(canvasId);
+  if (!canvas) {
+    showToast('Chart visual not ready for export.', 'warning');
+    return;
+  }
+  const link = document.createElement('a');
+  link.download = (title || 'routemind_chart').toLowerCase().replace(/[^a-z0-9]/g, '_') + '.png';
+  link.href = canvas.toDataURL('image/png');
+  link.click();
+}
+
+function exportChartCsv(canvasId, title) {
+  let chartInstance = null;
+  if (typeof Chart !== 'undefined' && Chart.getChart) {
+    chartInstance = Chart.getChart(canvasId);
+  }
+  if (!chartInstance || !chartInstance.data) {
+    showToast('Underlying telemetry not available for CSV download.', 'warning');
+    return;
+  }
+  const data = chartInstance.data;
+  let csv = 'Dimension / Category,' + data.datasets.map(d => '"' + (d.label || 'Value') + '"').join(',') + '\n';
+  (data.labels || []).forEach((lbl, idx) => {
+    const row = ['"' + lbl + '"'];
+    data.datasets.forEach(ds => {
+      row.push(ds.data && ds.data[idx] !== undefined ? ds.data[idx] : '');
+    });
+    csv += row.join(',') + '\n';
+  });
+  const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+  const link = document.createElement('a');
+  link.href = URL.createObjectURL(blob);
+  link.download = (title || 'routemind_dataset').toLowerCase().replace(/[^a-z0-9]/g, '_') + '.csv';
+  link.click();
+}
+
+// Fixed-bottom positioning & auto-focus on start
+document.addEventListener('DOMContentLoaded', () => {
+  const box = document.getElementById('chatMessages');
+  if (box) {
+    box.scrollTop = box.scrollHeight;
+  }
+  const chatInput = document.getElementById('chatInput');
+  if (chatInput) {
+    chatInput.focus();
+  }
+});
+</script>
+{% endblock %}

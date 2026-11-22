@@ -1,0 +1,52 @@
+{
+  "dataset_key": "new_excel",
+  "total_records": 15000,
+  "class_imbalance": {
+    "negative_count_on_time": 7194,
+    "positive_count_late": 7806,
+    "late_ratio": 0.5204,
+    "scale_pos_weight": 0.9216,
+    "reference_formula": "negative_count / positive_count (from notebook Cell 15)"
+  },
+  "shipping_mode_distribution": {
+    "First Class": {
+      "total_shipments": 1540,
+      "late_rate": 0.9565
+    },
+    "Same Day": {
+      "total_shipments": 249,
+      "late_rate": 0.5301
+    },
+    "Second Class": {
+      "total_shipments": 2816,
+      "late_rate": 0.7802
+    },
+    "Standard Class": {
+      "total_shipments": 9828,
+      "late_rate": 0.3795
+    }
+  },
+  "top_regions_distribution": {
+    "Central America": {
+      "total_shipments": 1852,
+      "late_rate": 0.5194
+    },
+    "Oceania": {
+      "total_shipments": 977,
+      "late_rate": 0.5077
+    },
+    "South America": {
+      "total_shipments": 948,
+      "late_rate": 0.4926
+    },
+    "Southern Europe": {
+      "total_shipments": 906,
+      "late_rate": 0.5453
+    },
+    "Western Europe": {
+      "total_shipments": 2532,
+      "late_rate": 0.5269
+    }
+  },
+  "analyzed_at": "2026-11-14T14:04:39.715311Z"
+}

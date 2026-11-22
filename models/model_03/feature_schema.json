@@ -1,0 +1,25 @@
+{
+  "model_id": "model_03_delivery_delay_duration_catboost",
+  "algorithm": "CatBoostRegressor",
+  "stage": "transit_routing_and_gating",
+  "target": "Days for shipping (real)",
+  "target_unit": "days",
+  "derived_metric": "Delay Duration = Days for shipping (real) - Days for shipment (scheduled)",
+  "numerical_features": [
+    "Days for shipment (scheduled)",
+    "Order-to-Ship Time"
+  ],
+  "categorical_features": [
+    "Shipping Mode",
+    "Customer Segment",
+    "Order Region"
+  ],
+  "feature_order": [
+    "Days for shipment (scheduled)",
+    "Order-to-Ship Time",
+    "Shipping Mode",
+    "Customer Segment",
+    "Order Region"
+  ],
+  "training_date": "2026-11-17T18:12:53.799556"
+}

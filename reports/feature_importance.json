@@ -1,0 +1,42 @@
+[
+  {
+    "feature": "num__Days for shipment (scheduled)",
+    "importance": 0.24449991653699116
+  },
+  {
+    "feature": "cat__Shipping Mode_Standard Class",
+    "importance": 0.14917741656825828
+  },
+  {
+    "feature": "cat__Shipping Mode_First Class",
+    "importance": 0.13616544353838664
+  },
+  {
+    "feature": "cat__Shipping Mode_Second Class",
+    "importance": 0.11731486598214029
+  },
+  {
+    "feature": "cat__Customer Segment_Corporate",
+    "importance": 0.038207711098543165
+  },
+  {
+    "feature": "cat__Type_CASH",
+    "importance": 0.036807876796521775
+  },
+  {
+    "feature": "cat__Type_TRANSFER",
+    "importance": 0.03152449308047343
+  },
+  {
+    "feature": "cat__Customer Segment_Consumer",
+    "importance": 0.022797146353656417
+  },
+  {
+    "feature": "num__Order Item Discount Rate",
+    "importance": 0.01979952241819467
+  },
+  {
+    "feature": "num__Order Item Quantity",
+    "importance": 0.01617347054754058
+  }
+]

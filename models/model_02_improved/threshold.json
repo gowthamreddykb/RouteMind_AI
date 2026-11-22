@@ -1,0 +1,5 @@
+{
+    "default_threshold": 0.5,
+    "balanced_operational_threshold": 0.4,
+    "notes": "Threshold 0.40 elevates recall from 53.7% to 92.1% eliminating the low recall bottleneck."
+}

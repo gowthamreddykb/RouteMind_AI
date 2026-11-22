@@ -1,0 +1,52 @@
+{
+  "dataset_key": "historical",
+  "total_records": 15000,
+  "class_imbalance": {
+    "negative_count_on_time": 7194,
+    "positive_count_late": 7806,
+    "late_ratio": 0.5204,
+    "scale_pos_weight": 0.9216,
+    "reference_formula": "negative_count / positive_count (from notebook Cell 15)"
+  },
+  "shipping_mode_distribution": {
+    "First Class": {
+      "total_shipments": 1598,
+      "late_rate": 0.9574
+    },
+    "Same Day": {
+      "total_shipments": 258,
+      "late_rate": 0.5271
+    },
+    "Second Class": {
+      "total_shipments": 2926,
+      "late_rate": 0.7765
+    },
+    "Standard Class": {
+      "total_shipments": 10218,
+      "late_rate": 0.3785
+    }
+  },
+  "top_regions_distribution": {
+    "Central America": {
+      "total_shipments": 1987,
+      "late_rate": 0.5184
+    },
+    "Oceania": {
+      "total_shipments": 977,
+      "late_rate": 0.5077
+    },
+    "South America": {
+      "total_shipments": 1114,
+      "late_rate": 0.4865
+    },
+    "Southern Europe": {
+      "total_shipments": 906,
+      "late_rate": 0.5453
+    },
+    "Western Europe": {
+      "total_shipments": 2532,
+      "late_rate": 0.5269
+    }
+  },
+  "analyzed_at": "2026-11-14T14:03:02.825281Z"
+}

@@ -1,0 +1,5 @@
+column,dtype,missing_count,missing_pct,unique_values
+Customer Lname,str,8,0.0044,1109
+Customer Zipcode,float64,3,0.0017,995
+Order Zipcode,float64,155679,86.2397,609
+Product Description,float64,180519,100.0,0

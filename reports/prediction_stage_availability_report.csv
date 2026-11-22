@@ -1,0 +1,54 @@
+Feature Name,Order Creation Availability,Dispatch Availability,Data Type,Leakage Risk,Missing Percentage,Decision,Reason
+Type,Yes,Yes,Categorical,Low,0.0,Include,Payment type is chosen when the order is placed.
+Days for shipping (real),No,No,Numerical,High,0.0,Exclude,"Actual shipping duration. Verified: every late row (target=1) has real > scheduled (100%), and the rule real > scheduled reproduces the target in 97.55% of all rows (the other 2.45% are cancelled/fraud orders labelled 0)."
+Days for shipment (scheduled),Yes,Yes,Numerical,Low,0.0,Include,"Promised duration, known at order time. NOTE: 1-to-1 with Shipping Mode (0/1/2/4 days), so partly redundant; kept as scheduled_days."
+Benefit per order,No,No,Numerical,Medium,0.0,Exclude,Profit/benefit is finalised after the order is fulfilled.
+Sales per customer,No,No,Numerical,Medium,0.0,Exclude,Aggregate; not an order-time value.
+Delivery Status,No,No,Categorical,High,0.0,Exclude,Reveals delivery outcome; 'Late delivery' == target 1 in 100% of rows (verified).
+Late_delivery_risk,No,No,Numerical,High,0.0,Exclude,Target variable - must never appear in X.
+Category Id,Yes,Yes,Numerical,Low,0.0,Exclude,"Identifier code. Verified NOT strictly 1-to-1 with Category Name (51 ids vs 50 names: one name maps to two ids), but the extra id carries no business meaning; Category Name is kept instead."
+Category Name,Yes,Yes,Categorical,Low,0.0,Include,"Product category, known at order time."
+Customer City,Yes,Yes,Categorical,Low,0.0,Include,563 values; rare categories must be grouped in the encoder.
+Customer Country,Yes,Yes,Categorical,Low,0.0,Include,Only 2 values (Puerto Rico / EE. UU.). Low information.
+Customer Email,No,No,Categorical,Medium,0.0,Exclude,Personal information; not predictive.
+Customer Fname,No,No,Categorical,Medium,0.0,Exclude,Personal information.
+Customer Id,No,No,Numerical,Medium,0.0,Exclude,Record identifier; keep only for joins/grouping.
+Customer Lname,No,No,Categorical,Medium,0.0044,Exclude,Personal information.
+Customer Password,No,No,Categorical,Medium,0.0,Exclude,Credential; must never be used.
+Customer Segment,Yes,Yes,Categorical,Low,0.0,Include,Customer attribute known at order time.
+Customer State,Yes,Yes,Categorical,Low,0.0,Include,Known at order time.
+Customer Street,No,No,Categorical,Medium,0.0,Exclude,Personal address information.
+Customer Zipcode,No,No,Numerical,Medium,0.0017,Exclude,"Postal code; sparse/high-cardinality, not approved for first model."
+Department Id,Yes,Yes,Numerical,Low,0.0,Exclude,Identifier code; Department Name carries the same information.
+Department Name,Yes,Yes,Categorical,Low,0.0,Include,Known at order time.
+Latitude,Review,Review,Numerical,Medium,0.0,Exclude,"VERIFIED to be the CUSTOMER location (e.g. Order City Bekasi, Indonesia has lat 18.25 = Puerto Rico), NOT the destination. Available at order time but duplicates Customer City/State. Decide by ablation. | RESOLVED by validation ablation: validation AUC base=0.7593, best variant '+all review'=0.7597; adopted only if gain >= 0.002"
+Longitude,Review,Review,Numerical,Medium,0.0,Exclude,"Same as Latitude: customer location, not destination. | RESOLVED by validation ablation: validation AUC base=0.7593, best variant '+all review'=0.7597; adopted only if gain >= 0.002"
+Market,Yes,Yes,Categorical,Low,0.0,Include,Destination market.
+Order City,Yes,Yes,Categorical,Low,0.0,Exclude,"3,597 values - very high cardinality. Decide by validation ablation, with rare-category grouping. | RESOLVED by validation ablation: validation AUC base=0.7593, best variant '+all review'=0.7597; adopted only if gain >= 0.002"
+Order Country,Yes,Yes,Categorical,Low,0.0,Include,164 values; rare categories grouped in the encoder.
+Order Customer Id,No,No,Numerical,Medium,0.0,Exclude,Duplicate customer identifier.
+order date (DateOrders),Yes,Yes,Date,Low,0.0,Include,Order timestamp; used to derive calendar features and for the chronological split. Raw timestamp itself is not passed to the model.
+Order Id,No,No,Numerical,Medium,0.0,Exclude,Used for grouping the split only.
+Order Item Cardprod Id,No,No,Numerical,Medium,0.0,Exclude,Identical to Product Card Id in 100% of rows (verified).
+Order Item Discount,Yes,Yes,Numerical,Low,0.0,Exclude,Equals Discount Rate x Sales (redundant).
+Order Item Discount Rate,Yes,Yes,Numerical,Low,0.0,Include,Known at order time; used for discount_level.
+Order Item Id,No,No,Numerical,Medium,0.0,Exclude,Row identifier.
+Order Item Product Price,Yes,Yes,Numerical,Low,0.0,Include,Unit price at order time.
+Order Item Profit Ratio,No,No,Numerical,Medium,0.0,Exclude,Profit is finalised after the order is fulfilled.
+Order Item Quantity,Yes,Yes,Numerical,Low,0.0,Include,Quantity ordered.
+Sales,Yes,Yes,Numerical,Low,0.0,Include,Item price x quantity (verified); used for order_value.
+Order Item Total,Yes,Yes,Numerical,Low,0.0,Exclude,Sales minus discount (matches in 97.4% rows) - redundant combination of included fields.
+Order Profit Per Order,No,No,Numerical,Medium,0.0,Exclude,Profit is finalised after the order is fulfilled.
+Order Region,Yes,Yes,Categorical,Low,0.0,Include,Destination region.
+Order State,Yes,Yes,Categorical,Low,0.0,Exclude,"1,089 values - high cardinality. Decide by validation ablation. | RESOLVED by validation ablation: validation AUC base=0.7593, best variant '+all review'=0.7597; adopted only if gain >= 0.002"
+Order Status,No,No,Categorical,Medium,0.0,Exclude,"May reflect events after order creation (e.g. CANCELED, COMPLETE)."
+Order Zipcode,No,No,Numerical,Medium,86.2397,Exclude,86.24% missing (verified).
+Product Card Id,Yes,Yes,Numerical,Low,0.0,Exclude,Identifier code; Product Name carries the same information (1-to-1).
+Product Category Id,Yes,Yes,Numerical,Low,0.0,Exclude,Identical to Category Id in 100% of rows.
+Product Description,No,No,Numerical,Medium,100.0,Exclude,100% missing (verified).
+Product Image,No,No,Categorical,Medium,0.0,Exclude,"URL/text, one value per product, not predictive."
+Product Name,Yes,Yes,Categorical,Low,0.0,Include,"118 values - moderate cardinality, known at order time."
+Product Price,Yes,Yes,Numerical,Low,0.0,Exclude,Identical to Order Item Product Price in 100% of rows.
+Product Status,No,No,Numerical,Medium,0.0,Exclude,Single constant value (verified).
+shipping date (DateOrders),No,No,Date,High,0.0,Exclude,"VERIFIED: equals order date + actual shipping days (2 days -> exactly 2.0 days, etc.). It is a delivery-duration proxy, NOT a real dispatch timestamp. Excluded from BOTH models."
+Shipping Mode,Yes,Yes,Categorical,Low,0.0,Include,Chosen by customer at order time. Strongest signal in the data.

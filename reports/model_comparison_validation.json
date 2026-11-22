@@ -1,0 +1,58 @@
+[
+  {
+    "Model": "Random Forest",
+    "Accuracy": 0.6691,
+    "Precision": 0.7947,
+    "Recall": 0.4931,
+    "F1 Score": 0.6086,
+    "Probability MSE": 0.2119,
+    "ROC-AUC": 0.7174,
+    "PR-AUC": 0.7742,
+    "TN": 626,
+    "FP": 101,
+    "FN": 402,
+    "TP": 391
+  },
+  {
+    "Model": "XGBoost",
+    "Accuracy": 0.6671,
+    "Precision": 0.7808,
+    "Recall": 0.5032,
+    "F1 Score": 0.612,
+    "Probability MSE": 0.2097,
+    "ROC-AUC": 0.6989,
+    "PR-AUC": 0.7733,
+    "TN": 615,
+    "FP": 112,
+    "FN": 394,
+    "TP": 399
+  },
+  {
+    "Model": "Logistic Regression",
+    "Accuracy": 0.6592,
+    "Precision": 0.767,
+    "Recall": 0.4981,
+    "F1 Score": 0.604,
+    "Probability MSE": 0.2144,
+    "ROC-AUC": 0.6934,
+    "PR-AUC": 0.7618,
+    "TN": 607,
+    "FP": 120,
+    "FN": 398,
+    "TP": 395
+  },
+  {
+    "Model": "LightGBM",
+    "Accuracy": 0.6651,
+    "Precision": 0.7669,
+    "Recall": 0.5145,
+    "F1 Score": 0.6158,
+    "Probability MSE": 0.211,
+    "ROC-AUC": 0.7003,
+    "PR-AUC": 0.7703,
+    "TN": 603,
+    "FP": 124,
+    "FN": 385,
+    "TP": 408
+  }
+]

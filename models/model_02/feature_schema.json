@@ -1,0 +1,37 @@
+{
+  "model_name": "Model 02: Late Delivery at Dispatch",
+  "stage": "Warehouse Dock Dispatch",
+  "algorithm": "XGBoost Classifier",
+  "training_timestamp": "2026-11-18T11:35:12.836642",
+  "random_state": 42,
+  "mandatory_numerical_features": [
+    "Days for shipment (scheduled)",
+    "Order-to-Ship Time"
+  ],
+  "mandatory_categorical_features": [
+    "Shipping Mode",
+    "Order Region",
+    "Market",
+    "Department Name",
+    "Customer Segment"
+  ],
+  "target": "Late_delivery_risk",
+  "optimal_threshold": 0.39,
+  "hyperparameters": {
+    "colsample_bytree": "1.0",
+    "learning_rate": "0.03",
+    "max_depth": "3",
+    "n_estimators": "100",
+    "subsample": "0.8"
+  },
+  "test_metrics": {
+    "Accuracy (Default 0.50)": 0.9714921576939382,
+    "Accuracy (Optimal Threshold)": 0.9752013565069945,
+    "Precision (Default 0.50)": 1.0,
+    "Recall (Default 0.50)": 0.9506603081438004,
+    "F1-Score (Default 0.50)": 0.9747061589092618,
+    "ROC-AUC Score": 0.9985510180855484,
+    "Average Precision (PR-AUC)": 0.9979694885869943,
+    "Brier Score Loss": 0.02212691493332386
+  }
+}

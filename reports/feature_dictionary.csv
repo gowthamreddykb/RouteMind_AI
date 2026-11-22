@@ -1,0 +1,51 @@
+Feature,Description,Used by model,Stage
+Type,Payment type (DEBIT/TRANSFER/CASH/PAYMENT),Yes,Order creation
+Days for shipment (scheduled),Promised shipping days at order time (determined by Shipping Mode),Yes,Order creation
+Shipping Mode,Shipping service chosen by customer,Yes,Order creation
+order date (DateOrders),Order creation timestamp,Yes,Order creation
+Category Name,Product category,Yes,Order creation
+Department Name,Store department,Yes,Order creation
+Product Name,Product (118 distinct),Yes,Order creation
+Order Item Product Price,Unit price of the item,Yes,Order creation
+Order Item Quantity,Units ordered in this item row,Yes,Order creation
+Customer Segment,Consumer / Corporate / Home Office,Yes,Order creation
+Customer City,Customer city,Yes,Order creation
+Customer Country,Customer country (Puerto Rico / United States),Yes,Order creation
+Customer State,Customer state,Yes,Order creation
+Market,Destination market (5 values),Yes,Order creation
+Order Country,Destination country,Yes,Order creation
+Order Region,Destination region,Yes,Order creation
+Order Item Discount Rate,Discount fraction applied (0-0.25),Yes,Order creation
+Sales,Item price x quantity,Yes,Order creation
+scheduled_days,Engineered: renamed Days for shipment (scheduled),Yes,Order creation
+order_value,Engineered: renamed Sales,Yes,Order creation
+order_year,Engineered from order date,Yes,Order creation
+order_month,Engineered from order date,Yes,Order creation
+order_day,Engineered from order date,Yes,Order creation
+order_day_of_week,Engineered from order date (Monday=0),Yes,Order creation
+order_hour,Engineered from order date,Yes,Order creation
+is_weekend,Engineered: Saturday/Sunday flag,Yes,Order creation
+Late_delivery_risk,Target variable - must never appear in X.,No,Target
+Days for shipping (real),"Actual shipping duration. Verified: every late row (target=1) has real > scheduled (100%), and the rule real > scheduled reproduces the target in 97.55% of all rows (the other 2.45% are cancelled/fraud orders labelled 0).",No,Target leakage
+Delivery Status,Reveals delivery outcome; 'Late delivery' == target 1 in 100% of rows (verified).,No,Target leakage
+Order Status,"May reflect events after order creation (e.g. CANCELED, COMPLETE).",No,Post-order information
+Customer Email,Personal information; not predictive.,No,Personal data
+Customer Password,Credential; must never be used.,No,Personal data
+Customer Fname,Personal information.,No,Personal data
+Customer Lname,Personal information.,No,Personal data
+Customer Street,Personal address information.,No,Personal data
+Customer Id,Record identifier; keep only for joins/grouping.,No,Identifier
+Order Customer Id,Duplicate customer identifier.,No,Identifier
+Order Id,Used for grouping the split only.,No,Identifier
+Order Item Id,Row identifier.,No,Identifier
+Customer Zipcode,"Postal code; sparse/high-cardinality, not approved for first model.",No,Initially excluded
+Order Zipcode,86.24% missing (verified).,No,Initially excluded
+Order Item Cardprod Id,Identical to Product Card Id in 100% of rows (verified).,No,Initially excluded
+Product Description,100% missing (verified).,No,Initially excluded
+Product Image,"URL/text, one value per product, not predictive.",No,Initially excluded
+Product Status,Single constant value (verified).,No,Initially excluded
+Order Profit Per Order,Profit is finalised after the order is fulfilled.,No,Initially excluded
+Order Item Profit Ratio,Profit is finalised after the order is fulfilled.,No,Initially excluded
+Benefit per order,Profit/benefit is finalised after the order is fulfilled.,No,Initially excluded
+Sales per customer,Aggregate; not an order-time value.,No,Initially excluded
+shipping date (DateOrders),"VERIFIED: equals order date + actual shipping days (2 days -> exactly 2.0 days, etc.). It is a delivery-duration proxy, NOT a real dispatch timestamp. Excluded from BOTH models.",No,Target leakage (discovered)

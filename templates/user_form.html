@@ -1,0 +1,91 @@
+{% extends 'base.html' %}
+{% block title %}RouteMind AI – {% if user %}Edit User {{ user.username }}{% else %}Add New User{% endif %}{% endblock %}
+{% block content %}
+<div class="container-fluid max-w-7xl px-0">
+
+  <!-- Header -->
+  <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+    <div class="d-flex align-items-center gap-2">
+      <a href="/users/" class="btn btn-light rounded-circle p-1.5" title="Back to User List">
+        <i class="bi bi-arrow-left fs-5"></i>
+      </a>
+      <div>
+        <h4 class="fw-bold text-dark mb-0">{% if user %}Edit User Account ({{ user.username }}){% else %}Create New Enterprise User{% endif %}</h4>
+        <p class="text-muted small mb-0">Assign personnel clearance across the three authorized operational roles.</p>
+      </div>
+    </div>
+    <span class="badge bg-primary-subtle text-primary border p-2">
+      <i class="bi bi-shield-lock me-1"></i> Administrator Access Only
+    </span>
+  </div>
+
+  <div class="card-rm p-4 mb-4" style="max-width: 650px;">
+    <form method="POST" action="{% if user %}/users/{{ user.id }}/edit{% else %}/users/new{% endif %}">
+      
+      <div class="mb-3">
+        <label class="form-label small fw-semibold">Full Name *</label>
+        <input type="text" name="full_name" class="form-control form-control-sm" placeholder="e.g. Captain Gowtham K" required value="{{ user.full_name if user else '' }}">
+      </div>
+
+      <div class="row g-3 mb-3">
+        <div class="col-md-6">
+          <label class="form-label small fw-semibold">Username *</label>
+          <input type="text" name="username" class="form-control form-control-sm font-mono" placeholder="e.g. gowtham_k" required value="{{ user.username if user else '' }}" {% if user %}readonly{% endif %}>
+          {% if user %}<small class="text-muted" style="font-size: 0.7rem;">Username cannot be altered after creation.</small>{% endif %}
+        </div>
+        <div class="col-md-6">
+          <label class="form-label small fw-semibold">Enterprise Email *</label>
+          <input type="email" name="email" class="form-control form-control-sm" placeholder="name@routemind.ai" required value="{{ user.email if user else '' }}">
+        </div>
+      </div>
+
+      <!-- Password fields -->
+      <div class="row g-3 mb-3">
+        <div class="col-md-6">
+          <label class="form-label small fw-semibold">{% if user %}New Password (leave blank to keep){% else %}Password *{% endif %}</label>
+          <input type="password" name="password" class="form-control form-control-sm" {% if not user %}required{% endif %} placeholder="••••••••">
+        </div>
+        <div class="col-md-6">
+          <label class="form-label small fw-semibold">Confirm Password {% if not user %}*{% endif %}</label>
+          <input type="password" name="confirm_password" class="form-control form-control-sm" {% if not user %}required{% endif %} placeholder="••••••••">
+        </div>
+      </div>
+
+      <!-- EXACT THREE ROLES -->
+      <div class="mb-3">
+        <label class="form-label small fw-semibold">Role Clearance (Exactly Three Approved Roles) *</label>
+        <select name="role" class="form-select form-select-sm" required>
+          <option value="Dispatcher" {% if user and user.normalized_role == 'Dispatcher' %}selected{% endif %}>
+            1. Dispatcher / Operations Analyst (Operational Triage &amp; Exception Management)
+          </option>
+          <option value="Operations Manager" {% if user and user.normalized_role == 'Operations Manager' %}selected{% endif %}>
+            2. Operations Manager (Exception Assignment &amp; Operational Triage)
+          </option>
+          <option value="Administrator" {% if user and user.normalized_role == 'Administrator' %}selected{% endif %}>
+            3. Administrator (System Configuration &amp; User Governance)
+          </option>
+        </select>
+        <small class="text-muted d-block mt-1" style="font-size: 0.7rem;">
+          Note: Roles must be strictly assigned from the three permitted enterprise roles.
+        </small>
+      </div>
+
+      <!-- Account Status -->
+      <div class="mb-4">
+        <label class="form-label small fw-semibold">Account Status *</label>
+        <select name="status" class="form-select form-select-sm" required>
+          <option value="active" {% if not user or user.is_active %}selected{% endif %}>Active (Authorized to authenticate)</option>
+          <option value="inactive" {% if user and not user.is_active %}selected{% endif %}>Deactivated (Access strictly revoked)</option>
+        </select>
+      </div>
+
+      <div class="d-flex justify-content-end gap-2 pt-2 border-top">
+        <a href="/users/" class="btn btn-rm-outline btn-sm px-3">Cancel</a>
+        <button type="submit" class="btn btn-rm-primary btn-sm px-4 fw-semibold">
+          <i class="bi bi-check2-circle me-1"></i> {% if user %}Save Changes{% else %}Create User Account{% endif %}
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}

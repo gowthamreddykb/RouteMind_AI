@@ -1,0 +1,15 @@
+Rank,Feature,Supporting Finding,Prediction Stage,Availability,Evidence Strength,Leakage Risk,Recommendation
+1,Shipping Mode (+ scheduled days),"Late rate First Class: 100.0% (n=9,602); Second Class: 80.0% (n=12,256); Same Day: 48.4% (n=3,407); Standard Class: 39.9% (n=37,632); V=0.48; Kruskal eta^2=0.23",Order creation / dispatch,Order creation if chosen at checkout,Strong,Low,Approved
+2,Ordered after noon x Same Day,"Same Day: 0% late before 12:00, 100% after (n=3,407); rule stable in all 4 years",Order creation / dispatch,Order creation,Strong,Low,Approved
+3,Order hour (alone),"V=0.064, entirely explained by Same Day cutoff",Order creation,Order creation,Moderate (via mode only),Low,Conditional
+4,Order total quantity / items,V=0.004; Spearman -0.0004,Order creation,Order creation,None found,Low,Conditional (ablation only)
+5,Order total value,V=0.007; Spearman -0.003,Order creation,Order creation,None found,Low,Conditional (ablation only)
+6,Product category / department,V=0.016; 0 categories deviate after mode adjustment,Order creation,Order creation,None found,Low,Conditional (ablation only)
+7,Destination region / country / market,"V=0.022 (region), 0.034 (country); 0 groups deviate",Order creation,Order creation,None found,Medium if encoded on full data,Conditional (ablation only)
+8,Customer prior order count,No effect; 67.5% coverage,Order creation,Past-only,None found,Medium,Conditional (ablation only)
+9,Customer prior late rate,AUC 0.496; dispersion ratio 0.99,Order creation,Past-only,None (chance),High if full-data,Rejected
+10,Destination/category/mode history rates,Within-mode AUC 0.49-0.50,Order creation,Past-only,None (chance),High if full-data,Rejected
+11,Month / weekday / quarter,V<=0.011; monthly SD consistent with noise,Order creation,Order creation,None found,Low,Rejected
+12,Order volume features,V=0.0002; rho=-0.007,Order creation,Past-only counts,None found,High if whole-day totals,Rejected
+13,Route / carrier / warehouse features,Fields absent,Dispatch,Not available,Cannot assess,-,Rejected (unavailable)
+14,"Late_delivery_risk, Delivery Status, real days, shipping date, Order Status",Define or follow the outcome,-,After delivery / after order,-,Direct / temporal,Rejected (leakage)

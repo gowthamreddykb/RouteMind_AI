@@ -1,0 +1,54 @@
+Column,Availability stage,Model 2 verdict,Reason
+Type,Order creation,Allowed (carried over from order creation),Order-creation fields remain known at dispatch
+Days for shipping (real),After delivery,Forbidden (leakage),Known only after delivery
+Days for shipment (scheduled),Order creation (if mode chosen),Conditional (carried over from order creation),Order-creation fields remain known at dispatch
+Benefit per order,Unknown,Forbidden (unknown availability),Reject (post-sale finance)
+Sales per customer,Order creation,Allowed (carried over from order creation),Order-creation fields remain known at dispatch
+Delivery Status,After delivery,Forbidden (leakage),Known only after delivery
+Late_delivery_risk,After delivery,Forbidden (leakage),Known only after delivery
+Category Id,Order creation,Excluded,Same as Product Category Id
+Category Name,Order creation,Allowed (carried over from order creation),Order-creation fields remain known at dispatch
+Customer City,Order creation,Allowed (carried over from order creation),Order-creation fields remain known at dispatch
+Customer Country,Order creation,Excluded,Low value (2 values)
+Customer Email,n/a,Excluded,Drop
+Customer Fname,n/a,Excluded,Drop (PII)
+Customer Id,Order creation,Allowed (carried over from order creation),Order-creation fields remain known at dispatch
+Customer Lname,n/a,Excluded,Drop (PII)
+Customer Password,n/a,Excluded,Drop
+Customer Segment,Order creation,Allowed (carried over from order creation),Order-creation fields remain known at dispatch
+Customer State,Order creation,Allowed (carried over from order creation),Order-creation fields remain known at dispatch
+Customer Street,n/a,Excluded,"Drop (PII, high cardinality)"
+Customer Zipcode,Order creation,Allowed (carried over from order creation),Order-creation fields remain known at dispatch
+Department Id,Order creation,Excluded,Redundant with Department Name
+Department Name,Order creation,Allowed (carried over from order creation),Order-creation fields remain known at dispatch
+Latitude,Order creation,Allowed (carried over from order creation),Order-creation fields remain known at dispatch
+Longitude,Order creation,Allowed (carried over from order creation),Order-creation fields remain known at dispatch
+Market,Order creation,Allowed (carried over from order creation),Order-creation fields remain known at dispatch
+Order City,Order creation,Allowed (carried over from order creation),Order-creation fields remain known at dispatch
+Order Country,Order creation,Allowed (carried over from order creation),Order-creation fields remain known at dispatch
+Order Customer Id,Order creation,Excluded,Redundant
+order date (DateOrders),Order creation,Allowed (carried over from order creation),Order-creation fields remain known at dispatch
+Order Id,Order creation,Allowed (carried over from order creation),Order-creation fields remain known at dispatch
+Order Item Cardprod Id,Order creation,Excluded,Redundant
+Order Item Discount,Order creation (if discount known),Conditional (carried over from order creation),Order-creation fields remain known at dispatch
+Order Item Discount Rate,Order creation (if discount known),Conditional (carried over from order creation),Order-creation fields remain known at dispatch
+Order Item Id,Order creation,Excluded,Identifier
+Order Item Product Price,Order creation,Allowed (carried over from order creation),Order-creation fields remain known at dispatch
+Order Item Profit Ratio,Unknown,Forbidden (unknown availability),Reject (post-sale finance)
+Order Item Quantity,Order creation,Allowed (carried over from order creation),Order-creation fields remain known at dispatch
+Sales,Order creation,Allowed (carried over from order creation),Order-creation fields remain known at dispatch
+Order Item Total,Order creation,Allowed (carried over from order creation),Order-creation fields remain known at dispatch
+Order Profit Per Order,Unknown,Forbidden (unknown availability),Reject
+Order Region,Order creation,Allowed (carried over from order creation),Order-creation fields remain known at dispatch
+Order State,Order creation,Allowed (carried over from order creation),Order-creation fields remain known at dispatch
+Order Status,After order creation,Forbidden (temporal leakage),Snapshot after order creation
+Order Zipcode,n/a,Excluded,Reject (missing)
+Product Card Id,Order creation,Excluded,Key
+Product Category Id,Order creation,Excluded,Redundant
+Product Description,n/a,Excluded,Drop
+Product Image,n/a,Excluded,Drop
+Product Name,Order creation,Allowed (carried over from order creation),Order-creation fields remain known at dispatch
+Product Price,Order creation,Allowed (carried over from order creation),Order-creation fields remain known at dispatch
+Product Status,n/a,Excluded,Drop
+shipping date (DateOrders),After delivery,Forbidden (leakage),Known only after delivery
+Shipping Mode,Order creation (if selected at checkout),Conditional (carried over from order creation),Order-creation fields remain known at dispatch

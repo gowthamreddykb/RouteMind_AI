@@ -1,0 +1,25 @@
+feature,type,psi,ks_stat,ks_pvalue,missing_rate_ref,missing_rate_live,unseen_share_live,alert,action
+scheduled_days,numeric,0.00021184206620439563,0.002390512292766808,0.9996970063856038,0.0,0.0,,OK,
+order_value,numeric,0.07042020626396281,0.113788896676288,1.0941091367684038e-240,0.0,0.0,,OK,
+Order Item Product Price,numeric,0.10287605955796515,0.15921649005999094,0.0,0.0,0.0,,WATCH,
+Order Item Quantity,numeric,0.14913307857648642,0.18657507081431401,0.0,0.0,0.0,,WATCH,
+Order Item Discount Rate,numeric,3.613973514226916e-05,0.0024794864655035553,0.9994071730846744,0.0,0.0,,OK,
+order_year,numeric,4.553677805490947,0.990719238365991,0.0,0.0,0.0,,INVESTIGATE,Investigate data/model; retraining needs controlled approval (never automatic)
+order_month,numeric,1.9276790781025908,0.33925192848571656,0.0,0.0,0.0,,INVESTIGATE,Investigate data/model; retraining needs controlled approval (never automatic)
+order_day,numeric,0.009126615674384247,0.04359895887128856,1.2813596181390536e-35,0.0,0.0,,OK,
+order_day_of_week,numeric,0.00010796690871692245,0.0020932285618110447,0.999983646866605,0.0,0.0,,OK,
+order_hour,numeric,0.0005463656904595001,0.0040025084070520744,0.8831651100947948,0.0,0.0,,OK,
+is_weekend,numeric,0.0,0.0002848462609859048,1.0,0.0,0.0,,OK,
+Type,categorical,0.00027398113547884377,,,0.0,0.0,0.0,OK,
+Shipping Mode,categorical,0.00026371994180041065,,,0.0,0.0,0.0,OK,
+Category Name,categorical,3.1582546829537854,,,0.0,0.0,0.34059344655499246,INVESTIGATE,Investigate data/model; retraining needs controlled approval (never automatic)
+Department Name,categorical,1.3843194225857824,,,0.0,0.0,0.17594491082827188,INVESTIGATE,Investigate data/model; retraining needs controlled approval (never automatic)
+Product Name,categorical,3.4131213919324024,,,0.0,0.0,0.3707686951139309,INVESTIGATE,Investigate data/model; retraining needs controlled approval (never automatic)
+Customer Segment,categorical,4.2963932229440095e-05,,,0.0,0.0,0.0,OK,
+Customer City,categorical,0.08277497475398597,,,0.0,0.0,0.00011605864830360942,OK,
+Customer Country,categorical,0.00033104833170289423,,,0.0,0.0,0.0,OK,
+Customer State,categorical,0.006123070307778822,,,0.0,0.0,0.00011605864830360942,OK,
+Market,categorical,3.2244776283411323,,,0.0,0.0,0.0,INVESTIGATE,Investigate data/model; retraining needs controlled approval (never automatic)
+Order Country,categorical,3.90894842313916,,,0.0,0.0,0.0,INVESTIGATE,Investigate data/model; retraining needs controlled approval (never automatic)
+Order Region,categorical,3.9226627987489135,,,0.0,0.0,0.0,INVESTIGATE,Investigate data/model; retraining needs controlled approval (never automatic)
+PREDICTED_PROBABILITY,prediction,0.1193686541816806,0.1345930139376062,6.765116841575859e-205,0.0,0.0,,WATCH,

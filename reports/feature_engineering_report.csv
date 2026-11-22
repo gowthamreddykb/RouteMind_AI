@@ -1,0 +1,27 @@
+feature,source_column,kind,dtype,missing_count,min,max,note
+scheduled_days,Days for shipment (scheduled),engineered,int64,0.0,0,4,Renamed raw column (raw column not kept: avoids duplicate)
+order_value,Sales,engineered,float64,0.0,9.989999771,1999.98999,Renamed Sales (avoids duplicate)
+Order Item Product Price,Order Item Product Price,passed through (standardised),float64,0.0,9.989999771,1999.98999,
+Order Item Quantity,Order Item Quantity,passed through (standardised),int64,0.0,1,5,
+Order Item Discount Rate,Order Item Discount Rate,passed through (standardised),float64,0.0,0.0,0.25,
+order_year,order date (DateOrders),engineered,float64,0.0,2015.0,2018.0,
+order_month,order date (DateOrders),engineered,float64,0.0,1.0,12.0,
+order_day,order date (DateOrders),engineered,float64,0.0,1.0,31.0,
+order_day_of_week,order date (DateOrders),engineered,float64,0.0,0.0,6.0,
+order_hour,order date (DateOrders),engineered,float64,0.0,0.0,23.0,
+is_weekend,order date (DateOrders),engineered,float64,0.0,0.0,1.0,
+Type,Type,passed through (standardised),str,0.0,,,
+Shipping Mode,Shipping Mode,passed through (standardised),str,0.0,,,
+Category Name,Category Name,passed through (standardised),str,0.0,,,
+Department Name,Department Name,passed through (standardised),str,0.0,,,
+Product Name,Product Name,passed through (standardised),str,0.0,,,
+Customer Segment,Customer Segment,passed through (standardised),str,0.0,,,
+Customer City,Customer City,passed through (standardised),str,0.0,,,
+Customer Country,Customer Country,passed through (standardised),str,0.0,,,
+Customer State,Customer State,passed through (standardised),str,0.0,,,
+Market,Market,passed through (standardised),str,0.0,,,
+Order Country,Order Country,passed through (standardised),str,0.0,,,
+Order Region,Order Region,passed through (standardised),str,0.0,,,
+(not created) order_quarter,order date (DateOrders),skipped,,,,,Redundant with order_month
+(not created) discount_level,Order Item Discount Rate,skipped,,,,,Rate has only 18 distinct values; bucketing adds no information
+(not created) dispatch_* / hours_to_dispatch,shipping date (DateOrders),skipped,,,,,Source column is not a real dispatch timestamp (leakage) - see audits

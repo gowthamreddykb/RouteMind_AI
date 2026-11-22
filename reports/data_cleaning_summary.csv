@@ -1,0 +1,16 @@
+step,rows_or_values_affected,detail
+target validation,0,Late_delivery_risk contains only 0/1; target not modified
+duplicate rows,0,exact duplicate rows removed (0 found)
+target consistency per order,0,no order has conflicting labels
+text standardisation,132750,collapsed repeated spaces (e.g. 'South of  USA'); Customer Country 'EE. UU.' -> 'United States'
+invalid order dates,0,rows with unparseable order date removed (0 found)
+postal codes,0,stored as strings; missing values left missing (Order Zipcode 86.24% missing; excluded from model)
+range check: Order Item Quantity<=0,0,violations found
+range check: Order Item Product Price<0,0,violations found
+range check: Sales<0,0,violations found
+"range check: Discount rate outside [0,1]",0,violations found
+fully-missing columns dropped,1,['Product Description']
+personal/credential columns dropped from cleaned file,5,Customer Email/Password/Fname/Lname/Street removed so personal data is not propagated downstream
+remaining missing values,155682,"{'Customer Zipcode': 3, 'Order Zipcode': 155679} - numeric: median / categorical: 'Unknown' inside the pipeline (train-fitted)"
+"label limitation (kept, documented)",7754,CANCELED/SUSPECTED_FRAUD orders are always labelled 0; not removable at order time (status unknown) - treated as label noise
+final row count,180519,0 rows removed in total; Order Id / Order Item Id preserved for grouping

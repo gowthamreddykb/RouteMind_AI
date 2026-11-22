@@ -1,0 +1,317 @@
+transformed_feature,original_feature,mean_abs_shap
+Type_TRANSFER,Type,0.45709223
+Order Country_Camerún,Order Country,0.39326763
+order_hour,order_hour,0.3319
+Customer City_Bayamon,Customer City,0.32410797
+Customer City_El Paso,Customer City,0.25734785
+Order Country_República Democrática del Congo,Order Country,0.24776994
+Category Name_Lacrosse,Category Name,0.24231414
+Product Name_Hirzl Women's Soffft Flex Golf Glove,Product Name,0.21855088
+Order Country_Bélgica,Order Country,0.213288
+Customer State_NY,Customer State,0.209832
+Order Country_Suecia,Order Country,0.20434669
+scheduled_days,scheduled_days,0.1978452
+Customer City_Long Beach,Customer City,0.19027978
+order_day_of_week,order_day_of_week,0.17707941
+Customer City_Sacramento,Customer City,0.15630183
+order_month,order_month,0.1538365
+Order Region_West of USA,Order Region,0.15275083
+order_day,order_day,0.15227702
+Customer City_Houston,Customer City,0.14520971
+Customer City_Saint Paul,Customer City,0.12911615
+Customer City_San Diego,Customer City,0.1258374
+Market_Africa,Market,0.11980037
+Order Country_Canada,Order Country,0.11880613
+Order Country_España,Order Country,0.115935124
+Order Country_El Salvador,Order Country,0.10959594
+Order Country_Zambia,Order Country,0.10756283
+Customer City_Miami,Customer City,0.102109864
+Order Country_Alemania,Order Country,0.100811
+Customer State_CA,Customer State,0.100632004
+Order Country_Myanmar (Birmania),Order Country,0.10031393
+Customer City_Orlando,Customer City,0.099265315
+Order Region_South America,Order Region,0.09790925
+Customer Segment_Corporate,Customer Segment,0.093540244
+Order Country_Mozambique,Order Country,0.093218364
+Customer City_Marietta,Customer City,0.09089733
+Customer State_IL,Customer State,0.090070955
+Order Country_Panamá,Order Country,0.08938399
+Customer City_Santa Ana,Customer City,0.08232883
+Customer City_Dallas,Customer City,0.07719608
+Customer State_AZ,Customer State,0.076305024
+Customer State_GA,Customer State,0.07236572
+Order Country_Japón,Order Country,0.07198454
+Customer State_CO,Customer State,0.070630595
+Order Region_East of USA,Order Region,0.06767858
+Customer City_Caguas,Customer City,0.06379716
+Customer City_Hayward,Customer City,0.063109286
+Market_LATAM,Market,0.06276571
+Order Country_Costa de Marfil,Order Country,0.05905095
+Customer City_Buffalo,Customer City,0.057392698
+Order Region_Southern Europe,Order Region,0.053863313
+Order Item Discount Rate,Order Item Discount Rate,0.053702977
+Type_CASH,Type,0.052445114
+Customer City_Austin,Customer City,0.05111795
+Customer City_Fort Worth,Customer City,0.049247604
+Customer State_NJ,Customer State,0.04811282
+Order Country_Rumania,Order Country,0.04621255
+Customer City_Antioch,Customer City,0.044141375
+Order Region_North Africa,Order Region,0.04320145
+Order Country_Malasia,Order Country,0.042972405
+Customer City_Elmhurst,Customer City,0.042949717
+Type_DEBIT,Type,0.042541273
+Order Country_Polonia,Order Country,0.042326625
+Customer City_Albuquerque,Customer City,0.041047007
+Customer State_CT,Customer State,0.04080299
+Customer Segment_Home Office,Customer Segment,0.040381115
+Customer State_MD,Customer State,0.04031784
+Customer State_DC,Customer State,0.040030226
+Customer Segment_Consumer,Customer Segment,0.037957735
+Customer City_Aurora,Customer City,0.03794527
+Customer State_TN,Customer State,0.03712158
+Order Region_South Asia,Order Region,0.036255952
+Customer City_Columbus,Customer City,0.036252752
+Order Country_Guatemala,Order Country,0.035404317
+Order Country_Colombia,Order Country,0.035104413
+Customer City_infrequent_sklearn,Customer City,0.03440384
+Order Country_Nigeria,Order Country,0.03412776
+Order Country_Senegal,Order Country,0.033692118
+Customer State_TX,Customer State,0.033280723
+order_value,order_value,0.032857034
+Order Country_Irán,Order Country,0.032682795
+Order Country_infrequent_sklearn,Order Country,0.03258807
+Customer State_MN,Customer State,0.032537017
+Order Country_Turquía,Order Country,0.031364452
+Order Country_Cuba,Order Country,0.03128634
+Order Country_Nicaragua,Order Country,0.031041538
+Customer City_Atlanta,Customer City,0.030703396
+order_year,order_year,0.0294328
+Customer City_West Chester,Customer City,0.029432096
+Customer State_UT,Customer State,0.028731419
+Order Country_Kenia,Order Country,0.02807349
+Customer City_Chicago,Customer City,0.02803968
+Market_Europe,Market,0.027573124
+Customer State_OR,Customer State,0.027538883
+Order Country_Irak,Order Country,0.02561765
+Order Region_Oceania,Order Region,0.025127826
+Customer State_WA,Customer State,0.024976255
+Order Country_Brasil,Order Country,0.024569562
+Customer City_Jersey City,Customer City,0.024493204
+Order Country_Tanzania,Order Country,0.02399044
+Customer City_Saint Louis,Customer City,0.023438727
+Order Region_US Center,Order Region,0.023288276
+Customer City_Escondido,Customer City,0.022989227
+Order Region_Central Africa,Order Region,0.022874685
+Customer State_HI,Customer State,0.022609822
+Order Region_West Africa,Order Region,0.022290671
+Product Name_Team Golf St. Louis Cardinals Putter Grip,Product Name,0.021631015
+Customer State_KY,Customer State,0.021401938
+Order Country_Rusia,Order Country,0.021171106
+Order Country_Marruecos,Order Country,0.021124026
+Customer City_San Antonio,Customer City,0.020868555
+Order Country_Israel,Order Country,0.020838903
+Customer City_Laredo,Customer City,0.02059929
+Customer City_Bakersfield,Customer City,0.02047226
+Customer State_PA,Customer State,0.020459538
+Customer City_Tampa,Customer City,0.01858555
+Order Country_China,Order Country,0.018500237
+Customer State_MO,Customer State,0.018210774
+Order Country_Pakistán,Order Country,0.018027253
+Order Country_Italia,Order Country,0.017837942
+Order Country_República Dominicana,Order Country,0.01777576
+Order Country_Indonesia,Order Country,0.017553506
+Order Country_Australia,Order Country,0.017193282
+Type_PAYMENT,Type,0.01692295
+Customer State_NV,Customer State,0.016701644
+Order Country_Argelia,Order Country,0.015848571
+Customer City_Mission Viejo,Customer City,0.01578368
+Order Country_Angola,Order Country,0.015520372
+Order Region_Central America,Order Region,0.015342451
+Customer State_FL,Customer State,0.0153340455
+Order Item Product Price,Order Item Product Price,0.015079397
+Order Country_India,Order Country,0.015062503
+Customer City_Corona,Customer City,0.014990957
+Customer City_Fremont,Customer City,0.014439868
+Market_Pacific Asia,Market,0.013774716
+Order Country_Haití,Order Country,0.013492925
+Customer City_Brooklyn,Customer City,0.0130410995
+Customer City_Cleveland,Customer City,0.012965733
+Customer City_Los Angeles,Customer City,0.012446396
+Customer City_Moreno Valley,Customer City,0.012095876
+Order Region_Caribbean,Order Region,0.01156995
+Customer City_New York,Customer City,0.011522611
+Customer State_LA,Customer State,0.010943407
+Customer State_KS,Customer State,0.010306227
+Order Country_Honduras,Order Country,0.009804242
+Market_USCA,Market,0.0097871525
+Order Country_Noruega,Order Country,0.008866976
+Customer City_Memphis,Customer City,0.008856594
+Order Region_Northern Europe,Order Region,0.008416768
+Customer City_San Jose,Customer City,0.008303431
+Customer State_NC,Customer State,0.008189812
+Customer City_Fort Lauderdale,Customer City,0.008067195
+Order Region_Southeast Asia,Order Region,0.008058698
+Customer City_Bronx,Customer City,0.007386881
+Customer State_NM,Customer State,0.007275696
+Order Country_Bangladés,Order Country,0.0072211255
+Order Country_Egipto,Order Country,0.007134849
+Customer State_MA,Customer State,0.0064552166
+Order Country_Venezuela,Order Country,0.005998116
+Department Name_Golf,Department Name,0.0052624713
+Order Region_Western Europe,Order Region,0.0034365768
+Order Region_South of USA,Order Region,0.0033718492
+Order Country_Ghana,Order Country,0.0031442398
+Order Country_Arabia Saudí,Order Country,0.0028598444
+Order Region_Southern Africa,Order Region,0.0023588366
+Order Region_West Asia,Order Region,0.0020054649
+Order Item Quantity,Order Item Quantity,0.0017766628
+Department Name_Fan Shop,Department Name,0.0016469811
+Department Name_Outdoors,Department Name,0.0016324259
+Customer State_infrequent_sklearn,Customer State,0.0014213361
+Customer Country_Puerto Rico,Customer Country,0.0012456815
+Order Country_Reino Unido,Order Country,0.0010556931
+Order Region_Eastern Europe,Order Region,0.0007239644
+Order Country_México,Order Country,3.9537972e-05
+Category Name_Boxing & MMA,Category Name,0.0
+Category Name_Baseball & Softball,Category Name,0.0
+Category Name_Camping & Hiking,Category Name,0.0
+Category Name_Cleats,Category Name,0.0
+Category Name_Electronics,Category Name,0.0
+Category Name_Fishing,Category Name,0.0
+Order Region_Eastern Asia,Order Region,0.0
+Customer City_Philadelphia,Customer City,0.0
+Customer City_Phoenix,Customer City,0.0
+Category Name_Cardio Equipment,Category Name,0.0
+Shipping Mode_First Class,Shipping Mode,0.0
+Shipping Mode_Second Class,Shipping Mode,0.0
+Shipping Mode_Standard Class,Shipping Mode,0.0
+Category Name_Accessories,Category Name,0.0
+Shipping Mode_Same Day,Shipping Mode,0.0
+Customer City_San Francisco,Customer City,0.0
+Customer City_Salt Lake City,Customer City,0.0
+Customer City_Riverside,Customer City,0.0
+Customer City_Richmond,Customer City,0.0
+Customer City_Portland,Customer City,0.0
+Customer City_Pompano Beach,Customer City,0.0
+Customer City_Sugar Land,Customer City,0.0
+Customer City_San Juan,Customer City,0.0
+Customer Country_United States,Customer Country,0.0
+Customer City_Lakewood,Customer City,0.0
+Customer City_Lancaster,Customer City,0.0
+Customer City_Las Vegas,Customer City,0.0
+Customer City_Tempe,Customer City,0.0
+Customer City_Tucson,Customer City,0.0
+Customer City_Virginia Beach,Customer City,0.0
+Customer City_Simi Valley,Customer City,0.0
+Customer City_Detroit,Customer City,0.0
+Customer City_Elgin,Customer City,0.0
+Customer City_Florissant,Customer City,0.0
+Customer City_Fresno,Customer City,0.0
+Customer City_Hialeah,Customer City,0.0
+Customer City_Honolulu,Customer City,0.0
+Customer City_Anaheim,Customer City,0.0
+Customer City_Baltimore,Customer City,0.0
+Customer State_IN,Customer State,0.0
+Customer State_MI,Customer State,0.0
+Product Name_Under Armour Girls' Toddler Spine Surge Runni,Product Name,0.0
+Product Name_Under Armour Hustle Storm Medium Duffle Bag,Product Name,0.0
+Customer City_New Orleans,Customer City,0.0
+Customer City_Newark,Customer City,0.0
+Customer City_Oceanside,Customer City,0.0
+Customer City_Washington,Customer City,0.0
+Product Name_Under Armour Women's Ignite PIP VI Slide,Product Name,0.0
+Product Name_Under Armour Women's Ignite Slide,Product Name,0.0
+Product Name_adidas Kids' F5 Messi FG Soccer Cleat,Product Name,0.0
+Product Name_Under Armour Women's Micro G Skulpt Running S,Product Name,0.0
+Product Name_adidas Men's Germany Black Crest Away Tee,Product Name,0.0
+Product Name_adidas Youth Germany Black/Red Away Match Soc,Product Name,0.0
+Customer State_OH,Customer State,0.0
+Product Name_adidas Men's F10 Messi TRX FG Soccer Cleat,Product Name,0.0
+Customer State_PR,Customer State,0.0
+Customer State_SC,Customer State,0.0
+Customer State_VA,Customer State,0.0
+Customer State_WI,Customer State,0.0
+Product Name_Nike Women's Tempo Shorts,Product Name,0.0
+Product Name_O'Brien Men's Neoprene Life Vest,Product Name,0.0
+Product Name_Pelican Sunstream 100 Kayak,Product Name,0.0
+Product Name_Perfect Fitness Perfect Rip Deck,Product Name,0.0
+Product Name_TYR Boys' Team Digi Jammer,Product Name,0.0
+Product Name_Team Golf New England Patriots Putter Grip,Product Name,0.0
+Product Name_Team Golf Pittsburgh Steelers Putter Grip,Product Name,0.0
+Product Name_Team Golf San Francisco Giants Putter Grip,Product Name,0.0
+Product Name_Team Golf Tennessee Volunteers Putter Grip,Product Name,0.0
+Product Name_Team Golf Texas Longhorns Putter Grip,Product Name,0.0
+Product Name_Titleist Pro V1 High Numbers Personalized Gol,Product Name,0.0
+Product Name_Titleist Pro V1x Golf Balls,Product Name,0.0
+Product Name_Titleist Pro V1x High Numbers Golf Balls,Product Name,0.0
+Product Name_Titleist Pro V1x High Numbers Personalized Go,Product Name,0.0
+Product Name_Top Flite Women's 2014 XL Hybrid,Product Name,0.0
+Order Country_Argentina,Order Country,0.0
+Product Name_Under Armour Kids' Mercenary Slide,Product Name,0.0
+Product Name_Under Armour Men's Compression EV SL Slide,Product Name,0.0
+Product Name_Under Armour Men's Tech II T-Shirt,Product Name,0.0
+Customer City_Ontario,Customer City,0.0
+Order Country_Estados Unidos,Order Country,0.0
+Order Country_Corea del Sur,Order Country,0.0
+Order Country_Chile,Order Country,0.0
+Order Country_Austria,Order Country,0.0
+Product Name_Glove It Women's Imperial Golf Glove,Product Name,0.0
+Order Country_Francia,Order Country,0.0
+Product Name_Glove It Imperial Golf Towel,Product Name,0.0
+Order Country_Filipinas,Order Country,0.0
+Product Name_Hirzl Women's Hybrid Golf Glove,Product Name,0.0
+Product Name_LIJA Women's Eyelet Sleeveless Golf Polo,Product Name,0.0
+Product Name_Nike Dri-FIT Crew Sock 6 Pack,Product Name,0.0
+Product Name_Nike Men's CJ Elite 2 TD Football Cleat,Product Name,0.0
+Product Name_Nike Men's Comfort 2 Slide,Product Name,0.0
+Product Name_Glove It Women's Mod Oval 3-Zip Carry All Gol,Product Name,0.0
+Product Name_Glove It Women's Mod Oval Golf Glove,Product Name,0.0
+Product Name_Glove It Urban Brick Golf Towel,Product Name,0.0
+Product Name_Nike Men's Free 5.0+ Running Shoe,Product Name,0.0
+Product Name_Nike Men's Dri-FIT Victory Golf Polo,Product Name,0.0
+Product Name_Nike Men's Deutschland Weltmeister Winners Bl,Product Name,0.0
+Order Country_Irlanda,Order Country,0.0
+Order Country_Kazajistán,Order Country,0.0
+Department Name_Apparel,Department Name,0.0
+Department Name_Fitness,Department Name,0.0
+Product Name_Nike Women's Legend V-Neck T-Shirt,Product Name,0.0
+Department Name_Footwear,Department Name,0.0
+Product Name_Bag Boy Beverage Holder,Product Name,0.0
+Product Name_Bridgestone e6 Straight Distance NFL Carolina,Product Name,0.0
+Product Name_Bridgestone e6 Straight Distance NFL San Dieg,Product Name,0.0
+Product Name_Bridgestone e6 Straight Distance NFL Tennesse,Product Name,0.0
+Product Name_Clicgear 8.0 Shoe Brush,Product Name,0.0
+Product Name_Clicgear Rovic Cooler Bag,Product Name,0.0
+Product Name_Hirzl Men's Hybrid Golf Glove,Product Name,0.0
+Product Name_Columbia Men's PFG Anchor Tough T-Shirt,Product Name,0.0
+Product Name_Diamondback Women's Serene Classic Comfort Bi,Product Name,0.0
+Product Name_Field & Stream Sportsman 16 Gun Fire Safe,Product Name,0.0
+Product Name_ENO Atlas Hammock Straps,Product Name,0.0
+Order Country_Nueva Zelanda,Order Country,0.0
+Order Country_Países Bajos,Order Country,0.0
+Order Country_Perú,Order Country,0.0
+Order Country_Singapur,Order Country,0.0
+Order Country_SudAfrica,Order Country,0.0
+Category Name_Fitness Accessories,Category Name,0.0
+Category Name_Girls' Apparel,Category Name,0.0
+Category Name_Golf Apparel,Category Name,0.0
+Category Name_Golf Balls,Category Name,0.0
+Category Name_Golf Gloves,Category Name,0.0
+Category Name_Golf Shoes,Category Name,0.0
+Category Name_Hockey,Category Name,0.0
+Category Name_Hunting & Shooting,Category Name,0.0
+Category Name_Indoor/Outdoor Games,Category Name,0.0
+Category Name_Men's Footwear,Category Name,0.0
+Category Name_Shop By Sport,Category Name,0.0
+Category Name_Tennis & Racquet,Category Name,0.0
+Category Name_Trade-In,Category Name,0.0
+Category Name_Water Sports,Category Name,0.0
+Category Name_Women's Apparel,Category Name,0.0
+Order Country_Sudán,Order Country,0.0
+Order Country_Tailandia,Order Country,0.0
+Order Country_Ucrania,Order Country,0.0
+Order Country_Vietnam,Order Country,0.0
+Order Region_Canada,Order Region,0.0
+Order Region_Central Asia,Order Region,0.0
+Order Region_East Africa,Order Region,0.0
+is_weekend,is_weekend,0.0

@@ -1,0 +1,4 @@
+table,columns
+model_registry,"model_name, model_version, algorithm, target_column, feature_list, model_file_path, preprocessing_version, training_rows, accuracy, precision_score, recall_score, f1_score, roc_auc, pr_auc, decision_threshold, trained_at, is_active"
+model_scores,"shipment_id, model_id, predicted_probability, predicted_class, risk_level, decision_threshold, scoring_timestamp, prediction_notes"
+risk_factors,"feature_name, feature_value, contribution_value, contribution_direction, explanation"

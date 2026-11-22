@@ -1,0 +1,151 @@
+Days for shipment (scheduled),Benefit per order,Sales per customer,Order Item Discount Rate,Order Item Product Price,Order Item Quantity,Order Item Total,Shipping Mode,Customer Segment,Order Region,Category Name,Department Name,Late_risk
+4,178.5899963,379.980011,0.050000001,399.980011,1,379.980011,Standard Class,Home Office,Central America,Fishing,Fan Shop,1
+4,87.38999939,189.9799957,0.050000001,99.98999786,2,189.9799957,Standard Class,Home Office,Central America,Cardio Equipment,Footwear,0
+2,25.73999977,128.6900024,0.01,129.9900055,1,128.6900024,Second Class,Consumer,Eastern Europe,Men's Footwear,Apparel,1
+4,86.30999756,331.9700012,0.170000002,99.98999786,4,331.9700012,Standard Class,Home Office,East of USA,Cardio Equipment,Footwear,0
+4,71.05999756,377.980011,0.059999999,399.980011,1,377.980011,Standard Class,Home Office,South Asia,Fishing,Fan Shop,1
+4,29.39999962,293.9500122,0.02,59.99000168,5,293.9500122,Standard Class,Consumer,Central America,Cleats,Apparel,0
+4,0.0,371.980011,0.07,399.980011,1,371.980011,Standard Class,Corporate,Caribbean,Fishing,Fan Shop,0
+1,39.59999847,88.0,0.119999997,50.0,2,88.0,First Class,Consumer,Central America,Women's Apparel,Golf,1
+4,46.08000183,383.980011,0.039999999,399.980011,1,383.980011,Standard Class,Consumer,West Africa,Fishing,Fan Shop,1
+4,165.4299927,351.980011,0.119999997,399.980011,1,351.980011,Standard Class,Consumer,South America,Fishing,Fan Shop,0
+2,5.880000114,293.980011,0.02,299.980011,1,293.980011,Second Class,Home Office,Caribbean,Camping & Hiking,Fan Shop,1
+4,1.360000014,104.3700027,0.129999995,39.99000168,3,104.3700027,Standard Class,Corporate,Western Europe,Shop By Sport,Golf,1
+4,67.16999817,239.8999939,0.039999999,49.97999954,5,239.8999939,Standard Class,Consumer,Oceania,Indoor/Outdoor Games,Fan Shop,1
+4,125.2699966,260.9700012,0.129999995,99.98999786,3,260.9700012,Standard Class,Corporate,Southern Africa,Cardio Equipment,Footwear,0
+4,29.39999962,167.9900055,0.159999996,199.9900055,1,167.9900055,Standard Class,Consumer,East of USA,Water Sports,Fan Shop,0
+4,97.63999939,278.980011,0.07,299.980011,1,278.980011,Standard Class,Consumer,West Africa,Camping & Hiking,Fan Shop,1
+2,8.5,113.3700027,0.059999999,39.99000168,3,113.3700027,Second Class,Consumer,Western Europe,Shop By Sport,Golf,0
+4,84.48000336,175.9900055,0.119999997,199.9900055,1,175.9900055,Standard Class,Corporate,South America,Water Sports,Fan Shop,0
+4,198.4299927,472.4500122,0.059999999,99.98999786,5,472.4500122,Standard Class,Corporate,Northern Europe,As Seen on  TV!,Footwear,1
+1,-50.59999847,237.5599976,0.01,59.99000168,4,237.5599976,First Class,Corporate,South America,Cleats,Apparel,1
+4,-15.43999958,123.4899979,0.050000001,129.9900055,1,123.4899979,Standard Class,Consumer,South Asia,Men's Footwear,Apparel,1
+1,-6.25,250.0,0.0,50.0,5,250.0,First Class,Home Office,Central America,Women's Apparel,Golf,1
+4,62.04000092,132.0,0.119999997,50.0,3,132.0,Standard Class,Home Office,Western Europe,Women's Apparel,Golf,1
+1,1.440000057,14.39000034,0.100000001,15.98999977,1,14.39000034,First Class,Consumer,Central Africa,Trade-In,Outdoors,1
+1,21.0,299.980011,0.0,299.980011,1,299.980011,First Class,Consumer,North Africa,Camping & Hiking,Fan Shop,1
+0,17.20000076,272.9500122,0.090000004,59.99000168,5,272.9500122,Same Day,Consumer,Southeast Asia,Cleats,Apparel,0
+2,-7.949999809,139.4400024,0.07,49.97999954,3,139.4400024,Second Class,Home Office,East of USA,Indoor/Outdoor Games,Fan Shop,1
+0,3.0,149.9900055,0.25,199.9900055,1,149.9900055,Same Day,Consumer,Northern Europe,Water Sports,Fan Shop,1
+4,22.22999954,123.4899979,0.050000001,129.9900055,1,123.4899979,Standard Class,Corporate,Eastern Asia,Men's Footwear,Apparel,0
+4,-61.41999817,38.38999939,0.039999999,39.99000168,1,38.38999939,Standard Class,Corporate,Southeast Asia,Shop By Sport,Golf,0
+4,18.01000023,54.59000015,0.090000004,59.99000168,1,54.59000015,Standard Class,Consumer,Oceania,Cleats,Apparel,1
+4,100.7900009,359.980011,0.100000001,399.980011,1,359.980011,Standard Class,Corporate,Central America,Fishing,Fan Shop,0
+4,221.0200043,442.0400085,0.170000002,532.5800171,1,442.0400085,Standard Class,Consumer,Southeast Asia,Garden,Outdoors,0
+4,-95.44999695,165.9900055,0.170000002,199.9900055,1,165.9900055,Standard Class,Corporate,South America,Water Sports,Fan Shop,1
+4,-196.0099945,296.980011,0.01,299.980011,1,296.980011,Standard Class,Corporate,Oceania,Camping & Hiking,Fan Shop,0
+0,38.86999893,107.9800034,0.100000001,59.99000168,2,107.9800034,Same Day,Corporate,Oceania,Cleats,Apparel,0
+4,100.0400009,434.9599915,0.129999995,99.98999786,5,434.9599915,Standard Class,Consumer,Southeast Asia,Cardio Equipment,Footwear,1
+4,87.41999817,185.9900055,0.07,199.9900055,1,185.9900055,Standard Class,Corporate,Oceania,Water Sports,Fan Shop,1
+4,98.40000153,327.980011,0.180000007,399.980011,1,327.980011,Standard Class,Home Office,Northern Europe,Fishing,Fan Shop,1
+4,5.460000038,109.1800003,0.090000004,59.99000168,2,109.1800003,Standard Class,Consumer,Southern Europe,Cleats,Apparel,0
+0,81.62999725,170.0700073,0.059999999,59.99000168,3,170.0700073,Same Day,Consumer,US Center ,Cleats,Apparel,0
+2,-242.3899994,290.980011,0.029999999,299.980011,1,290.980011,Second Class,Consumer,Western Europe,Camping & Hiking,Fan Shop,1
+2,116.1900024,331.980011,0.170000002,399.980011,1,331.980011,Second Class,Corporate,US Center ,Fishing,Fan Shop,0
+4,128.6900024,395.980011,0.01,399.980011,1,395.980011,Standard Class,Corporate,Western Europe,Fishing,Fan Shop,0
+4,51.00999832,141.6900024,0.059999999,49.97999954,3,141.6900024,Standard Class,Home Office,Southern Europe,Indoor/Outdoor Games,Fan Shop,1
+4,27.20999908,113.3799973,0.059999999,59.99000168,2,113.3799973,Standard Class,Home Office,US Center ,Cleats,Apparel,0
+1,11.61999989,37.49000168,0.25,49.97999954,1,37.49000168,First Class,Consumer,Northern Europe,Indoor/Outdoor Games,Fan Shop,1
+1,22.95999908,82.0,0.180000007,50.0,2,82.0,First Class,Corporate,Western Europe,Women's Apparel,Golf,1
+4,113.5599976,335.980011,0.159999996,399.980011,1,335.980011,Standard Class,Corporate,Western Europe,Fishing,Fan Shop,0
+2,14.8199997,56.99000168,0.050000001,59.99000168,1,56.99000168,Second Class,Home Office,South Asia,Cleats,Apparel,1
+2,2.789999962,278.9500122,0.07,59.99000168,5,278.9500122,Second Class,Corporate,Oceania,Cleats,Apparel,1
+2,39.11999893,85.05000305,0.059999999,30.0,3,85.05000305,Second Class,Home Office,Southern Europe,Girls' Apparel,Golf,1
+4,6.690000057,223.1600037,0.07,59.99000168,4,223.1600037,Standard Class,Consumer,West Africa,Cleats,Apparel,0
+4,46.38999939,107.8899994,0.170000002,129.9900055,1,107.8899994,Standard Class,Consumer,Caribbean,Men's Footwear,Apparel,1
+1,7.829999924,104.3899994,0.129999995,119.9899979,1,104.3899994,First Class,Consumer,Western Europe,Golf Apparel,Outdoors,1
+4,65.41000366,139.1699982,0.129999995,39.99000168,4,139.1699982,Standard Class,Home Office,Eastern Asia,Shop By Sport,Golf,0
+4,31.75,117.5800018,0.02,59.99000168,2,117.5800018,Standard Class,Corporate,Eastern Europe,Cleats,Apparel,0
+4,53.27000046,239.9600067,0.200000003,59.99000168,5,239.9600067,Standard Class,Home Office,Central America,Cleats,Apparel,0
+4,76.04000092,224.9900055,0.25,299.980011,1,224.9900055,Standard Class,Consumer,East of USA,Camping & Hiking,Fan Shop,0
+4,117.5899963,391.980011,0.02,399.980011,1,391.980011,Standard Class,Home Office,Eastern Europe,Fishing,Fan Shop,0
+1,97.0,387.980011,0.029999999,399.980011,1,387.980011,First Class,Consumer,Central America,Fishing,Fan Shop,0
+4,174.7100067,363.980011,0.090000004,399.980011,1,363.980011,Standard Class,Consumer,Oceania,Fishing,Fan Shop,0
+4,14.68999958,41.97999954,0.159999996,49.97999954,1,41.97999954,Standard Class,Consumer,Central America,Indoor/Outdoor Games,Fan Shop,1
+4,55.86000061,116.3799973,0.029999999,59.99000168,2,116.3799973,Standard Class,Consumer,West of USA ,Cleats,Apparel,0
+2,14.68999958,41.97999954,0.159999996,49.97999954,1,41.97999954,Second Class,Corporate,Central America,Indoor/Outdoor Games,Fan Shop,1
+4,33.25,98.37999725,0.180000007,59.99000168,2,98.37999725,Standard Class,Consumer,Southern Europe,Cleats,Apparel,1
+2,37.43999863,116.9899979,0.100000001,129.9900055,1,116.9899979,Second Class,Corporate,South of  USA ,Men's Footwear,Apparel,0
+2,-49.09999847,371.980011,0.07,399.980011,1,371.980011,Second Class,Consumer,Western Europe,Fishing,Fan Shop,0
+4,58.08000183,159.9900055,0.200000003,199.9900055,1,159.9900055,Standard Class,Corporate,Southeast Asia,Water Sports,Fan Shop,0
+2,54.0,200.0,0.0,50.0,4,200.0,Second Class,Consumer,South America,Women's Apparel,Golf,1
+2,15.98999977,159.9400024,0.200000003,49.97999954,4,159.9400024,Second Class,Consumer,South of  USA ,Indoor/Outdoor Games,Fan Shop,1
+4,52.79000092,159.9600067,0.0,39.99000168,4,159.9600067,Standard Class,Consumer,West of USA ,Shop By Sport,Golf,1
+1,40.38999939,118.7799988,0.01,59.99000168,2,118.7799988,First Class,Consumer,Central America,Cleats,Apparel,1
+2,31.85000038,91.0,0.090000004,50.0,2,91.0,Second Class,Consumer,Southern Europe,Women's Apparel,Golf,1
+4,106.3899994,379.980011,0.050000001,399.980011,1,379.980011,Standard Class,Home Office,West Asia,Fishing,Fan Shop,0
+2,35.66999817,123.0,0.180000007,50.0,3,123.0,Second Class,Consumer,Western Europe,Women's Apparel,Golf,0
+0,16.37999916,163.7700043,0.090000004,59.99000168,3,163.7700043,Same Day,Consumer,Western Europe,Cleats,Apparel,1
+4,20.87000084,69.58000183,0.129999995,39.99000168,2,69.58000183,Standard Class,Consumer,West Africa,Shop By Sport,Golf,0
+4,4.090000153,46.47999954,0.07,49.97999954,1,46.47999954,Standard Class,Consumer,Eastern Asia,Indoor/Outdoor Games,Fan Shop,0
+2,52.91999817,189.0,0.059999999,50.0,4,189.0,Second Class,Consumer,Eastern Asia,Women's Apparel,Golf,1
+2,22.79999924,67.45999908,0.100000001,14.98999977,5,67.45999908,Second Class,Consumer,US Center ,Golf Balls,Outdoors,1
+4,-206.9900055,359.980011,0.100000001,399.980011,1,359.980011,Standard Class,Corporate,Southeast Asia,Fishing,Fan Shop,1
+4,115.1900024,239.9799957,0.200000003,299.980011,1,239.9799957,Standard Class,Consumer,South America,Camping & Hiking,Fan Shop,0
+4,37.06000137,327.980011,0.180000007,399.980011,1,327.980011,Standard Class,Consumer,Northern Europe,Fishing,Fan Shop,0
+4,90.66999817,278.980011,0.07,299.980011,1,278.980011,Standard Class,Consumer,South America,Camping & Hiking,Fan Shop,0
+4,52.65000153,116.9899979,0.100000001,129.9900055,1,116.9899979,Standard Class,Corporate,Central America,Men's Footwear,Apparel,0
+2,14.61999989,44.99000168,0.25,59.99000168,1,44.99000168,Second Class,Home Office,Southern Europe,Baseball & Softball,Fitness,1
+4,67.30000305,197.9499969,0.01,39.99000168,5,197.9499969,Standard Class,Consumer,Western Europe,Shop By Sport,Golf,0
+4,2.970000029,99.0,0.01,50.0,2,99.0,Standard Class,Consumer,Central America,Women's Apparel,Golf,0
+4,85.25,293.980011,0.02,299.980011,1,293.980011,Standard Class,Home Office,Caribbean,Camping & Hiking,Fan Shop,0
+2,15.56000042,124.5,0.170000002,30.0,5,124.5,Second Class,Corporate,South America,Shop By Sport,Golf,1
+1,-167.4199982,383.980011,0.039999999,399.980011,1,383.980011,First Class,Corporate,South America,Fishing,Fan Shop,1
+2,147.1900024,319.9700012,0.200000003,99.98999786,4,319.9700012,Second Class,Consumer,Western Europe,Cardio Equipment,Footwear,1
+1,57.40000153,124.7900009,0.039999999,129.9900055,1,124.7900009,First Class,Consumer,North Africa,Men's Footwear,Apparel,1
+1,-2.480000019,14.86999989,0.07,15.98999977,1,14.86999989,First Class,Consumer,Caribbean,Trade-In,Outdoors,1
+2,106.5899963,409.9599915,0.180000007,99.98999786,5,409.9599915,Second Class,Consumer,US Center ,Cardio Equipment,Footwear,1
+4,8.550000191,284.980011,0.050000001,299.980011,1,284.980011,Standard Class,Corporate,US Center ,Camping & Hiking,Fan Shop,1
+4,80.25,163.7700043,0.090000004,59.99000168,3,163.7700043,Standard Class,Consumer,Central America,Cleats,Apparel,0
+2,68.01999664,141.6999969,0.059999999,29.98999977,5,141.6999969,Second Class,Corporate,US Center ,Hunting & Shooting,Fan Shop,1
+1,82.77999878,179.9600067,0.100000001,39.99000168,5,179.9600067,First Class,Home Office,West of USA ,Shop By Sport,Golf,1
+4,-0.569999993,44.0,0.119999997,50.0,1,44.0,Standard Class,Home Office,West Asia,Women's Apparel,Golf,0
+4,-2.690000057,192.0,0.039999999,50.0,4,192.0,Standard Class,Corporate,Central America,Women's Apparel,Golf,0
+4,87.11000061,263.980011,0.119999997,299.980011,1,263.980011,Standard Class,Consumer,East of USA,Camping & Hiking,Fan Shop,1
+4,41.99000168,239.9600067,0.0,59.99000168,4,239.9600067,Standard Class,Consumer,Central America,Cleats,Apparel,0
+1,11.25,149.9900055,0.25,199.9900055,1,149.9900055,First Class,Consumer,South America,Water Sports,Fan Shop,1
+4,136.7599945,290.980011,0.029999999,299.980011,1,290.980011,Standard Class,Consumer,West of USA ,Camping & Hiking,Fan Shop,0
+2,87.93000031,209.3500061,0.029999999,215.8200073,1,209.3500061,Second Class,Corporate,Oceania,Women's Clothing,Apparel,0
+2,22.67000008,47.22999954,0.059999999,49.97999954,1,47.22999954,Second Class,Corporate,Southern Europe,Indoor/Outdoor Games,Fan Shop,1
+4,57.90999985,128.6900024,0.01,129.9900055,1,128.6900024,Standard Class,Consumer,Southeast Asia,Men's Footwear,Apparel,0
+4,43.65999985,90.94999695,0.090000004,19.98999977,5,90.94999695,Standard Class,Corporate,West Africa,Golf Balls,Outdoors,0
+4,60.18999863,122.8399963,0.059999999,129.9900055,1,122.8399963,Standard Class,Corporate,South America,Men's Footwear,Apparel,0
+1,25.98999977,79.97000122,0.200000003,49.97999954,2,79.97000122,First Class,Consumer,Central America,Indoor/Outdoor Games,Fan Shop,1
+4,23.19000053,79.97000122,0.200000003,49.97999954,2,79.97000122,Standard Class,Corporate,Central America,Indoor/Outdoor Games,Fan Shop,0
+2,-45.27000046,247.3999939,0.01,49.97999954,5,247.3999939,Second Class,Consumer,East Africa,Indoor/Outdoor Games,Fan Shop,1
+4,69.80999756,145.4400024,0.029999999,49.97999954,3,145.4400024,Standard Class,Consumer,Central America,Indoor/Outdoor Games,Fan Shop,1
+1,19.79999924,197.9900055,0.01,199.9900055,1,197.9900055,First Class,Consumer,South Asia,Water Sports,Fan Shop,1
+4,47.84999847,174.0,0.129999995,50.0,4,174.0,Standard Class,Consumer,South Asia,Women's Apparel,Golf,0
+0,100.0100021,217.4100037,0.129999995,49.97999954,5,217.4100037,Same Day,Home Office,East of USA,Indoor/Outdoor Games,Fan Shop,1
+4,23.53000069,110.4899979,0.150000006,129.9900055,1,110.4899979,Standard Class,Consumer,Eastern Europe,Men's Footwear,Apparel,0
+4,69.97000122,249.8999939,0.0,49.97999954,5,249.8999939,Standard Class,Consumer,Caribbean,Indoor/Outdoor Games,Fan Shop,0
+2,-252.1999969,152.8500061,0.02,51.99000168,3,152.8500061,Second Class,Consumer,South America,Electronics,Outdoors,1
+4,79.80999756,254.9799957,0.150000006,299.980011,1,254.9799957,Standard Class,Consumer,Central America,Camping & Hiking,Fan Shop,0
+4,42.0,149.9900055,0.25,99.98999786,2,149.9900055,Standard Class,Consumer,Western Europe,Cardio Equipment,Footwear,1
+2,90.0,200.0,0.0,50.0,4,200.0,Second Class,Consumer,West Asia,Women's Apparel,Golf,1
+4,-10.80000019,47.97999954,0.039999999,49.97999954,1,47.97999954,Standard Class,Home Office,Caribbean,Indoor/Outdoor Games,Fan Shop,0
+2,10.77000046,56.68999863,0.059999999,59.99000168,1,56.68999863,Second Class,Corporate,West of USA ,Cleats,Apparel,1
+2,18.29999924,70.37999725,0.119999997,39.99000168,2,70.37999725,Second Class,Consumer,Central America,Shop By Sport,Golf,1
+1,93.88999939,299.980011,0.0,299.980011,1,299.980011,First Class,Consumer,East of USA,Camping & Hiking,Fan Shop,1
+4,10.39999962,103.9899979,0.200000003,129.9900055,1,103.9899979,Standard Class,Corporate,US Center ,Men's Footwear,Apparel,1
+4,194.0200043,395.9599915,0.01,99.98999786,4,395.9599915,Standard Class,Corporate,West Asia,Cardio Equipment,Footwear,1
+0,21.87999916,83.18000031,0.200000003,51.99000168,2,83.18000031,Same Day,Corporate,East Africa,Electronics,Outdoors,0
+1,16.12999916,62.04000092,0.029999999,15.98999977,4,62.04000092,First Class,Consumer,East of USA,Trade-In,Outdoors,1
+4,38.22000122,147.0,0.02,50.0,3,147.0,Standard Class,Corporate,Central America,Women's Apparel,Golf,0
+1,91.0,325.0,0.0,65.0,5,325.0,First Class,Consumer,Central America,Golf Shoes,Outdoors,1
+4,-149.1600037,201.5700073,0.159999996,59.99000168,4,201.5700073,Standard Class,Consumer,Western Europe,Cleats,Apparel,0
+4,28.97999954,126.0,0.159999996,50.0,3,126.0,Standard Class,Corporate,West of USA ,Women's Apparel,Golf,1
+1,140.9900055,299.9899902,0.25,399.980011,1,299.9899902,First Class,Corporate,Central America,Fishing,Fan Shop,1
+2,8.020000458,91.18000031,0.050000001,47.99000168,2,91.18000031,Second Class,Consumer,Western Europe,Electronics,Outdoors,1
+2,38.24000168,101.9800034,0.150000006,59.99000168,2,101.9800034,Second Class,Home Office,South America,Cleats,Apparel,1
+2,21.59000015,44.97999954,0.100000001,49.97999954,1,44.97999954,Second Class,Corporate,Western Europe,Indoor/Outdoor Games,Fan Shop,0
+2,47.50999832,237.5599976,0.01,59.99000168,4,237.5599976,Second Class,Consumer,Central Asia,Cleats,Apparel,1
+4,3.359999895,167.9900055,0.159999996,199.9900055,1,167.9900055,Standard Class,Consumer,Southeast Asia,Water Sports,Fan Shop,0
+1,-11.81000042,236.25,0.059999999,50.0,5,236.25,First Class,Corporate,US Center ,Women's Apparel,Golf,1
+0,64.80000305,179.9900055,0.100000001,199.9900055,1,179.9900055,Same Day,Corporate,Central America,Water Sports,Fan Shop,0
+4,52.24000168,474.9500122,0.050000001,99.98999786,5,474.9500122,Standard Class,Home Office,West of USA ,Cardio Equipment,Footwear,1
+4,30.70000076,94.45999908,0.059999999,49.97999954,2,94.45999908,Standard Class,Corporate,Western Europe,Indoor/Outdoor Games,Fan Shop,0
+2,1.860000014,46.5,0.07,50.0,1,46.5,Second Class,Consumer,Central America,Women's Apparel,Golf,1
+4,12.60000038,48.47999954,0.029999999,49.97999954,1,48.47999954,Standard Class,Consumer,Western Europe,Indoor/Outdoor Games,Fan Shop,0
+2,48.59000015,269.9599915,0.100000001,59.99000168,5,269.9599915,Second Class,Consumer,Western Europe,Cleats,Apparel,1
+2,63.70000076,195.9900055,0.02,199.9900055,1,195.9900055,Second Class,Corporate,Southeast Asia,Water Sports,Fan Shop,1

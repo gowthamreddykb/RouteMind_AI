@@ -1,0 +1,21 @@
+Issue,Column(s),Affected,Base,% affected,Example,Possible reason,Recommended treatment,Affects ML?
+Entirely missing,Product Description,180519,180519,100.0,NaN,Not populated,Drop,No
+Mostly missing,Order Zipcode,155679,180519,86.24,NaN,Not collected for most destinations,Drop; do not impute,Yes if used
+Missing,Customer Zipcode,3,180519,0.0,NaN,Unknown,Leave missing; do not guess,Minor
+Constant/masked columns,"Customer Email, Customer Password, Product Status",722076,722076,100.0,XXXXXXXXX / 0,Anonymisation,Drop,No
+Country mapped to >1 Region,"Order Country, Order Region",8270,65752,12.58,"Estados Unidos -> ['West of USA ', 'US Center ', 'East of USA']",Region labels not derived from country,Use country and region separately; flag region as unreliable,Yes (geography features)
+Non-English country/state labels,"Order Country, Customer Country",65752,65752,100.0,"Estados Unidos, EE. UU.",Spanish export,Standardise labels before modelling,Cosmetic
+Canceled/fraud orders carry delivery days,Delivery Status,2855,65752,4.34,Shipping canceled with real>sched,Status set but timing fields populated; Late flag = 0,Exclude from the late-delivery target,Yes
+Order Status contradicts completed delivery,Order Status vs Delivery Status,93658,180519,51.88,PENDING_PAYMENT + Shipping on time,"Status is a snapshot, not synced with delivery",Do not use Order Status as an input,Yes (leakage risk)
+Real days differ from date gap,Days for shipping (real) vs dates,4657,180519,2.58,see below,Rounding/definition,Use stated real days; confirm definition,Minor
+Ship date before order date,dates,0,180519,0.0,none,-,-,No
+Non-positive quantity,Order Item Quantity,0,180519,0.0,none,-,-,No
+Non-positive price/sales,Product Price / Sales,0,180519,0.0,none,-,-,No
+Negative profit lines,Benefit per order,33784,180519,18.71,min -4275.0,Genuine losses or discounts,Keep; not an ML input,No
+Discount > sales,Order Item Discount,0,180519,0.0,none,-,-,No
+Order Profit Per Order varies within an order,Order Profit Per Order,45902,65752,69.81,differs per line,Mislabelled: it is per line,Do not treat as order-level,Minor
+Customer has >1 name/segment,Customer Id,0,20652,0.0,-,ID reuse or edits,Review; keep Customer Id as key,Minor
+Product Name -> >1 category,Product Name,0,118,0.0,-,-,-,No
+Product with >1 price,Product Card Id,0,118,0.0,-,-,-,No
+Multi-line orders (not a defect: needs aggregation),Order Id,45902,65752,69.81,up to 5 lines,Order contains several products,Aggregate to order level,Yes
+Scheduled days vs mode inconsistent,"Days for shipment (scheduled), Shipping Mode",0,4,0.0,none,Schedule is a function of mode,Treat as redundant,Yes (redundancy)

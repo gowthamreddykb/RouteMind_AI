@@ -1,0 +1,7 @@
+variant,hist_cols,matrix_columns,roc_auc,pr_auc,log_loss,brier,seconds
+base (23 order-time features),[],311,0.7728858644300647,0.8474281868738476,0.5113321542739868,0.17874640226364136,10.5
++ history: route,"['hist_mode_rate', 'hist_mode_n', 'hist_region_rate', 'hist_region_n', 'hist_route_rate', 'hist_route_n', 'hist_country_mode_rate', 'hist_country_mode_n']",319,0.766735445233865,0.8461847796922499,0.5175809264183044,0.180650532245636,10.4
++ history: product,"['hist_category_rate', 'hist_category_n', 'hist_product_rate', 'hist_product_n', 'hist_mode_category_rate', 'hist_mode_category_n']",317,0.7728954864591835,0.847686323063569,0.5112751722335815,0.17851364612579346,10.2
++ history: market,"['hist_market_rate', 'hist_market_n', 'hist_segment_rate', 'hist_segment_n']",315,0.7667601200562544,0.8455584016847715,0.5152211785316467,0.1801896095275879,10.7
++ history: customer,"['hist_customer_rate', 'hist_customer_n']",313,0.7686544172629446,0.846611768214032,0.515766978263855,0.18009495735168457,9.6
++ history: route+product+market,"['hist_mode_rate', 'hist_mode_n', 'hist_region_rate', 'hist_region_n', 'hist_route_rate', 'hist_route_n', 'hist_country_mode_rate', 'hist_country_mode_n', 'hist_category_rate', 'hist_category_n', 'hist_product_rate', 'hist_product_n', 'hist_mode_category_rate', 'hist_mode_category_n', 'hist_market_rate', 'hist_market_n', 'hist_segment_rate', 'hist_segment_n']",329,0.7739180035832133,0.8483771835190761,0.5132425427436829,0.17852579057216644,11.2

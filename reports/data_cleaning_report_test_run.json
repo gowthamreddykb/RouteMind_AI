@@ -1,0 +1,25 @@
+{
+  "dataset_key": "test_run",
+  "initial_rows": 500,
+  "final_rows": 500,
+  "duplicates_removed": 0,
+  "initial_columns": 53,
+  "final_columns": 48,
+  "dropped_sensitive_columns": [
+    "Customer Email",
+    "Customer Password",
+    "Customer Fname",
+    "Customer Lname",
+    "Customer Street"
+  ],
+  "missing_values_per_column": {
+    "Order Zipcode": 476,
+    "Product Description": 500
+  },
+  "target_distribution": {
+    "0 (On Time / Advance)": 230,
+    "1 (Late Delivery)": 270,
+    "late_delivery_rate": 0.54
+  },
+  "cleaned_at": "2026-11-22T14:00:00.000348Z"
+}

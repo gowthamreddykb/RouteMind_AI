@@ -1,0 +1,35 @@
+{
+  "model_id": "routemind_order_creation_random_forest",
+  "prediction_stage": "order_creation",
+  "numeric_features": [
+    "Days for shipment (scheduled)",
+    "Order Item Quantity",
+    "Sales",
+    "Order Item Product Price",
+    "Order Item Discount Rate"
+  ],
+  "categorical_features": [
+    "Type",
+    "Shipping Mode",
+    "Order Region",
+    "Market",
+    "Order Country",
+    "Customer Segment",
+    "Category Name"
+  ],
+  "required_raw_columns": [
+    "Days for shipment (scheduled)",
+    "Order Item Quantity",
+    "Sales",
+    "Order Item Product Price",
+    "Order Item Discount Rate",
+    "Type",
+    "Shipping Mode",
+    "Order Region",
+    "Market",
+    "Order Country",
+    "Customer Segment",
+    "Category Name"
+  ],
+  "decision_threshold": 0.1
+}

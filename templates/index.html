@@ -1,0 +1,1129 @@
+{% extends 'base.html' %}
+{% block title %}RouteMind AI – Control Tower Dashboard{% endblock %}
+
+{% block extra_css %}
+<style>
+  /* Control Tower Dashboard Charts Styling */
+  .chart-card-wrapper {
+    background: #FFFFFF;
+    border: 1px solid rgba(226, 232, 240, 0.75);
+    border-radius: 12px;
+    padding: 1.25rem;
+    position: relative;
+    box-shadow: 0 1px 3px rgba(15, 23, 42, 0.04);
+    transition: box-shadow 0.2s ease, border-color 0.2s ease;
+  }
+  .chart-card-wrapper:hover {
+    border-color: rgba(203, 213, 225, 0.9);
+    box-shadow: 0 4px 12px rgba(15, 23, 42, 0.06);
+  }
+  /* Remove scrollbars cleanly across charts and containers */
+  .chart-card-wrapper, .chart-container-box, .table-responsive, [class*="legend"] {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+  .chart-card-wrapper::-webkit-scrollbar, .chart-container-box::-webkit-scrollbar, .table-responsive::-webkit-scrollbar, [class*="legend"]::-webkit-scrollbar {
+    display: none;
+  }
+  .chart-container-box {
+    position: relative;
+    height: 290px;
+    width: 100%;
+  }
+  .chart-loading-overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(255, 255, 255, 0.88);
+    backdrop-filter: blur(2px);
+    z-index: 10;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    border-radius: 10px;
+  }
+  .chart-empty-state, .chart-error-state {
+    position: absolute;
+    inset: 0;
+    z-index: 5;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: #F8FAFC;
+    border-radius: 10px;
+    padding: 1.5rem;
+    text-align: center;
+  }
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+  .spin-animation {
+    display: inline-block;
+    animation: spin 0.8s linear infinite;
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid max-w-7xl px-0">
+  
+  <!-- Header Title & Quick Action Buttons -->
+  <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
+    <div class="d-flex align-items-center gap-3">
+      <div class="kpi-stat-icon-wrapper bg-primary bg-opacity-10 text-primary">
+        <i class="bi bi-water fs-4"></i>
+      </div>
+      <div>
+        <h4 class="fw-bold text-dark mb-0">Logistics Control Tower</h4>
+        <p class="text-muted small mb-0">Dual-Stage Predictive Exception Management & Real-Time Maritime Telemetry.</p>
+      </div>
+    </div>
+
+    <div class="d-flex align-items-center gap-2">
+      <a href="/shipments/new" class="btn btn-order-creation btn-sm d-flex align-items-center gap-1.5 shadow-sm">
+        <i class="bi bi-plus-circle-fill"></i> Order Creation
+      </a>
+      <a href="/exceptions/" class="btn btn-rm-outline btn-sm d-flex align-items-center gap-1.5 rounded-pill">
+        <i class="bi bi-shield-exclamation"></i> Exceptions Queue
+      </a>
+    </div>
+  </div>
+
+  <!-- 4 Executive KPI Cards -->
+  <div class="row g-3 mb-4">
+    <div class="col-12 col-sm-6 col-xl-3">
+      <a href="/shipments/" class="text-decoration-none">
+        <div class="kpi-stat-card card-rm-hover p-3 bg-white rounded-3 border shadow-xs h-100">
+          <div class="d-flex align-items-center gap-3">
+            <div class="kpi-stat-icon-wrapper bg-primary bg-opacity-10 text-primary p-2.5 rounded-3">
+              <i class="bi bi-box-seam fs-4"></i>
+            </div>
+            <div>
+              <span class="text-muted small d-block">Active Shipments</span>
+              <h3 class="fw-bold mb-0 text-dark" id="kpiTotalShipments">{{ total_shipments|default(0) }}</h3>
+              <small class="text-success fw-semibold"><i class="bi bi-arrow-up-short"></i> Live Database Volume</small>
+            </div>
+          </div>
+        </div>
+      </a>
+    </div>
+
+    <div class="col-12 col-sm-6 col-xl-3">
+      <a href="/shipments/?risk=High+Risk" class="text-decoration-none">
+        <div class="kpi-stat-card card-rm-hover p-3 bg-white rounded-3 border shadow-xs h-100">
+          <div class="d-flex align-items-center gap-3">
+            <div class="kpi-stat-icon-wrapper bg-danger bg-opacity-10 text-danger p-2.5 rounded-3">
+              <i class="bi bi-exclamation-triangle fs-4"></i>
+            </div>
+            <div>
+              <span class="text-muted small d-block">Late Risk Alerts</span>
+              <h3 class="fw-bold mb-0 text-danger" id="kpiHighRisk">{{ high_risk_count|default(0) }}</h3>
+              <small class="text-danger fw-semibold"><i class="bi bi-clock-history"></i> Dual-Stage Triggered</small>
+            </div>
+          </div>
+        </div>
+      </a>
+    </div>
+
+    <div class="col-12 col-sm-6 col-xl-3">
+      <a href="/exceptions/" class="text-decoration-none">
+        <div class="kpi-stat-card card-rm-hover p-3 bg-white rounded-3 border shadow-xs h-100">
+          <div class="d-flex align-items-center gap-3">
+            <div class="kpi-stat-icon-wrapper bg-warning bg-opacity-10 text-warning p-2.5 rounded-3">
+              <i class="bi bi-shield-exclamation fs-4"></i>
+            </div>
+            <div>
+              <span class="text-muted small d-block">Open Exceptions</span>
+              <h3 class="fw-bold mb-0 text-warning" id="kpiExceptions">{{ exceptions_count|default(0) }}</h3>
+              <small class="text-warning fw-semibold"><i class="bi bi-arrow-right-short"></i> Pending Remediation</small>
+            </div>
+          </div>
+        </div>
+      </a>
+    </div>
+
+    <div class="col-12 col-sm-6 col-xl-3">
+      <a href="/shipments/?risk=Low+Risk" class="text-decoration-none">
+        <div class="kpi-stat-card card-rm-hover p-3 bg-white rounded-3 border shadow-xs h-100">
+          <div class="d-flex align-items-center gap-3">
+            <div class="kpi-stat-icon-wrapper bg-success bg-opacity-10 text-success p-2.5 rounded-3">
+              <i class="bi bi-check-circle fs-4"></i>
+            </div>
+            <div>
+              <span class="text-muted small d-block">On-Time Reliability</span>
+              <h3 class="fw-bold mb-0 text-success" id="kpiReliability">{{ on_time_pct|default(0.0) }}%</h3>
+              <small class="text-success fw-semibold"><i class="bi bi-shield-check"></i> Within SLA ({{ on_time_count|default(0) }}/{{ total_shipments|default(0) }})</small>
+            </div>
+          </div>
+        </div>
+      </a>
+    </div>
+  </div>
+
+  <!-- ================================================================= -->
+  <!-- 4 PRIMARY CONTROL TOWER ANALYTICS CHARTS                         -->
+  <!-- ================================================================= -->
+  <div class="mb-4">
+    <!-- Charts Section Header with Global Date Filters and Refresh -->
+    <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+      <div>
+        <div class="d-flex align-items-center gap-2">
+          <h5 class="fw-bold text-dark mb-0">Predictive Telemetry &amp; Operational Analytics</h5>
+          <span class="badge bg-primary-subtle text-primary border border-primary-subtle rounded-pill px-2.5 py-0.5 small">
+            Live MySQL Telemetry
+          </span>
+        </div>
+        <p class="text-muted small mb-0 mt-0.5">Real-time database aggregations, status pipeline &amp; active risk distribution.</p>
+      </div>
+
+      <!-- Controls: Quick Date Presets & Global Refresh -->
+      <div class="d-flex align-items-center gap-2 flex-wrap">
+        <div class="input-group input-group-sm" style="width: auto;">
+          <span class="input-group-text bg-white text-muted border-end-0"><i class="bi bi-calendar3"></i></span>
+          <select id="globalDatePreset" class="form-select form-select-sm border-start-0" onchange="handleDatePresetChange(this.value)">
+            <option value="ALL" selected>All Time</option>
+            <option value="LAST_7_DAYS">Last 7 Days</option>
+            <option value="LAST_30_DAYS">Last 30 Days</option>
+            <option value="LAST_90_DAYS">Last 90 Days</option>
+          </select>
+        </div>
+
+        <button type="button" class="btn btn-sm btn-outline-secondary rounded-pill d-flex align-items-center gap-1.5" id="btnGlobalRefresh" onclick="refreshAllCharts()" title="Refresh all four charts from MySQL database">
+          <i class="bi bi-arrow-clockwise" id="refreshIcon"></i>
+          <span>Refresh Analytics</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- 2x2 Responsive Charts Grid -->
+    <div class="row g-3">
+      
+      <!-- ------------------------------------------------------------- -->
+      <!-- CHART 1: SHIPMENT STATUS DISTRIBUTION (Doughnut Chart)        -->
+      <!-- ------------------------------------------------------------- -->
+      <div class="col-12 col-lg-6">
+        <div class="chart-card-wrapper h-100 d-flex flex-column" id="cardStatusChart">
+          <div class="d-flex justify-content-between align-items-start mb-2">
+            <div>
+              <div class="d-flex align-items-center gap-2">
+                <h6 class="fw-bold text-dark mb-0">Shipment Status Distribution</h6>
+                <span class="badge bg-light text-muted border rounded-pill px-2 py-0.5" style="font-size: 0.7rem;">Doughnut</span>
+              </div>
+              <small class="text-muted d-block" id="statusSubtitle">All nine maritime lifecycle stages (Click segment to filter)</small>
+            </div>
+            <button class="btn btn-sm btn-link text-muted p-0 ms-1" onclick="refreshSingleChart('status')" title="Refresh Status Distribution Chart">
+              <i class="bi bi-arrow-repeat"></i>
+            </button>
+          </div>
+
+          <!-- Chart Area: Doughnut + Custom Interactive Legend (Scrollbar removed, all 9 visible) -->
+          <div class="chart-container-box flex-grow-1 position-relative d-flex align-items-center" style="height: 260px;">
+            <div class="row g-2 w-100 align-items-center h-100 m-0">
+              <div class="col-6 position-relative d-flex justify-content-center align-items-center h-100 p-0">
+                <canvas id="chartStatusCanvas"></canvas>
+              </div>
+              <div class="col-6 h-100 p-0 d-flex flex-column justify-content-center">
+                <div id="statusLegendContainer" class="d-flex flex-column gap-1 w-100" style="scrollbar-width: none; -ms-overflow-style: none;">
+                  <!-- Dynamic legend entries generated via JS -->
+                </div>
+              </div>
+            </div>
+
+            <!-- Loading State -->
+            <div class="chart-loading-overlay d-none" id="statusLoading">
+              <div class="spinner-border spinner-border-sm text-primary mb-2" role="status"></div>
+              <span class="small text-muted fw-semibold">Loading status distribution...</span>
+            </div>
+            <!-- Empty State -->
+            <div class="chart-empty-state d-none" id="statusEmpty">
+              <i class="bi bi-pie-chart text-secondary fs-2 mb-1"></i>
+              <span class="small fw-semibold text-dark">No Shipment Statuses</span>
+              <small class="text-muted">No consignments found for the selected timeframe.</small>
+            </div>
+            <!-- Error State -->
+            <div class="chart-error-state d-none" id="statusError">
+              <i class="bi bi-exclamation-octagon text-danger fs-3 mb-1"></i>
+              <span class="small fw-bold text-danger">Failed to Load Status Chart</span>
+              <button class="btn btn-sm btn-outline-danger mt-2 py-0.5 px-2" onclick="refreshSingleChart('status')">Retry</button>
+            </div>
+          </div>
+
+          <div class="border-top pt-2 mt-2 d-flex justify-content-between align-items-center text-muted small">
+            <span style="font-size: 0.75rem;"><i class="bi bi-cursor me-1"></i>Interactive: click segment to filter shipments</span>
+            <span class="fw-semibold text-primary" id="statusTotalFooter">Total: -- Consignments</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- ------------------------------------------------------------- -->
+      <!-- CHART 2: SHIPMENT VOLUME BY DESTINATION REGION (Vertical Bar) -->
+      <!-- ------------------------------------------------------------- -->
+      <div class="col-12 col-lg-6">
+        <div class="chart-card-wrapper h-100 d-flex flex-column" id="cardDestinationChart">
+          <div class="d-flex justify-content-between align-items-start mb-2">
+            <div>
+              <div class="d-flex align-items-center gap-2">
+                <h6 class="fw-bold text-dark mb-0">Shipment Volume by Destination Region</h6>
+                <span class="badge bg-light text-muted border rounded-pill px-2 py-0.5" style="font-size: 0.7rem;">Vertical Bar</span>
+              </div>
+              <small class="text-muted d-block" id="destinationSubtitle">Grouped by destination region (Click bar to filter list)</small>
+            </div>
+            <button class="btn btn-sm btn-link text-muted p-0" onclick="refreshSingleChart('destination')" title="Refresh Destination Volume Chart">
+              <i class="bi bi-arrow-repeat"></i>
+            </button>
+          </div>
+
+          <!-- Chart Area -->
+          <div class="chart-container-box flex-grow-1 position-relative" style="height: 260px;">
+            <canvas id="chartDestinationCanvas"></canvas>
+            <!-- Loading State -->
+            <div class="chart-loading-overlay d-none" id="destinationLoading">
+              <div class="spinner-border spinner-border-sm text-primary mb-2" role="status"></div>
+              <span class="small text-muted fw-semibold">Loading regional volume...</span>
+            </div>
+            <!-- Empty State -->
+            <div class="chart-empty-state d-none" id="destinationEmpty">
+              <i class="bi bi-globe text-secondary fs-2 mb-1"></i>
+              <span class="small fw-semibold text-dark">No Regional Data</span>
+              <small class="text-muted">No consignments found for the selected timeframe.</small>
+            </div>
+            <!-- Error State -->
+            <div class="chart-error-state d-none" id="destinationError">
+              <i class="bi bi-exclamation-octagon text-danger fs-3 mb-1"></i>
+              <span class="small fw-bold text-danger">Failed to Load Chart</span>
+              <button class="btn btn-sm btn-outline-danger mt-2 py-0.5 px-2" onclick="refreshSingleChart('destination')">Retry</button>
+            </div>
+          </div>
+          
+          <div class="border-top pt-2 mt-2 d-flex justify-content-between align-items-center text-muted small">
+            <span style="font-size: 0.75rem;"><i class="bi bi-cursor me-1"></i>Click bar to filter shipments by destination region</span>
+            <span class="fw-semibold text-primary" id="destinationTotalFooter">Total Shipments: --</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- ------------------------------------------------------------- -->
+      <!-- CHART 3: SHIPMENT RISK DISTRIBUTION (Vertical Bar Chart)       -->
+      <!-- ------------------------------------------------------------- -->
+      <div class="col-12 col-lg-6">
+        <div class="chart-card-wrapper h-100 d-flex flex-column" id="cardRiskChart">
+          <div class="d-flex justify-content-between align-items-start mb-2">
+            <div>
+              <div class="d-flex align-items-center gap-2">
+                <h6 class="fw-bold text-dark mb-0">Shipment Risk Distribution</h6>
+                <span class="badge bg-light text-muted border rounded-pill px-2 py-0.5" style="font-size: 0.7rem;">Vertical Bar</span>
+              </div>
+              <small class="text-muted d-block" id="riskModelSubtitle">Overall predicted risk (Latest valid prediction per active shipment)</small>
+            </div>
+            <button class="btn btn-sm btn-link text-muted p-0" onclick="refreshSingleChart('risk')" title="Refresh Risk Chart">
+              <i class="bi bi-arrow-repeat"></i>
+            </button>
+          </div>
+
+          <!-- Chart Area -->
+          <div class="chart-container-box flex-grow-1 position-relative" style="height: 260px;">
+            <canvas id="chartRiskCanvas"></canvas>
+            <!-- Loading State -->
+            <div class="chart-loading-overlay d-none" id="riskLoading">
+              <div class="spinner-border spinner-border-sm text-primary mb-2" role="status"></div>
+              <span class="small text-muted fw-semibold">Loading risk distribution...</span>
+            </div>
+            <!-- Empty State -->
+            <div class="chart-empty-state d-none" id="riskEmpty">
+              <i class="bi bi-shield-slash text-secondary fs-2 mb-1"></i>
+              <span class="small fw-semibold text-dark">No Active Risk Scores</span>
+              <small class="text-muted">No model predictions found for active consignments.</small>
+            </div>
+            <!-- Error State -->
+            <div class="chart-error-state d-none" id="riskError">
+              <i class="bi bi-exclamation-octagon text-danger fs-3 mb-1"></i>
+              <span class="small fw-bold text-danger">Failed to Load Risk Scores</span>
+              <button class="btn btn-sm btn-outline-danger mt-2 py-0.5 px-2" onclick="refreshSingleChart('risk')">Retry</button>
+            </div>
+          </div>
+
+          <div class="border-top pt-2 mt-2 d-flex justify-content-between align-items-center text-muted small">
+            <span style="font-size: 0.75rem;"><i class="bi bi-cursor me-1"></i>Count and percentage shown · Click bar to view list</span>
+            <span class="fw-semibold text-dark" id="riskTotalFooter">Active Evaluated: --</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- ------------------------------------------------------------- -->
+      <!-- CHART 4: EXCEPTION ANALYSIS BY PRIORITY (Horizontal Bar Chart) -->
+      <!-- ------------------------------------------------------------- -->
+      <div class="col-12 col-lg-6">
+        <div class="chart-card-wrapper h-100 d-flex flex-column" id="cardExceptionChart">
+          <div class="d-flex justify-content-between align-items-start mb-2 flex-wrap gap-2">
+            <div>
+              <div class="d-flex align-items-center gap-2">
+                <h6 class="fw-bold text-dark mb-0">Exception Analysis by Priority</h6>
+                <span class="badge bg-light text-muted border rounded-pill px-2 py-0.5" style="font-size: 0.7rem;">Horizontal Bar</span>
+              </div>
+              <small class="text-muted d-block">Incidents grouped by operational priority</small>
+            </div>
+
+            <!-- Exception Status Filter: All, Open, Investigating, Resolved -->
+            <div class="d-flex align-items-center gap-1.5">
+              <select id="exceptionStatusFilter" class="form-select form-select-sm" style="width: 140px; font-size: 0.78rem;" onchange="handleExceptionStatusChange(this.value)">
+                <option value="ALL" selected>All Statuses</option>
+                <option value="OPEN">Open Only</option>
+                <option value="INVESTIGATING">Investigating</option>
+                <option value="RESOLVED">Resolved Only</option>
+              </select>
+              <button class="btn btn-sm btn-link text-muted p-0 ms-1" onclick="refreshSingleChart('exceptions')" title="Refresh Exceptions Chart">
+                <i class="bi bi-arrow-repeat"></i>
+              </button>
+            </div>
+          </div>
+
+          <!-- Chart Area -->
+          <div class="chart-container-box flex-grow-1 position-relative" style="height: 260px;">
+            <canvas id="chartExceptionCanvas"></canvas>
+            <!-- Loading State -->
+            <div class="chart-loading-overlay d-none" id="exceptionLoading">
+              <div class="spinner-border spinner-border-sm text-primary mb-2" role="status"></div>
+              <span class="small text-muted fw-semibold">Loading exceptions...</span>
+            </div>
+            <!-- Empty State -->
+            <div class="chart-empty-state d-none" id="exceptionEmpty">
+              <i class="bi bi-check2-circle text-success fs-2 mb-1"></i>
+              <span class="small fw-semibold text-dark">No Exceptions Found</span>
+              <small class="text-muted">No exception records match the selected status filter.</small>
+            </div>
+            <!-- Error State -->
+            <div class="chart-error-state d-none" id="exceptionError">
+              <i class="bi bi-exclamation-octagon text-danger fs-3 mb-1"></i>
+              <span class="small fw-bold text-danger">Failed to Load Exceptions</span>
+              <button class="btn btn-sm btn-outline-danger mt-2 py-0.5 px-2" onclick="refreshSingleChart('exceptions')">Retry</button>
+            </div>
+          </div>
+
+          <div class="border-top pt-2 mt-2 d-flex justify-content-between align-items-center text-muted small">
+            <span style="font-size: 0.75rem;"><i class="bi bi-cursor me-1"></i>Click bar to filter exceptions queue</span>
+            <span class="fw-semibold text-dark" id="exceptionTotalFooter">Total Incidents: --</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Recent Shipments Queue Table -->
+  <div class="card p-4 bg-white border rounded-3 shadow-xs mb-4">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+      <h6 class="fw-bold text-dark mb-0">
+        <i class="bi bi-list-check me-2 text-primary"></i>Active Shipment Telemetry
+      </h6>
+      <a href="/shipments/" class="btn btn-link btn-sm text-decoration-none">View All Shipments &rarr;</a>
+    </div>
+
+    <div class="table-responsive">
+      <table class="table table-hover align-middle mb-0 text-sm">
+        <thead class="table-light text-muted small">
+          <tr>
+            <th>Shipment #</th>
+            <th>Shipping Mode</th>
+            <th>Destination Region</th>
+            <th>Scheduled Days</th>
+            <th>Status</th>
+            <th>Risk Level</th>
+            <th class="text-end">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% if shipments %}
+            {% for s in shipments %}
+            <tr>
+              <td class="fw-bold font-mono text-primary cursor-pointer" onclick="openShipmentDetail('{{ s.shipment_number }}')" title="Open Consignment Details">
+                {{ s.shipment_number }}
+              </td>
+              <td>{{ s.shipping_mode }}</td>
+              <td>{{ s.destination_region|default('Global') }}</td>
+              <td>{{ s.scheduled_days }} days</td>
+              <td>
+                {% if s.order_status in ['DELIVERED', 'Delivered to Consignee', 'COMPLETED'] %}
+                  <span class="badge-booked"><i class="bi bi-check-circle-fill" style="font-size: 6px;"></i> Delivered</span>
+                {% elif s.order_status in ['DELAYED', 'HOLD', 'EXCEPTION_HOLD'] %}
+                  <span class="badge-at-port"><i class="bi bi-pin-map-fill" style="font-size: 6px;"></i> Hold</span>
+                {% else %}
+                  <span class="badge-in-transit"><i class="bi bi-circle-fill" style="font-size: 5px;"></i> {{ s.order_status }}</span>
+                {% endif %}
+              </td>
+              <td>
+                {% if s.risk_level in ['HIGH', 'CRITICAL', 'CRITICAL_RISK'] %}
+                  <span class="badge-risk-high">HIGH RISK</span>
+                {% elif s.risk_level in ['MEDIUM', 'ELEVATED_RISK'] %}
+                  <span class="badge-risk-medium">MODERATE</span>
+                {% else %}
+                  <span class="badge-risk-low">ON TRACK</span>
+                {% endif %}
+              </td>
+              <td class="text-end">
+                <a href="/shipments/{{ s.shipment_number }}" class="btn btn-rm-outline btn-sm py-1 px-2.5">
+                  <i class="bi bi-eye"></i> View
+                </a>
+              </td>
+            </tr>
+            {% endfor %}
+          {% else %}
+            <tr>
+              <td colspan="7" class="text-center text-muted py-4">
+                No shipments recorded yet. Click <strong><a href="/shipments/new">Add Shipment</a></strong> to create the first order.
+              </td>
+            </tr>
+          {% endif %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+/**
+ * RouteMind AI Control Tower Dashboard Analytics Charts
+ * 1. Chart 1: Shipment Volume by Destination Region (Vertical Bar)
+ * 2. Chart 2: Shipment Status Overview (Horizontal Bar, 9 lifecycle statuses, count beside bar)
+ * 3. Chart 3: Shipment Risk Distribution (Vertical Bar, Low/Med/High overall, single assessment)
+ * 4. Chart 4: Exception Analysis by Priority (Horizontal Bar, preserved)
+ */
+
+// Global Chart Instances
+let chartStatus = null;
+let chartDestination = null;
+let chartRisk = null;
+let chartException = null;
+
+// Active state parameters
+let currentExceptionStatus = 'ALL';
+let currentStartDate = null;
+let currentEndDate = null;
+
+// Initial payload from server
+const initialChartsPayload = {{ charts_payload|tojson if charts_payload else 'null' }};
+let cachedChartData = initialChartsPayload ? initialChartsPayload.charts : null;
+
+// Plugin: Render centered total text in doughnut hole for Chart 1
+const doughnutCenterTextPlugin = {
+  id: 'doughnutCenterText',
+  beforeDraw(chart) {
+    if (chart.config.type !== 'doughnut') return;
+    const { ctx, chartArea } = chart;
+    if (!chartArea) return;
+
+    let total = 0;
+    if (chart.data.datasets && chart.data.datasets[0] && chart.data.datasets[0].data) {
+      total = chart.data.datasets[0].data.reduce((a, b) => a + (Number(b) || 0), 0);
+    }
+
+    ctx.save();
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    const centerX = (chartArea.left + chartArea.right) / 2;
+    const centerY = (chartArea.top + chartArea.bottom) / 2;
+
+    // Bold Total Number
+    ctx.font = 'bold 24px "Plus Jakarta Sans", sans-serif';
+    ctx.fillStyle = '#0F172A';
+    ctx.fillText(total.toString(), centerX, centerY - 8);
+
+    // Label below
+    ctx.font = '500 11px "Plus Jakarta Sans", sans-serif';
+    ctx.fillStyle = '#64748B';
+    ctx.fillText('Total Shipments', centerX, centerY + 14);
+    ctx.restore();
+  }
+};
+Chart.register(doughnutCenterTextPlugin);
+
+// Plugin: Render count label directly beside each horizontal bar for Chart 4
+const horizontalBarLabelsPlugin = {
+  id: 'horizontalBarLabels',
+  afterDatasetsDraw(chart) {
+    if (chart.config.type !== 'bar' || chart.config.options.indexAxis !== 'y') return;
+    const { ctx, chartArea } = chart;
+    if (!chartArea) return;
+
+    chart.data.datasets.forEach((dataset, i) => {
+      const meta = chart.getDatasetMeta(i);
+      meta.data.forEach((bar, index) => {
+        const val = dataset.data[index];
+        ctx.save();
+        ctx.font = '600 11px "JetBrains Mono", monospace';
+        ctx.fillStyle = '#334155';
+        ctx.textBaseline = 'middle';
+        // Draw number directly beside bar
+        const xPos = Math.min(bar.x + 6, chartArea.right - 25);
+        ctx.fillText(val, xPos, bar.y);
+        ctx.restore();
+      });
+    });
+  }
+};
+Chart.register(horizontalBarLabelsPlugin);
+
+// Document Ready
+document.addEventListener('DOMContentLoaded', function () {
+  if (cachedChartData) {
+    renderAllCharts(cachedChartData);
+  } else {
+    refreshAllCharts();
+  }
+});
+
+// -----------------------------------------------------------------------------
+// RENDER ALL CHARTS
+// -----------------------------------------------------------------------------
+function renderAllCharts(data) {
+  if (!data) return;
+  renderStatusChart(data.status_distribution || data.status || data.status_overview);
+  renderDestinationChart(data.destination_volume || data.destination);
+  renderRiskChart(data.risk_distribution || data.risk);
+  renderExceptionChart(data.exception_priority || data.exceptions);
+}
+
+// -----------------------------------------------------------------------------
+// CHART 1: SHIPMENT STATUS DISTRIBUTION (Doughnut Chart)
+// -----------------------------------------------------------------------------
+function renderStatusChart(cfg) {
+  const canvas = document.getElementById('chartStatusCanvas');
+  const loading = document.getElementById('statusLoading');
+  const empty = document.getElementById('statusEmpty');
+  const error = document.getElementById('statusError');
+  const totalFooter = document.getElementById('statusTotalFooter');
+  const legendContainer = document.getElementById('statusLegendContainer');
+
+  loading.classList.add('d-none');
+  error.classList.add('d-none');
+
+  if (!cfg || cfg.empty || cfg.total_shipments === 0) {
+    empty.classList.remove('d-none');
+    if (chartStatus) chartStatus.destroy();
+    if (totalFooter) totalFooter.textContent = 'Total: 0 Consignments';
+    if (legendContainer) legendContainer.innerHTML = '';
+    return;
+  }
+  empty.classList.add('d-none');
+
+  if (totalFooter) totalFooter.textContent = `Total: ${cfg.total_shipments} Consignments`;
+
+  // Render Custom Interactive Legend (No scrollbar, perfectly fitting all 9 statuses)
+  if (legendContainer) {
+    legendContainer.innerHTML = '';
+    cfg.labels.forEach((label, idx) => {
+      const color = cfg.colors[idx];
+      const count = cfg.counts[idx];
+      const pct = cfg.percentages[idx];
+      const url = cfg.filter_urls[idx];
+
+      const item = document.createElement('div');
+      item.className = 'status-legend-item d-flex align-items-center justify-content-between';
+      item.style.cssText = 'padding: 2px 6px; font-size: 0.77rem; border-radius: 6px; cursor: pointer; transition: background 0.15s ease;';
+      item.title = `Click to filter shipments with status '${label}'`;
+      item.innerHTML = `
+        <div class="d-flex align-items-center text-truncate me-1" style="min-width: 0;">
+          <span style="width: 8px; height: 8px; border-radius: 50%; background-color: ${color}; margin-right: 6px; flex-shrink: 0;"></span>
+          <span class="text-truncate text-dark fw-medium" style="font-size: 0.77rem;">${label}</span>
+        </div>
+        <span class="fw-semibold text-muted text-nowrap ms-1" style="font-size: 0.77rem;">${count} <small class="text-muted opacity-75">(${pct}%)</small></span>
+      `;
+      item.addEventListener('mouseenter', () => {
+        item.style.backgroundColor = '#F1F5F9';
+      });
+      item.addEventListener('mouseleave', () => {
+        item.style.backgroundColor = 'transparent';
+      });
+      item.addEventListener('click', () => {
+        if (url) window.location.href = url;
+      });
+      legendContainer.appendChild(item);
+    });
+  }
+
+  if (chartStatus) chartStatus.destroy();
+
+  const ctx = canvas.getContext('2d');
+  chartStatus = new Chart(ctx, {
+    type: 'doughnut',
+    data: {
+      labels: cfg.labels,
+      datasets: [{
+        data: cfg.counts,
+        backgroundColor: cfg.colors,
+        borderWidth: 2,
+        borderColor: '#FFFFFF',
+        hoverOffset: 6
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      cutout: '72%',
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          backgroundColor: '#0F172A',
+          titleFont: { family: 'Inter', size: 12, weight: 'bold' },
+          bodyFont: { family: 'Inter', size: 12 },
+          padding: 10,
+          cornerRadius: 8,
+          callbacks: {
+            label: function (ctx) {
+              const val = ctx.raw || 0;
+              const total = cfg.total_shipments || 1;
+              const pct = ((val / total) * 100).toFixed(1);
+              return ` ${ctx.label}: ${val} (${pct}%) – Click to filter`;
+            }
+          }
+        }
+      },
+      onClick: function (evt, elements) {
+        if (elements && elements.length > 0) {
+          const idx = elements[0].index;
+          const url = cfg.filter_urls[idx];
+          if (url) window.location.href = url;
+        }
+      }
+    }
+  });
+}
+
+// -----------------------------------------------------------------------------
+// CHART 2: SHIPMENT VOLUME BY DESTINATION REGION (Vertical Bar Chart)
+// -----------------------------------------------------------------------------
+function renderDestinationChart(cfg) {
+  const canvas = document.getElementById('chartDestinationCanvas');
+  const loading = document.getElementById('destinationLoading');
+  const empty = document.getElementById('destinationEmpty');
+  const error = document.getElementById('destinationError');
+  const totalFooter = document.getElementById('destinationTotalFooter');
+  const subtitle = document.getElementById('destinationSubtitle');
+
+  loading.classList.add('d-none');
+  error.classList.add('d-none');
+
+  if (!cfg || cfg.empty || cfg.total_shipments === 0) {
+    empty.classList.remove('d-none');
+    if (chartDestination) chartDestination.destroy();
+    if (totalFooter) totalFooter.textContent = 'Total Shipments: 0';
+    return;
+  }
+  empty.classList.add('d-none');
+
+  if (totalFooter) totalFooter.textContent = `Total Shipments: ${cfg.total_shipments}`;
+  if (subtitle && cfg.subtitle) subtitle.textContent = cfg.subtitle;
+
+  if (chartDestination) chartDestination.destroy();
+
+  const ctx = canvas.getContext('2d');
+  chartDestination = new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: cfg.labels,
+      datasets: [{
+        label: 'Number of Shipments',
+        data: cfg.counts,
+        backgroundColor: '#4338CA',
+        hoverBackgroundColor: '#3730A3',
+        borderRadius: 6,
+        borderSkipped: false,
+        maxBarThickness: 48
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      scales: {
+        x: {
+          grid: { display: false },
+          ticks: {
+            font: { family: 'Inter', size: 11, weight: '500' },
+            color: '#334155',
+            maxRotation: 35,
+            minRotation: 0
+          },
+          title: {
+            display: true,
+            text: 'Destination Region',
+            font: { family: 'Inter', size: 11, weight: '600' },
+            color: '#64748B'
+          }
+        },
+        y: {
+          beginAtZero: true,
+          grid: { color: 'rgba(226, 232, 240, 0.6)' },
+          ticks: {
+            stepSize: 1,
+            precision: 0,
+            font: { family: 'JetBrains Mono', size: 11 },
+            color: '#64748B'
+          },
+          title: {
+            display: true,
+            text: 'Number of Shipments',
+            font: { family: 'Inter', size: 11, weight: '600' },
+            color: '#64748B'
+          }
+        }
+      },
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          backgroundColor: '#0F172A',
+          titleFont: { family: 'Inter', size: 12, weight: 'bold' },
+          bodyFont: { family: 'Inter', size: 12 },
+          padding: 10,
+          cornerRadius: 8,
+          callbacks: {
+            label: function (ctx) {
+              const val = ctx.raw || 0;
+              const total = cfg.total_shipments || 1;
+              const pct = ((val / total) * 100).toFixed(1);
+              return ` ${val} shipments (${pct}%) – Click to filter list`;
+            }
+          }
+        }
+      },
+      onClick: function (evt, elements) {
+        if (elements && elements.length > 0) {
+          const idx = elements[0].index;
+          const url = cfg.filter_urls[idx];
+          if (url) window.location.href = url;
+        }
+      }
+    }
+  });
+}
+
+// -----------------------------------------------------------------------------
+// CHART 3: SHIPMENT RISK DISTRIBUTION (Vertical Bar Chart - Overall)
+// -----------------------------------------------------------------------------
+function renderRiskChart(cfg) {
+  const canvas = document.getElementById('chartRiskCanvas');
+  const loading = document.getElementById('riskLoading');
+  const empty = document.getElementById('riskEmpty');
+  const error = document.getElementById('riskError');
+  const subtitle = document.getElementById('riskModelSubtitle');
+  const totalFooter = document.getElementById('riskTotalFooter');
+
+  loading.classList.add('d-none');
+  error.classList.add('d-none');
+
+  if (!cfg || cfg.empty || cfg.total_active === 0) {
+    empty.classList.remove('d-none');
+    if (chartRisk) chartRisk.destroy();
+    if (totalFooter) totalFooter.textContent = 'Active Evaluated: 0';
+    return;
+  }
+  empty.classList.add('d-none');
+
+  if (subtitle && cfg.subtitle) {
+    subtitle.textContent = cfg.subtitle;
+  }
+  if (totalFooter) {
+    totalFooter.textContent = `Active Consignments Evaluated: ${cfg.total_active}`;
+  }
+
+  if (chartRisk) chartRisk.destroy();
+
+  // Create labels with counts & percentages: e.g. "Low Risk (8 · 53.3%)"
+  const formattedLabels = cfg.labels.map((lbl, idx) => {
+    const c = cfg.counts[idx];
+    const p = cfg.percentages[idx];
+    return `${lbl} (${c} · ${p}%)`;
+  });
+
+  const ctx = canvas.getContext('2d');
+  chartRisk = new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: formattedLabels,
+      datasets: [{
+        label: 'Active Consignments',
+        data: cfg.counts,
+        backgroundColor: cfg.colors,
+        borderRadius: 8,
+        borderSkipped: false,
+        maxBarThickness: 64
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      scales: {
+        x: {
+          grid: { display: false },
+          ticks: { font: { family: 'Inter', size: 11, weight: '600' }, color: '#334155' }
+        },
+        y: {
+          beginAtZero: true,
+          grid: { color: 'rgba(226, 232, 240, 0.6)' },
+          ticks: {
+            stepSize: 1,
+            precision: 0,
+            font: { family: 'JetBrains Mono', size: 11 },
+            color: '#64748B'
+          },
+          title: {
+            display: true,
+            text: 'Number of Active Shipments',
+            font: { family: 'Inter', size: 11, weight: '500' },
+            color: '#94A3B8'
+          }
+        }
+      },
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          backgroundColor: '#0F172A',
+          titleFont: { family: 'Inter', size: 12, weight: 'bold' },
+          bodyFont: { family: 'Inter', size: 12 },
+          padding: 10,
+          cornerRadius: 8,
+          callbacks: {
+            label: function (ctx) {
+              const val = ctx.raw || 0;
+              const total = cfg.total_active || 1;
+              const pct = ((val / total) * 100).toFixed(1);
+              return ` ${val} shipments (${pct}%) – Click to view matching list`;
+            }
+          }
+        }
+      },
+      onClick: function (evt, elements) {
+        if (elements && elements.length > 0) {
+          const idx = elements[0].index;
+          const url = cfg.filter_urls[idx];
+          if (url) window.location.href = url;
+        }
+      }
+    }
+  });
+}
+
+// -----------------------------------------------------------------------------
+// CHART 4: EXCEPTION ANALYSIS BY PRIORITY (Horizontal Bar Chart - UNMODIFIED)
+// -----------------------------------------------------------------------------
+function renderExceptionChart(cfg) {
+  const canvas = document.getElementById('chartExceptionCanvas');
+  const loading = document.getElementById('exceptionLoading');
+  const empty = document.getElementById('exceptionEmpty');
+  const error = document.getElementById('exceptionError');
+  const totalFooter = document.getElementById('exceptionTotalFooter');
+
+  loading.classList.add('d-none');
+  error.classList.add('d-none');
+
+  if (!cfg || cfg.empty || cfg.total_exceptions === 0) {
+    empty.classList.remove('d-none');
+    if (chartException) chartException.destroy();
+    if (totalFooter) totalFooter.textContent = 'Total Incidents: 0';
+    return;
+  }
+  empty.classList.add('d-none');
+
+  if (totalFooter) {
+    totalFooter.textContent = `Total Recorded Incidents: ${cfg.total_exceptions}`;
+  }
+
+  if (chartException) chartException.destroy();
+
+  const ctx = canvas.getContext('2d');
+  chartException = new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: cfg.labels,
+      datasets: [{
+        label: 'Exceptions',
+        data: cfg.counts,
+        backgroundColor: cfg.colors,
+        borderRadius: 6,
+        borderSkipped: false,
+        maxBarThickness: 28
+      }]
+    },
+    options: {
+      indexAxis: 'y',
+      responsive: true,
+      maintainAspectRatio: false,
+      layout: {
+        padding: { right: 28 }  // Extra space for count label beside each bar
+      },
+      scales: {
+        x: {
+          beginAtZero: true,
+          grid: { color: 'rgba(226, 232, 240, 0.6)' },
+          ticks: {
+            stepSize: 1,
+            precision: 0,
+            font: { family: 'JetBrains Mono', size: 11 },
+            color: '#64748B'
+          },
+          title: {
+            display: true,
+            text: 'Incident Count',
+            font: { family: 'Inter', size: 11, weight: '500' },
+            color: '#94A3B8'
+          }
+        },
+        y: {
+          grid: { display: false },
+          ticks: { font: { family: 'Inter', size: 12, weight: '600' }, color: '#334155' }
+        }
+      },
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          backgroundColor: '#0F172A',
+          titleFont: { family: 'Inter', size: 12, weight: 'bold' },
+          bodyFont: { family: 'Inter', size: 12 },
+          padding: 10,
+          cornerRadius: 8,
+          callbacks: {
+            label: function (ctx) {
+              const val = ctx.raw || 0;
+              const total = cfg.total_exceptions || 1;
+              const pct = ((val / total) * 100).toFixed(1);
+              return ` ${val} exceptions (${pct}%) – Click to open queue`;
+            }
+          }
+        }
+      },
+      onClick: function (evt, elements) {
+        if (elements && elements.length > 0) {
+          const idx = elements[0].index;
+          let url = cfg.filter_urls[idx];
+          const stFilter = document.getElementById('exceptionStatusFilter').value;
+          if (stFilter && stFilter !== 'ALL') {
+            url += `&status=${stFilter}`;
+          }
+          if (url) window.location.href = url;
+        }
+      }
+    }
+  });
+}
+
+// -----------------------------------------------------------------------------
+// GLOBAL & SINGLE CHART REFRESH CONTROLS
+// -----------------------------------------------------------------------------
+function buildQueryParams() {
+  const params = new URLSearchParams();
+  if (currentStartDate) params.append('start_date', currentStartDate);
+  if (currentEndDate) params.append('end_date', currentEndDate);
+  if (currentExceptionStatus && currentExceptionStatus !== 'ALL') {
+    params.append('exception_status', currentExceptionStatus);
+  }
+  return params.toString();
+}
+
+function refreshAllCharts() {
+  const icon = document.getElementById('refreshIcon');
+  if (icon) icon.classList.add('spin-animation');
+
+  document.getElementById('destinationLoading').classList.remove('d-none');
+  document.getElementById('statusLoading').classList.remove('d-none');
+  document.getElementById('riskLoading').classList.remove('d-none');
+  document.getElementById('exceptionLoading').classList.remove('d-none');
+
+  const q = buildQueryParams();
+  fetch(`/api/dashboard/charts?${q}`)
+    .then(r => {
+      if (!r.ok) throw new Error(`HTTP error ${r.status}`);
+      return r.json();
+    })
+    .then(payload => {
+      if (payload.status === 'success' && payload.charts) {
+        cachedChartData = payload.charts;
+        renderAllCharts(payload.charts);
+      }
+    })
+    .catch(err => {
+      console.error('Failed to refresh dashboard charts:', err);
+      document.getElementById('destinationError').classList.remove('d-none');
+      document.getElementById('statusError').classList.remove('d-none');
+      document.getElementById('riskError').classList.remove('d-none');
+      document.getElementById('exceptionError').classList.remove('d-none');
+    })
+    .finally(() => {
+      if (icon) icon.classList.remove('spin-animation');
+      document.getElementById('destinationLoading').classList.add('d-none');
+      document.getElementById('statusLoading').classList.add('d-none');
+      document.getElementById('riskLoading').classList.add('d-none');
+      document.getElementById('exceptionLoading').classList.add('d-none');
+    });
+}
+
+function refreshSingleChart(chartType) {
+  const q = buildQueryParams();
+  const loadingId = `${chartType}Loading`;
+  const errorId = `${chartType}Error`;
+  const loadingEl = document.getElementById(loadingId);
+  const errorEl = document.getElementById(errorId);
+
+  if (loadingEl) loadingEl.classList.remove('d-none');
+  if (errorEl) errorEl.classList.add('d-none');
+
+  fetch(`/api/dashboard/chart/${chartType}?${q}`)
+    .then(r => {
+      if (!r.ok) throw new Error(`HTTP error ${r.status}`);
+      return r.json();
+    })
+    .then(payload => {
+      if (payload.status === 'success' && payload.chart) {
+        if (chartType === 'destination') renderDestinationChart(payload.chart);
+        else if (chartType === 'status') renderStatusChart(payload.chart);
+        else if (chartType === 'risk') renderRiskChart(payload.chart);
+        else if (chartType === 'exceptions') renderExceptionChart(payload.chart);
+      }
+    })
+    .catch(err => {
+      console.error(`Failed to refresh chart ${chartType}:`, err);
+      if (errorEl) errorEl.classList.remove('d-none');
+    })
+    .finally(() => {
+      if (loadingEl) loadingEl.classList.add('d-none');
+    });
+}
+
+// Date Range Filter Preset Handler
+function handleDatePresetChange(val) {
+  const now = new Date();
+  if (val === 'ALL') {
+    currentStartDate = null;
+    currentEndDate = null;
+  } else if (val === 'LAST_7_DAYS') {
+    const d = new Date(now);
+    d.setDate(d.getDate() - 7);
+    currentStartDate = d.toISOString().slice(0, 10);
+    currentEndDate = now.toISOString().slice(0, 10);
+  } else if (val === 'LAST_30_DAYS') {
+    const d = new Date(now);
+    d.setDate(d.getDate() - 30);
+    currentStartDate = d.toISOString().slice(0, 10);
+    currentEndDate = now.toISOString().slice(0, 10);
+  } else if (val === 'LAST_90_DAYS') {
+    const d = new Date(now);
+    d.setDate(d.getDate() - 90);
+    currentStartDate = d.toISOString().slice(0, 10);
+    currentEndDate = now.toISOString().slice(0, 10);
+  }
+  refreshAllCharts();
+}
+
+// Exception Priority Status Filter Dropdown
+function handleExceptionStatusChange(val) {
+  currentExceptionStatus = val;
+  refreshSingleChart('exceptions');
+}
+
+function openShipmentDetail(shipmentNumber) {
+  window.location.href = `/shipments/${shipmentNumber}`;
+}
+</script>
+{% endblock %}

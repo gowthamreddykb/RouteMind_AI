@@ -1,0 +1,8 @@
+Required dispatch-time field,In DataCo?,Note
+Actual dispatch timestamp,No,Searched all 53 columns: absent
+Warehouse identifier / origin,No,Searched all 53 columns: absent
+Carrier identifier,No,Searched all 53 columns: absent
+Warehouse processing duration,No,Searched all 53 columns: absent
+Current workload / capacity,No,Searched all 53 columns: absent
+Route origin coordinates,No,Searched all 53 columns: absent
+Dispatch-time shipping mode (changes after order),No,Searched all 53 columns: absent

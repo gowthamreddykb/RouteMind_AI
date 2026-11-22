@@ -1,0 +1,274 @@
+{% extends 'base.html' %}
+{% block title %}RouteMind AI – Shipment List{% endblock %}
+{% block content %}
+<div class="container-fluid max-w-7xl px-0">
+
+      <!-- Header Section matching Image 4 -->
+      <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
+        <div class="d-flex align-items-center gap-3">
+          <div class="kpi-stat-icon-wrapper bg-info bg-opacity-10 text-info">
+            <i class="bi bi-water fs-4"></i>
+          </div>
+          <div>
+            <h4 class="fw-bold text-dark mb-0">Shipment Management</h4>
+            <p class="text-muted small mb-0">Monitor and manage container shipments across sea routes.</p>
+          </div>
+        </div>
+
+        <div class="d-flex align-items-center gap-2">
+          {% if can_create %}
+          <a href="/shipments/import" class="btn btn-outline-primary btn-sm rounded-pill d-flex align-items-center gap-1.5 shadow-sm">
+            <i class="bi bi-file-earmark-arrow-up"></i> Import CSV
+          </a>
+          <a href="/shipments/new" class="btn btn-order-creation btn-sm d-flex align-items-center gap-1.5 shadow-sm">
+            <i class="bi bi-plus-circle-fill"></i> Order Creation
+          </a>
+          {% endif %}
+        </div>
+      </div>
+
+      <!-- 4 KPI Cards matching Dashboard KPIs -->
+      <div class="row g-3 mb-4">
+        <!-- 1. Total Shipments -->
+        <div class="col-12 col-sm-6 col-xl-3">
+          <div class="kpi-stat-card card-rm-hover p-3 bg-white rounded-3 border shadow-xs">
+            <div class="d-flex align-items-center gap-3">
+              <div class="kpi-stat-icon-wrapper bg-primary bg-opacity-10 text-primary p-2.5 rounded-3">
+                <i class="bi bi-box-seam fs-4"></i>
+              </div>
+              <div>
+                <span class="text-muted small d-block">Total Shipments</span>
+                <h3 class="fw-bold mb-0 text-dark">{{ total_count|default(shipments|length) }}</h3>
+                <small class="text-success fw-semibold"><i class="bi bi-arrow-up-short"></i> Live Database Volume</small>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 2. In Transit -->
+        <div class="col-12 col-sm-6 col-xl-3">
+          <div class="kpi-stat-card card-rm-hover p-3 bg-white rounded-3 border shadow-xs">
+            <div class="d-flex align-items-center gap-3">
+              <div class="kpi-stat-icon-wrapper bg-success bg-opacity-10 text-success p-2.5 rounded-3">
+                <i class="bi bi-water fs-4"></i>
+              </div>
+              <div>
+                <span class="text-muted small d-block">In Transit</span>
+                <h3 class="fw-bold mb-0 text-dark">{{ in_transit_count|default(0) }}</h3>
+                <small class="text-success fw-semibold"><i class="bi bi-arrow-repeat"></i> Active Maritime Voyages</small>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 3. High Risk -->
+        <div class="col-12 col-sm-6 col-xl-3">
+          <div class="kpi-stat-card card-rm-hover p-3 bg-white rounded-3 border shadow-xs">
+            <div class="d-flex align-items-center gap-3">
+              <div class="kpi-stat-icon-wrapper bg-danger bg-opacity-10 text-danger p-2.5 rounded-3">
+                <i class="bi bi-exclamation-triangle fs-4"></i>
+              </div>
+              <div>
+                <span class="text-muted small d-block">High Risk</span>
+                <h3 class="fw-bold mb-0 text-danger">{{ high_risk_count|default(0) }}</h3>
+                <small class="text-danger fw-semibold"><i class="bi bi-clock-history"></i> Dual-Stage Triggered</small>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 4. Delayed -->
+        <div class="col-12 col-sm-6 col-xl-3">
+          <div class="kpi-stat-card card-rm-hover p-3 bg-white rounded-3 border shadow-xs">
+            <div class="d-flex align-items-center gap-3">
+              <div class="kpi-stat-icon-wrapper bg-warning bg-opacity-10 text-warning p-2.5 rounded-3">
+                <i class="bi bi-shield-exclamation fs-4"></i>
+              </div>
+              <div>
+                <span class="text-muted small d-block">Delayed</span>
+                <h3 class="fw-bold mb-0 text-warning">{{ delayed_count|default(0) }}</h3>
+                <small class="text-warning fw-semibold"><i class="bi bi-arrow-right-short"></i> Exceptions Active</small>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Filter Controls matching Image 4 -->
+      <div class="card-rm p-3 mb-4">
+        <form method="GET" action="/shipments/" id="shipmentFilterForm">
+          <div class="row g-2 align-items-center">
+            <div class="col-12 col-md-4">
+              <div class="position-relative">
+                <i class="bi bi-search position-absolute top-50 start-0 translate-middle-y ms-3 text-muted"></i>
+                <input type="text" name="search" value="{{ search|default('') }}" class="form-control form-control-sm ps-4 rounded-3" placeholder="Search shipment, container, vessel, port...">
+              </div>
+            </div>
+            <div class="col-6 col-md-2">
+              <select name="status" class="form-select form-select-sm rounded-3">
+                <option value="">All Statuses</option>
+                <option value="IN_TRANSIT" {% if status == 'IN_TRANSIT' %}selected{% endif %}>In Transit</option>
+                <option value="BOOKED" {% if status == 'BOOKED' %}selected{% endif %}>Booked</option>
+                <option value="DELAYED" {% if status == 'DELAYED' %}selected{% endif %}>Delayed / Hold</option>
+                <option value="DELIVERED" {% if status == 'DELIVERED' %}selected{% endif %}>Delivered</option>
+              </select>
+            </div>
+            <div class="col-6 col-md-2">
+              <select name="vessel" class="form-select form-select-sm rounded-3">
+                <option value="">All Vessels</option>
+                {% if vessels %}
+                  {% for v in vessels %}
+                  <option value="{{ v }}" {% if vessel == v %}selected{% endif %}>{{ v }}</option>
+                  {% endfor %}
+                {% endif %}
+              </select>
+            </div>
+            <div class="col-6 col-md-2">
+              <select name="risk" class="form-select form-select-sm rounded-3">
+                <option value="">All Risk Levels</option>
+                <option value="High Risk" {% if risk == 'High Risk' %}selected{% endif %}>High Risk</option>
+                <option value="Medium Risk" {% if risk == 'Medium Risk' %}selected{% endif %}>Medium Risk</option>
+                <option value="Low Risk" {% if risk == 'Low Risk' %}selected{% endif %}>Low Risk</option>
+              </select>
+            </div>
+            <div class="col-6 col-md-2 d-flex gap-2">
+              <button type="submit" class="btn btn-rm-primary btn-sm flex-grow-1"><i class="bi bi-funnel"></i> Apply</button>
+              <a href="/shipments/" class="btn btn-rm-outline btn-sm" title="Reset Filters"><i class="bi bi-arrow-counterclockwise"></i></a>
+            </div>
+          </div>
+        </form>
+      </div>
+
+      <!-- Shipment Records Table matching Image 4 -->
+      <div class="card-rm p-4 mb-4">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+          <h6 class="fw-bold mb-0 text-dark d-flex align-items-center gap-2">
+            <i class="bi bi-water text-primary"></i> Shipment Records
+          </h6>
+          <span class="badge bg-light text-muted border">Live Database Records ({{ total_count }} found)</span>
+        </div>
+
+        <div class="table-responsive">
+          <table class="table-rm">
+            <thead>
+              <tr>
+                <th>Shipment ID (Order ID)</th>
+                <th>Customer</th>
+                <th>Container (Type)</th>
+                <th>Vessel</th>
+                <th>Sea Route</th>
+                <th>Planned Dep.</th>
+                <th>Exp. Arrival</th>
+                <th>Status</th>
+                <th>Assigned / Creator</th>
+                <th>Predicted Risk</th>
+                <th>Risk Prob.</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="allShipmentsBody">
+              {% if shipments %}
+                {% for s in shipments %}
+                <tr>
+                  <td>
+                    <a href="/shipments/{{ s.shipment_number }}" class="font-mono fw-bold text-primary d-block text-decoration-none">{{ s.shipment_number }}</a>
+                    <small class="text-muted font-mono">{{ s.order_id_code or ('ORD-' ~ s.shipment_number) }}</small>
+                  </td>
+                  <td>{{ s.customer.first_name ~ ' ' ~ s.customer.last_name if s.customer else (s.customer_name if s.customer_name else 'Global Maritime Client') }}</td>
+                  <td>
+                    <span class="font-mono">{{ s.container_number or 'Data Not Available' }}</span><br>
+                    <small class="text-muted">({{ s.container_type or (s.product.product_name if s.product else '40ft Standard Dry') }})</small>
+                  </td>
+                  <td>{{ s.vessel_name or 'Data Not Available' }}</td>
+                  <td>{{ s.origin_port or s.origin_region or 'Port Origin' }} ➔ {{ s.destination_port or s.destination_region or 'Port Destination' }}</td>
+                  <td>{{ s.planned_departure.strftime('%d %b %Y') if s.planned_departure else (s.order_date.strftime('%d %b %Y') if s.order_date else 'Not Available') }}</td>
+                  <td>{{ s.expected_arrival.strftime('%d %b %Y') if s.expected_arrival else ('+' ~ s.scheduled_days ~ ' Days') }}</td>
+                  <td>
+                    {% if s.order_status in ['DELIVERED', 'Delivered to Consignee'] %}
+                      <span class="badge-booked"><i class="bi bi-check-circle-fill" style="font-size: 6px;"></i> Delivered</span>
+                    {% elif s.order_status in ['DELAYED', 'HOLD', 'EXCEPTION_HOLD'] %}
+                      <span class="badge-at-port"><i class="bi bi-pin-map-fill" style="font-size: 6px;"></i> Exception Hold</span>
+                    {% else %}
+                      <span class="badge-in-transit"><i class="bi bi-circle-fill" style="font-size: 5px;"></i> In Transit</span>
+                    {% endif %}
+                  </td>
+                  <td>
+                    {% if s.assigned_to_name %}
+                      <span class="badge bg-primary-subtle text-primary border border-primary-subtle px-2 py-1"><i class="bi bi-person me-1"></i>{{ s.assigned_to_name }}</span>
+                    {% elif s.created_by_name %}
+                      <span class="badge bg-light text-secondary border px-2 py-1"><i class="bi bi-person-plus me-1"></i>{{ s.created_by_name }}</span>
+                    {% else %}
+                      <span class="text-muted small">--</span>
+                    {% endif %}
+                  </td>
+                  <td>
+                    {% if s.risk_level in ['HIGH', 'CRITICAL', 'CRITICAL_RISK'] %}
+                      <span class="badge-risk-high">High</span>
+                    {% elif s.risk_level in ['MEDIUM', 'ELEVATED_RISK'] %}
+                      <span class="badge-risk-medium">Medium</span>
+                    {% else %}
+                      <span class="badge-risk-low">Low</span>
+                    {% endif %}
+                  </td>
+                  <td class="fw-bold {% if s.risk_level in ['HIGH', 'CRITICAL', 'CRITICAL_RISK'] %}text-danger{% elif s.risk_level in ['MEDIUM', 'ELEVATED_RISK'] %}text-warning{% else %}text-success{% endif %}">
+                    {% if s.dispatch_prob is not none %}
+                      {{ (s.dispatch_prob * 100)|round(0)|int }}%
+                    {% elif s.order_creation_prob is not none %}
+                      {{ (s.order_creation_prob * 100)|round(0)|int }}%
+                    {% else %}
+                      <span class="text-muted small">Not Scored</span>
+                    {% endif %}
+                  </td>
+                  <td>
+                    <a href="/shipments/{{ s.shipment_number }}" class="btn btn-sm btn-outline-primary py-0.5 px-2.5 rounded-2 text-decoration-none">
+                      <i class="bi bi-eye"></i> View
+                    </a>
+                  </td>
+                </tr>
+                {% endfor %}
+              {% else %}
+                <tr>
+                  <td colspan="12" class="text-center py-4 text-muted">
+                    <i class="bi bi-box-seam fs-3 text-muted d-block mb-2"></i>
+                    No shipment records match the selected filter criteria.
+                  </td>
+                </tr>
+              {% endif %}
+            </tbody>
+          </table>
+        </div>
+
+        <div class="d-flex justify-content-between align-items-center pt-3 small text-muted flex-wrap gap-2">
+          <span>Showing {{ ((page-1)*per_page) + 1 if total_count > 0 else 0 }}–{{ [page*per_page, total_count]|min }} of {{ total_count }} shipments</span>
+          <nav>
+            <ul class="pagination pagination-sm m-0">
+              <li class="page-item {% if page <= 1 %}disabled{% endif %}">
+                <a class="page-link" href="?page={{ page - 1 }}&search={{ search }}&status={{ status }}&vessel={{ vessel }}&risk={{ risk }}">&lt;</a>
+              </li>
+              {% for p in range(1, total_pages + 1) %}
+              <li class="page-item {% if p == page %}active{% endif %}">
+                <a class="page-link" href="?page={{ p }}&search={{ search }}&status={{ status }}&vessel={{ vessel }}&risk={{ risk }}">{{ p }}</a>
+              </li>
+              {% endfor %}
+              <li class="page-item {% if page >= total_pages %}disabled{% endif %}">
+                <a class="page-link" href="?page={{ page + 1 }}&search={{ search }}&status={{ status }}&vessel={{ vessel }}&risk={{ risk }}">&gt;</a>
+              </li>
+            </ul>
+          </nav>
+        </div>
+      </div>
+
+      <!-- Maritime Wave Footer matching Image 4 -->
+      <div class="maritime-wave-footer rounded-4">
+        <div class="d-flex align-items-center gap-2">
+          <i class="bi bi-water fs-5"></i>
+          <span><strong>RouteMind AI</strong> &bull; Smarter Maritime Operations. Predictive Decisions.</span>
+        </div>
+        <div class="d-flex align-items-center gap-3">
+          <span><i class="bi bi-shield-check"></i> Zero Target Leakage</span>
+          <span><i class="bi bi-geo-alt-slash"></i> 100% Zero Live Map Tracking</span>
+        </div>
+      </div>
+
+    </div>
+{% endblock %}

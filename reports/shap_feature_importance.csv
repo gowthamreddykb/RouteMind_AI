@@ -1,0 +1,24 @@
+feature,mean_abs_shap,mean_abs_shap_aggregated
+Order Country,2.8324594,0.4755712
+Type,0.5690017,0.46546277
+Customer City,2.6809242,0.46482763
+order_hour,0.33190003,0.33190003
+Category Name,0.24231409,0.24231409
+Product Name,0.24018188,0.23881723
+scheduled_days,0.19784528,0.19784528
+Market,0.23370095,0.18956903
+order_day_of_week,0.17707914,0.17707914
+Order Region,0.6005247,0.16380785
+order_month,0.15383643,0.15383643
+order_day,0.15227716,0.15227716
+Customer State,1.1325941,0.11453314
+Customer Segment,0.17187905,0.09393799
+Order Item Discount Rate,0.05370298,0.05370298
+order_value,0.03285704,0.03285704
+order_year,0.029432807,0.029432807
+Order Item Product Price,0.015079414,0.015079414
+Department Name,0.008541877,0.0063023926
+Order Item Quantity,0.0017766436,0.0017766436
+Customer Country,0.0012456937,0.0012456937
+Shipping Mode,0.0,0.0
+is_weekend,0.0,0.0

@@ -1,0 +1,200 @@
+{% extends 'base.html' %}
+{% block title %}RouteMind AI – {{ 'Edit Consignment ' ~ shipment.shipment_number if shipment else 'Order Creation – Book New Consignment' }}{% endblock %}
+{% block content %}
+<div class="container-fluid max-w-7xl px-0">
+
+  <!-- Centered Header -->
+  <div class="mx-auto mb-4" style="max-width: 960px;">
+    <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
+      <div class="d-flex align-items-center gap-2.5">
+        <a href="/shipments/{{ shipment.shipment_number if shipment else '' }}" class="btn btn-light rounded-circle p-2 shadow-xs border" title="Back to Shipments">
+          <i class="bi bi-arrow-left fs-5"></i>
+        </a>
+        <div>
+          <div class="d-flex align-items-center gap-2">
+            <h4 class="fw-bold text-dark mb-0">{{ 'Edit Consignment: ' ~ shipment.shipment_number if shipment else 'Order Creation: Maritime Booking' }}</h4>
+            <span class="badge bg-primary-subtle text-primary border border-primary-subtle rounded-pill px-2.5 py-1" style="font-size: 0.72rem;">Model-01 Gateway</span>
+          </div>
+          <p class="text-muted small mb-0 mt-0.5">Record consignment parameters, assign ocean carrier capacity, and evaluate dual-stage late-delivery risk.</p>
+        </div>
+      </div>
+      <span class="badge bg-success-subtle text-success border border-success-subtle py-1.5 px-3 rounded-pill fw-semibold">
+        <i class="bi bi-shield-check me-1"></i> Authorized Operations Entry
+      </span>
+    </div>
+  </div>
+
+  <!-- Centered Modern Order Creation Card -->
+  <div class="card-rm p-4 p-md-5 mb-5 mx-auto shadow-sm" style="max-width: 960px; border-radius: 16px;">
+    <form method="POST" action="{{ ('/shipments/' ~ shipment.id ~ '/edit') if shipment else '/shipments/new' }}" id="consignmentForm">
+      
+      <!-- Section 1: Order & Commercial Specifications -->
+      <div class="d-flex align-items-center justify-content-between pb-2 mb-3 border-bottom">
+        <h6 class="fw-bold text-dark mb-0 d-flex align-items-center gap-2">
+          <span class="rounded-circle bg-primary-subtle text-primary d-inline-flex align-items-center justify-content-center fw-bold" style="width: 28px; height: 28px; font-size: 0.85rem;">1</span>
+          Order &amp; Commercial Specifications
+        </h6>
+        <span class="text-muted small">Stage 1: Pre-Dispatch Gate</span>
+      </div>
+      <div class="row g-3 mb-4">
+        <div class="col-md-4">
+          <label class="form-label small fw-semibold">Shipment / Booking Reference *</label>
+          <input type="text" name="shipment_number" class="form-control form-control-sm font-mono" placeholder="SHP-XXXXX" value="{{ shipment.shipment_number if shipment else '' }}" {% if shipment %}readonly{% endif %}>
+          <small class="text-muted" style="font-size: 0.7rem;">{% if shipment %}Unique system identifier{% else %}Leave blank to auto-generate unique ID{% endif %}</small>
+        </div>
+        <div class="col-md-4">
+          <label class="form-label small fw-semibold">Customer / Consignee *</label>
+          <select name="customer_id" class="form-select form-select-sm" required>
+            <option value="">Select...</option>
+            {% if customers %}
+              {% for c in customers %}
+              <option value="{{ c.id }}" {% if shipment and shipment.customer_id == c.id %}selected{% endif %}>
+                {{ c.first_name }} {{ c.last_name }} ({{ c.city }}, {{ c.country }})
+              </option>
+              {% endfor %}
+            {% endif %}
+          </select>
+        </div>
+        <div class="col-md-4">
+          <label class="form-label small fw-semibold">Cargo Product Category *</label>
+          <select name="product_id" class="form-select form-select-sm" required>
+            <option value="">Select...</option>
+            {% if products %}
+              {% for p in products %}
+              <option value="{{ p.id }}" {% if shipment and shipment.product_id == p.id %}selected{% endif %}>
+                {{ p.product_name }} (${{ "%.2f"|format(p.product_price) }})
+              </option>
+              {% endfor %}
+            {% endif %}
+          </select>
+        </div>
+        <div class="col-md-4">
+          <label class="form-label small fw-semibold">Order Item Quantity</label>
+          <input type="number" name="quantity" class="form-control form-control-sm" value="{{ shipment.quantity if shipment else 1 }}" min="1" required>
+        </div>
+        <div class="col-md-4">
+          <label class="form-label small fw-semibold">Declared Cargo Value ($ USD)</label>
+          <input type="number" step="0.01" name="sales" class="form-control form-control-sm" value="{{ shipment.sales if shipment else 1500.00 }}" min="1.0" required>
+        </div>
+        <div class="col-md-4">
+          <label class="form-label small fw-semibold">Maritime Shipping Class</label>
+          <select name="shipping_mode" class="form-select form-select-sm">
+            <option value="">Select...</option>
+            {% if shipping_classes %}
+              {% for sc in shipping_classes %}
+              <option value="{{ sc.label.split(' – ')[0] }}" {% if shipment and shipment.shipping_mode and sc.label.startswith(shipment.shipping_mode) %}selected{% endif %}>
+                {{ sc.label }}
+              </option>
+              {% endfor %}
+            {% else %}
+              <option value="FCL_STANDARD">FCL – Full Container Load (Standard Ocean)</option>
+              <option value="LCL_CONSOLIDATION">LCL – Less than Container Load</option>
+              <option value="REEFER_COLD">Reefer – Temperature Controlled Cargo</option>
+              <option value="IMO_HAZARDOUS">IMO – Hazardous Goods Marine</option>
+            {% endif %}
+          </select>
+        </div>
+      </div>
+
+      <!-- Section 2: Maritime Routing & Vessel Specifications -->
+      <div class="d-flex align-items-center justify-content-between pb-2 mb-3 border-bottom">
+        <h6 class="fw-bold text-dark mb-0 d-flex align-items-center gap-2">
+          <span class="rounded-circle bg-info-subtle text-info d-inline-flex align-items-center justify-content-center fw-bold" style="width: 28px; height: 28px; font-size: 0.85rem;">2</span>
+          Maritime Routing &amp; Vessel Assignment
+        </h6>
+        <span class="text-muted small">Corridor &amp; Seaport Lanes</span>
+      </div>
+      <div class="row g-3 mb-4">
+        <div class="col-md-6">
+          <label class="form-label small fw-semibold">Origin Seaport (Port of Loading) *</label>
+          <select name="origin_port" class="form-select form-select-sm" required>
+            <option value="">Select...</option>
+            {% if seaports %}
+              {% for sp in seaports %}
+              <option value="{{ sp.label }}" {% if (shipment and shipment.origin_port == sp.label) or (not shipment and 'Rotterdam' in sp.label) %}selected{% endif %}>
+                {{ sp.label }}
+              </option>
+              {% endfor %}
+            {% endif %}
+          </select>
+        </div>
+        <div class="col-md-6">
+          <label class="form-label small fw-semibold">Destination Seaport (Port of Discharge) *</label>
+          <select name="destination_port" class="form-select form-select-sm" required>
+            <option value="">Select...</option>
+            {% if seaports %}
+              {% for sp in seaports %}
+              <option value="{{ sp.label }}" {% if (shipment and shipment.destination_port == sp.label) or (not shipment and 'Singapore' in sp.label) %}selected{% endif %}>
+                {{ sp.label }}
+              </option>
+              {% endfor %}
+            {% endif %}
+          </select>
+        </div>
+        <div class="col-md-6">
+          <label class="form-label small fw-semibold">Vessel Assignment</label>
+          <select name="vessel_name" class="form-select form-select-sm" required>
+            <option value="">Select...</option>
+            {% if vessels %}
+              {% for v in vessels %}
+              <option value="{{ v.label.split(' (')[0] }}" {% if shipment and shipment.vessel_name and v.label.startswith(shipment.vessel_name) %}selected{% endif %}>
+                {{ v.label }}
+              </option>
+              {% endfor %}
+            {% endif %}
+          </select>
+        </div>
+        <div class="col-md-6">
+          <label class="form-label small fw-semibold">Destination Region / Market *</label>
+          <input type="text" name="destination_region" class="form-control form-control-sm" placeholder="e.g. Western Europe" value="{{ shipment.destination_region if shipment else 'Western Europe' }}" required>
+        </div>
+      </div>
+
+      <!-- Section 3: Container Specifications -->
+      <div class="d-flex align-items-center justify-content-between pb-2 mb-3 border-bottom">
+        <h6 class="fw-bold text-dark mb-0 d-flex align-items-center gap-2">
+          <span class="rounded-circle bg-success-subtle text-success d-inline-flex align-items-center justify-content-center fw-bold" style="width: 28px; height: 28px; font-size: 0.85rem;">3</span>
+          Intermodal Container Specifications
+        </h6>
+        <span class="text-muted small">Physical Telemetry</span>
+      </div>
+      <div class="row g-3 mb-4">
+        <div class="col-md-4">
+          <label class="form-label small fw-semibold">Container Identification Number</label>
+          <input type="text" name="container_number" class="form-control form-control-sm font-mono" placeholder="MSCU-XXXXXX-X" value="{{ shipment.container_number if shipment else '' }}">
+          <small class="text-muted" style="font-size: 0.7rem;">Leave blank to auto-assign container</small>
+        </div>
+        <div class="col-md-4">
+          <label class="form-label small fw-semibold">Container Type</label>
+          <select name="container_type" class="form-select form-select-sm">
+            <option value="">Select...</option>
+            {% if container_types %}
+              {% for ct in container_types %}
+              <option value="{{ ct.label.split(' (')[0] }}" {% if shipment and shipment.container_type and ct.label.startswith(shipment.container_type) %}selected{% endif %}>
+                {{ ct.label }}
+              </option>
+              {% endfor %}
+            {% else %}
+              <option value="40ft High Cube Dry">40ft High Cube Dry</option>
+              <option value="20ft Standard General Purpose">20ft Standard General Purpose</option>
+              <option value="40ft High Cube Refrigerated Reefer">40ft High Cube Refrigerated Reefer</option>
+              <option value="20ft ISO Tank Container">20ft ISO Tank Container</option>
+            {% endif %}
+          </select>
+        </div>
+        <div class="col-md-4">
+          <label class="form-label small fw-semibold">Scheduled Transit Duration (Days) *</label>
+          <input type="number" name="scheduled_days" class="form-control form-control-sm" value="{{ shipment.scheduled_days if shipment else 4 }}" min="1" max="60" required>
+        </div>
+      </div>
+
+      <div class="d-flex justify-content-end align-items-center gap-2 pt-3 border-top">
+        <a href="/shipments/{{ shipment.shipment_number if shipment else '' }}" class="btn btn-rm-outline btn-sm px-3.5 rounded-pill">Cancel</a>
+        <button type="submit" class="btn btn-order-creation btn-sm px-4 fw-semibold rounded-pill">
+          <i class="bi bi-check2-circle me-1"></i> {{ 'Save & Update Consignment' if shipment else 'Book Consignment & Score ML Risk' }}
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}

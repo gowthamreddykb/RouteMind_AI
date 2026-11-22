@@ -1,0 +1,86 @@
+{
+  "shipment_id": "SHP-TEST-1",
+  "prediction_stage": "order_creation",
+  "model_name": "XGBoost Classifier",
+  "model_version": "1.0.0",
+  "late_delivery_probability": 0.39160938187467115,
+  "raw_model_probability": 0.3923141062259674,
+  "predicted_class": 0,
+  "decision_threshold": 0.4,
+  "risk_level": "MEDIUM",
+  "prediction_status": "PREDICTED",
+  "scoring_timestamp": "2026-11-07T06:09:30.821099+00:00",
+  "explanations": [
+    "Customer City",
+    "order_month",
+    "Type"
+  ],
+  "explanation_details": {
+    "top_features": [
+      {
+        "feature": "Customer City",
+        "feature_value": "Caguas",
+        "shap_contribution": 0.7464940547943115,
+        "direction": "increases_risk"
+      },
+      {
+        "feature": "order_month",
+        "feature_value": 1.0,
+        "shap_contribution": 0.41053903102874756,
+        "direction": "increases_risk"
+      },
+      {
+        "feature": "Type",
+        "feature_value": "DEBIT",
+        "shap_contribution": 0.32395225763320923,
+        "direction": "increases_risk"
+      }
+    ],
+    "top_positive": [
+      {
+        "feature": "Customer City",
+        "feature_value": "Caguas",
+        "shap_contribution": 0.7464940547943115,
+        "direction": "increases_risk"
+      },
+      {
+        "feature": "order_month",
+        "feature_value": 1.0,
+        "shap_contribution": 0.41053903102874756,
+        "direction": "increases_risk"
+      },
+      {
+        "feature": "Type",
+        "feature_value": "DEBIT",
+        "shap_contribution": 0.32395225763320923,
+        "direction": "increases_risk"
+      }
+    ],
+    "top_negative": [
+      {
+        "feature": "Market",
+        "feature_value": "Pacific Asia",
+        "shap_contribution": -0.2503853738307953,
+        "direction": "decreases_risk"
+      },
+      {
+        "feature": "order_day_of_week",
+        "feature_value": 2.0,
+        "shap_contribution": -0.14435233175754547,
+        "direction": "decreases_risk"
+      },
+      {
+        "feature": "Customer Segment",
+        "feature_value": "Consumer",
+        "shap_contribution": -0.1392877846956253,
+        "direction": "decreases_risk"
+      }
+    ],
+    "base_value": 0.23020830750465393
+  },
+  "explanation_note": "SHAP contributions (log-odds of the XGBoost model) explain how the model used each feature; they do not prove real-world causation.",
+  "unknown_categories": {
+    "Category Name": "Sporting Goods",
+    "Product Name": "Smart watch"
+  }
+}

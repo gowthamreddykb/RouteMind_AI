@@ -1,0 +1,35 @@
+{
+  "model_name": "Model 01: Late Delivery at Order Creation",
+  "stage": "Order Placement / Checkout",
+  "algorithm": "Logistic Regression",
+  "training_timestamp": "2026-11-18T11:28:06.173614",
+  "random_state": 42,
+  "mandatory_numerical_features": [
+    "Days for shipment (scheduled)",
+    "Order Item Quantity",
+    "Sales"
+  ],
+  "mandatory_categorical_features": [
+    "Shipping Mode",
+    "Order Region",
+    "Type",
+    "Market",
+    "Primary Category"
+  ],
+  "target": "Late_delivery_risk",
+  "optimal_threshold": 0.33999999999999997,
+  "hyperparameters": {
+    "C": "0.01",
+    "class_weight": "balanced"
+  },
+  "test_metrics": {
+    "Accuracy (Default 0.50)": 0.6924168694241687,
+    "Accuracy (Optimal Threshold)": 0.610705596107056,
+    "Precision (Default 0.50)": 0.8480975893116468,
+    "Recall (Default 0.50)": 0.5376542073283005,
+    "F1-Score (Default 0.50)": 0.6581023213883255,
+    "ROC-AUC Score": 0.7445417923349273,
+    "Average Precision (PR-AUC)": 0.8165953312567396,
+    "Brier Score Loss": 0.19644877294965338
+  }
+}

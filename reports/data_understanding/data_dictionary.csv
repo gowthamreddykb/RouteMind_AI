@@ -1,0 +1,54 @@
+Column,Data type,Example,Missing %,Unique,Description (inferred - DescriptionDataCo.csv not supplied),Group,Possible ML use,Availability stage
+Type,str,DEBIT,0.0,4,Payment type (DEBIT/TRANSFER/CASH/PAYMENT),Order,Candidate categorical,Order creation
+Days for shipping (real),int64,3,0.0,7,Actual days between order date and shipping date,Delivery outcome,NOT an input (defines target),After delivery
+Days for shipment (scheduled),int64,4,0.0,4,Promised days; fixed per Shipping Mode (verified),Shipping,Candidate (redundant with mode),Order creation (if mode chosen)
+Benefit per order,float64,91.25,0.0,21998,Profit of the order item (identical to Order Profit Per Order),Order/finance,Reject (post-sale finance),Unknown
+Sales per customer,float64,314.6400146,0.0,2927,"Equals Order Item Total (verified 100%) - net line value, not per-customer",Order/finance,Use via order value,Order creation
+Delivery Status,str,Advance shipping,0.0,4,Advance shipping / Shipping on time / Late delivery / Shipping canceled,Delivery outcome,NOT an input (target source),After delivery
+Late_delivery_risk,int64,0,0.0,2,1 iff real > scheduled days (verified); 0 for canceled,Delivery outcome,TARGET (not an input),After delivery
+Category Id,int64,73,0.0,51,Category id,Product,Same as Product Category Id,Order creation
+Category Name,str,Sporting Goods,0.0,50,Product category,Product,Candidate categorical,Order creation
+Customer City,str,Caguas,0.0,563,Customer residence city,Customer,Weak candidate,Order creation
+Customer Country,str,Puerto Rico,0.0,2,Customer residence country (EE. UU. / Puerto Rico only),Customer,Low value (2 values),Order creation
+Customer Email,str,XXXXXXXXX,0.0,1,Masked (constant),Customer,Drop,n/a
+Customer Fname,str,Cally,0.0,782,First name,Customer,Drop (PII),n/a
+Customer Id,int64,20755,0.0,20652,Customer identifier,Customer,Key for history features only,Order creation
+Customer Lname,str,Holloway,0.0,1109,Last name,Customer,Drop (PII),n/a
+Customer Password,str,XXXXXXXXX,0.0,1,Masked (constant),Customer,Drop,n/a
+Customer Segment,str,Consumer,0.0,3,Consumer / Corporate / Home Office,Customer,Candidate categorical,Order creation
+Customer State,str,PR,0.0,46,Customer residence state,Customer,Weak candidate,Order creation
+Customer Street,str,5365 Noble Nectar Island,0.0,7458,Street address,Customer,"Drop (PII, high cardinality)",n/a
+Customer Zipcode,float64,725.0,0.0,995,Customer ZIP,Customer,Weak candidate,Order creation
+Department Id,int64,2,0.0,11,Department id,Product,Redundant with Department Name,Order creation
+Department Name,str,Fitness,0.0,11,Product department,Product,Candidate categorical,Order creation
+Latitude,float64,18.2514534,0.0,11250,Customer-location latitude (verified by country means),Location,Weak candidate,Order creation
+Longitude,float64,-66.03705597,0.0,4487,Customer-location longitude (verified by country means),Location,Weak candidate,Order creation
+Market,str,Pacific Asia,0.0,5,5 sales markets,Location (destination),Candidate categorical,Order creation
+Order City,str,Bekasi,0.0,3597,Delivery destination city,Location (destination),Candidate (high cardinality),Order creation
+Order Country,str,Indonesia,0.0,164,Delivery destination country (Spanish names),Location (destination),Candidate categorical,Order creation
+Order Customer Id,int64,20755,0.0,20652,Same as Customer Id (verified 100%),Customer,Redundant,Order creation
+order date (DateOrders),str,1/31/2018 22:56,0.0,65752,Order timestamp (minute resolution),Order,Source of month/weekday/hour,Order creation
+Order Id,int64,77202,0.0,65752,"Order identifier (65,752 unique)",Order,Prediction-unit key,Order creation
+Order Item Cardprod Id,int64,1360,0.0,118,Product card id (equals Product Card Id),Product,Redundant,Order creation
+Order Item Discount,float64,13.10999966,0.0,1017,Discount amount on the line,Order/finance,Candidate numeric,Order creation (if discount known)
+Order Item Discount Rate,float64,0.039999999,0.0,18,Discount rate on the line,Order/finance,Candidate numeric,Order creation (if discount known)
+Order Item Id,int64,180517,0.0,180519,Line-item identifier (unique per row),Order line,Identifier,Order creation
+Order Item Product Price,float64,327.75,0.0,75,Unit price (equals Product Price),Product,Candidate numeric,Order creation
+Order Item Profit Ratio,float64,0.289999992,0.0,162,Profit ratio of the line,Order/finance,Reject (post-sale finance),Unknown
+Order Item Quantity,int64,1,0.0,5,Units on the line (1-5),Order line,Candidate (sum per order),Order creation
+Sales,float64,327.75,0.0,193,"Price x quantity (verified 100%), before discount",Order/finance,Candidate via order value,Order creation
+Order Item Total,float64,314.6400146,0.0,2927,Sales - discount (verified 100%): net line value,Order/finance,Candidate via order value,Order creation
+Order Profit Per Order,float64,91.25,0.0,21998,"Identical to Benefit per order; varies by line, not per order",Order/finance,Reject,Unknown
+Order Region,str,Southeast Asia,0.0,23,23 regions (a country maps to up to 4 regions - inconsistent),Location (destination),Candidate (quality caveat),Order creation
+Order State,str,Java Occidental,0.0,1089,Delivery destination state/province,Location (destination),Candidate (high cardinality),Order creation
+Order Status,str,COMPLETE,0.0,9,"COMPLETE, PENDING_PAYMENT, ... ; CANCELED+SUSPECTED_FRAUD = Shipping canceled",Order,"Reject (post-order, partly leaks)",After order creation
+Order Zipcode,float64,nan,86.24,609,Destination ZIP (86% missing),Location,Reject (missing),n/a
+Product Card Id,int64,1360,0.0,118,Product id,Product,Key,Order creation
+Product Category Id,int64,73,0.0,51,Same as Category Id,Product,Redundant,Order creation
+Product Description,float64,nan,100.0,0,Entirely empty,Product,Drop,n/a
+Product Image,str,http://images.acmesports.sport,0.0,118,Image URL,Product,Drop,n/a
+Product Name,str,Smart watch ,0.0,118,Product name (118),Product,Candidate (high cardinality),Order creation
+Product Price,float64,327.75,0.0,75,List price,Product,Candidate numeric,Order creation
+Product Status,int64,0,0.0,1,Constant 0,Product,Drop,n/a
+shipping date (DateOrders),str,2/3/2018 22:56,0.0,63701,Date such that (shipping date - order date) ~ real days: behaves as a completion date,Delivery outcome,NOT an input,After delivery
+Shipping Mode,str,Standard Class,0.0,4,Same Day / First Class / Second Class / Standard Class,Shipping,Candidate categorical,Order creation (if selected at checkout)

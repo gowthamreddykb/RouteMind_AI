@@ -1,0 +1,5 @@
+mode,Early (<0),On time (0),Late 1 day,Late 2 days,Late 3+ days
+First Class,0.0,0.0,100.0,0.0,0.0
+Same Day,0.0,51.6,48.4,0.0,0.0
+Second Class,0.0,20.0,19.8,20.2,40.0
+Standard Class,40.2,20.0,19.8,20.0,0.0

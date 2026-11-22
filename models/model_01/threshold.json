@@ -1,0 +1,10 @@
+{
+    "default_threshold": 0.5,
+    "selected_optimal_threshold": 0.35,
+    "optimization_metric": "Validation F1-score",
+    "validation_f1_score": 0.7061,
+    "risk_categories": {
+        "Low Risk": "probability < 0.35",
+        "High Risk": "probability >= 0.35"
+    }
+}

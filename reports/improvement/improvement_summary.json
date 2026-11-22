@@ -1,0 +1,31 @@
+{
+  "selected": "XGBoost (baseline config, eligible data)",
+  "version": "2.0.0",
+  "threshold": 0.4,
+  "threshold_reason": "Minimum expected cost (FN cost=3.0, FP cost=1.0) among thresholds that flag at most 70% of shipments (alert capacity). ",
+  "risk_cutoffs": {
+    "medium": 0.3,
+    "high": 0.4
+  },
+  "calibration": "none",
+  "standard_class": {
+    "auc_inside_standard_final": 0.5120832087798552,
+    "auc_inside_standard_dedicated": 0.5210152826407307,
+    "max_feature_spread": 0.2127148058123614
+  },
+  "fn": 2690,
+  "fp": 5929,
+  "shap_additivity_error": 2.384185791015625e-06,
+  "shap_ok": true,
+  "challenger_note": "HistGradientBoosting (challenger) (val AUC 0.7713) vs selected XGBoost (0.7729): no meaningful advantage; XGBoost kept",
+  "acceptance_passed": true,
+  "monotonic_buckets": true,
+  "top_shap": [
+    "scheduled_days",
+    "Customer City",
+    "Order Country",
+    "Customer State",
+    "order_hour",
+    "Order Region"
+  ]
+}

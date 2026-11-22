@@ -1,0 +1,99 @@
+route,n,late_rate_%,ci95_low_%,ci95_high_%
+EE. UU. -> Estados Unidos,4927,57.82,56.44,59.2
+Puerto Rico -> Estados Unidos,2960,57.5,55.71,59.27
+EE. UU. -> Francia,2801,58.87,57.04,60.68
+EE. UU. -> México,2567,57.65,55.73,59.55
+EE. UU. -> Australia,2251,57.75,55.7,59.78
+EE. UU. -> Alemania,2061,58.18,56.03,60.29
+Puerto Rico -> Francia,1847,57.72,55.45,59.95
+Puerto Rico -> México,1634,58.02,55.61,60.39
+EE. UU. -> Reino Unido,1618,55.07,52.64,57.48
+EE. UU. -> Brasil,1537,57.64,55.16,60.09
+EE. UU. -> China,1528,57.2,54.7,59.66
+Puerto Rico -> Australia,1382,56.22,53.59,58.82
+Puerto Rico -> Alemania,1307,58.68,55.99,61.32
+EE. UU. -> India,1266,59.79,57.07,62.46
+EE. UU. -> Indonesia,1129,56.95,54.05,59.81
+EE. UU. -> Italia,1119,55.67,52.75,58.56
+Puerto Rico -> Reino Unido,1043,56.38,53.35,59.36
+Puerto Rico -> Brasil,983,54.63,51.5,57.72
+Puerto Rico -> China,967,58.12,54.98,61.19
+EE. UU. -> España,866,55.43,52.1,58.71
+Puerto Rico -> India,804,55.97,52.52,59.37
+EE. UU. -> República Dominicana,722,56.65,53.01,60.22
+EE. UU. -> El Salvador,713,56.52,52.86,60.12
+Puerto Rico -> Indonesia,704,59.94,56.28,63.5
+EE. UU. -> Cuba,688,52.76,49.03,56.47
+EE. UU. -> Honduras,684,55.56,51.81,59.24
+Puerto Rico -> Italia,674,55.49,51.72,59.2
+EE. UU. -> Turquía,664,59.19,55.41,62.86
+EE. UU. -> Nicaragua,606,60.23,56.28,64.05
+EE. UU. -> Filipinas,579,57.17,53.1,61.14
+EE. UU. -> Guatemala,550,56.55,52.37,60.63
+Puerto Rico -> España,542,58.67,54.48,62.74
+Puerto Rico -> El Salvador,482,59.96,55.52,64.24
+Puerto Rico -> República Dominicana,472,57.2,52.7,61.59
+EE. UU. -> Nigeria,458,54.37,49.79,58.87
+Puerto Rico -> Honduras,446,55.61,50.97,60.15
+Puerto Rico -> Cuba,436,56.65,51.96,61.22
+Puerto Rico -> Turquía,431,57.31,52.59,61.89
+EE. UU. -> Países Bajos,417,56.59,51.8,61.27
+EE. UU. -> Panamá,389,51.67,46.71,56.6
+EE. UU. -> Argentina,385,55.58,50.59,60.47
+EE. UU. -> Colombia,372,53.49,48.42,58.5
+Puerto Rico -> Nicaragua,353,58.64,53.44,63.66
+Puerto Rico -> Filipinas,333,58.86,53.5,64.01
+EE. UU. -> Nueva Zelanda,326,52.76,47.34,58.12
+Puerto Rico -> Guatemala,316,58.86,53.36,64.15
+EE. UU. -> Austria,290,60.34,54.61,65.8
+Puerto Rico -> Países Bajos,284,57.04,51.23,62.67
+EE. UU. -> Irán,282,59.22,53.4,64.79
+Puerto Rico -> Nigeria,279,51.61,45.77,57.42
+Puerto Rico -> Panamá,246,52.44,46.21,58.59
+EE. UU. -> Egipto,240,57.92,51.59,63.99
+EE. UU. -> SudAfrica,234,57.69,51.29,63.85
+EE. UU. -> Tailandia,229,55.9,49.42,62.18
+Puerto Rico -> Argentina,225,55.56,49.02,61.9
+EE. UU. -> Suecia,220,53.64,47.04,60.11
+EE. UU. -> Marruecos,219,54.34,47.72,60.8
+EE. UU. -> Pakistán,218,57.8,51.16,64.16
+EE. UU. -> Japón,213,54.46,47.75,61.01
+EE. UU. -> Vietnam,211,56.87,50.13,63.37
+Puerto Rico -> Colombia,207,55.07,48.27,61.69
+Puerto Rico -> Irán,199,52.26,45.34,59.09
+Puerto Rico -> Austria,194,57.73,50.7,64.47
+EE. UU. -> República Democrática del Congo,193,61.66,54.63,68.23
+EE. UU. -> Rusia,191,59.16,52.08,65.89
+Puerto Rico -> Nueva Zelanda,189,61.38,54.27,68.02
+EE. UU. -> Ucrania,189,58.73,51.61,65.51
+EE. UU. -> Venezuela,186,60.22,53.04,66.97
+EE. UU. -> Irak,184,56.52,49.3,63.48
+EE. UU. -> Corea del Sur,172,61.63,54.18,68.57
+EE. UU. -> Arabia Saudí,168,61.31,53.77,68.34
+EE. UU. -> Canada,165,48.48,40.98,56.06
+EE. UU. -> Malasia,158,57.59,49.8,65.03
+EE. UU. -> Perú,157,60.51,52.7,67.82
+Puerto Rico -> Tailandia,156,62.82,55.01,70.01
+EE. UU. -> Bélgica,147,61.22,53.16,68.72
+Puerto Rico -> Marruecos,141,58.87,50.61,66.65
+EE. UU. -> Chile,140,62.14,53.89,69.75
+EE. UU. -> Singapur,136,58.82,50.42,66.74
+Puerto Rico -> Pakistán,135,55.56,47.13,63.67
+Puerto Rico -> Egipto,134,60.45,51.99,68.32
+EE. UU. -> Polonia,129,58.14,49.51,66.3
+Puerto Rico -> SudAfrica,129,52.71,44.14,61.13
+Puerto Rico -> Canada,126,57.94,49.21,66.2
+Puerto Rico -> Suecia,126,65.87,57.23,73.57
+EE. UU. -> Bangladés,126,59.52,50.79,67.69
+Puerto Rico -> Ucrania,125,54.4,45.67,62.87
+Puerto Rico -> República Democrática del Congo,124,59.68,50.88,67.9
+Puerto Rico -> Japón,124,52.42,43.69,61.0
+Puerto Rico -> Arabia Saudí,121,56.2,47.3,64.71
+Puerto Rico -> Rusia,118,61.02,52.0,69.34
+Puerto Rico -> Irak,117,50.43,41.5,59.33
+Puerto Rico -> Venezuela,116,62.07,52.99,70.38
+EE. UU. -> Irlanda,115,72.17,63.37,79.55
+Puerto Rico -> Vietnam,114,54.39,45.25,63.24
+EE. UU. -> Myanmar (Birmania),113,54.87,45.68,63.73
+EE. UU. -> Argelia,104,61.54,51.94,70.32
+Puerto Rico -> Perú,101,55.45,45.73,64.76

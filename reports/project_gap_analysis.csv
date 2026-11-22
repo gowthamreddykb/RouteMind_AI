@@ -1,0 +1,23 @@
+File,Current Purpose,Current Status,Problems Found,Required Changes
+requirements.txt,Dependency list,Requires correction,Unpinned versions (spec requires reproducible versions),"Pin tested versions: sklearn 1.9.1, xgboost 3.4.1, shap 0.54.1, pandas 3.0.6, numpy 2.5.4, joblib 1.6.0, matplotlib 3.11.2, seaborn 0.13.2, pytest 9.2.0"
+src/load_data.py,"Load CSV (cp1252 fallback), holds 29 candidates + 24 prohibited columns",Requires correction,No utf-8-sig attempt; no project paths; no description-file loader,"Add utf-8-sig, path constants, optional description loader"
+src/data_analysis.py,Phase 1 inspection reports,Requires correction,Missing % rounded to 2 decimals (spec: >=4); no target_distribution.csv; no data_quality_report.txt; no date-range/numeric/categorical stats,"Keep inspect(); add target report, quality report, 4-decimal percentages"
+src/feature_audit.py,"Order/dispatch audits, leakage audit, leakage guard",Requires correction,"Review items (Order City/State, Lat/Lon) unresolved; no prediction_stage_availability_report, approved/excluded lists, feature_dictionary; leakage reasons not backed by computed evidence for Order Status, Product Status, profit columns, Sales per customer; availability uses 'Conditional' not Yes/No/Review","Keep SPEC + guard; add evidence checks, stage report, lists, dictionary; resolve Review by validation ablation"
+src/main.py,Runs Phases 1-3 only,Incomplete,"No cleaning, engineering, split, training, evaluation, SHAP, saving, tests",Rewrite as full orchestrator with checkpoints
+src/data_cleaning.py,-,Missing,Not implemented,Implement
+src/feature_engineering.py,-,Missing,Not implemented,Implement (shared by training and Flask inference)
+src/data_splitting.py,-,Missing,Not implemented,Implement group-aware chronological split
+src/data_preprocessing.py,-,Missing,Not implemented,Implement ColumnTransformer builders
+"src/model_training.py, hyperparameter_tuning.py",-,Missing,Not implemented,"Implement LR, default XGB, tuned XGB"
+"src/model_evaluation.py, model_calibration.py",-,Missing,Not implemented,"Implement metrics, plots, subgroup analysis, threshold, calibration"
+src/shap_explainability.py,-,Missing,Not implemented,Implement TreeExplainer + per-feature aggregation
+"src/model_saving.py, prediction.py",-,Missing,Not implemented,Implement versioned saving and predict_at_order_creation / predict_at_dispatch
+tests/ (11 files),-,Missing,No automated tests,Implement pytest suite
+README.md,-,Missing,No documentation,Write
+"reports/dataset_inspection.csv, missing_values_report.csv",Column stats / missing columns,Correct and reusable,Percentages only 2 decimals,Regenerate with 4 decimals (same content otherwise)
+reports/duplicate_report.csv,Duplicate/order-grouping stats,Correct and reusable,Unnamed index header,Regenerate with proper header names
+"reports/order_creation_feature_audit.csv, dispatch_feature_audit.csv",Stage audits,Correct and reusable (decisions preserved),Review rows unresolved; 'Conditional' label,Preserve decisions; resolve Review rows with evidence; add Yes/No/Review report
+reports/leakage_audit_report.csv,Excluded fields + reasons,Correct and reusable,Reasons for Order Status/Product Status/profit/Sales per customer not evidence-backed,Add computed evidence column
+visualizations/target_distribution.png,Target bar chart,Correct and reusable,None,Keep
+data/raw/DescriptionDataCoSupplyChain.csv,Column descriptions,Missing (not provided by user),File was not uploaded; cannot be inspected,Documented as unavailable; column meanings verified empirically instead
+models/dispatch/*,Dispatch model,Blocked by data,shipping date (DateOrders) is not a dispatch timestamp (verified),No model; write future dispatch feature schema + data requirements

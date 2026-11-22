@@ -1,0 +1,47 @@
+{
+    "model_name": "Model 03 Improved - Delivery Delay Duration Regressor",
+    "primary_algorithm": "Random Forest Regressor / CatBoost (Tuned)",
+    "feature_order": [
+        "Days for shipment (scheduled)",
+        "Order Item Quantity",
+        "Sales",
+        "Order Item Discount",
+        "Order Item Product Price",
+        "Order Item Id",
+        "Sales_Per_Item",
+        "Scheduled_Days_x_Item_Count",
+        "Order_Hour",
+        "Order_DayOfWeek",
+        "Order_Month",
+        "Is_Weekend",
+        "Shipping Mode",
+        "Order Region",
+        "Market",
+        "Customer Segment",
+        "Primary_Category",
+        "Primary_Department"
+    ],
+    "numeric_features": [
+        "Days for shipment (scheduled)",
+        "Order Item Quantity",
+        "Sales",
+        "Order Item Discount",
+        "Order Item Product Price",
+        "Order Item Id",
+        "Sales_Per_Item",
+        "Scheduled_Days_x_Item_Count",
+        "Order_Hour",
+        "Order_DayOfWeek",
+        "Order_Month",
+        "Is_Weekend"
+    ],
+    "categorical_features": [
+        "Shipping Mode",
+        "Order Region",
+        "Market",
+        "Customer Segment",
+        "Primary_Category",
+        "Primary_Department"
+    ],
+    "total_features": 18
+}

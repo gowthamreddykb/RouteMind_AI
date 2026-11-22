@@ -1,0 +1,51 @@
+{
+    "model_name": "Model 01 Improved - Late Delivery at Order Creation",
+    "primary_algorithm": "LightGBM Classifier",
+    "feature_order": [
+        "Days for shipment (scheduled)",
+        "Total_Quantity",
+        "Total_Sales",
+        "Total_Discount",
+        "Max_Item_Price",
+        "Mean_Item_Price",
+        "Item_Count",
+        "Sales_Per_Item",
+        "Discount_Rate_Order",
+        "Order_Hour",
+        "Order_DayOfWeek",
+        "Order_Month",
+        "Is_Weekend",
+        "Order_Quarter",
+        "Type",
+        "Order Region",
+        "Market",
+        "Customer Segment",
+        "Primary_Category",
+        "Primary_Department"
+    ],
+    "numeric_features": [
+        "Days for shipment (scheduled)",
+        "Total_Quantity",
+        "Total_Sales",
+        "Total_Discount",
+        "Max_Item_Price",
+        "Mean_Item_Price",
+        "Item_Count",
+        "Sales_Per_Item",
+        "Discount_Rate_Order",
+        "Order_Hour",
+        "Order_DayOfWeek",
+        "Order_Month",
+        "Is_Weekend",
+        "Order_Quarter"
+    ],
+    "categorical_features": [
+        "Type",
+        "Order Region",
+        "Market",
+        "Customer Segment",
+        "Primary_Category",
+        "Primary_Department"
+    ],
+    "total_features": 20
+}

@@ -1,0 +1,54 @@
+Column,Availability stage,Possible ML use,Model 1 verdict,Reason
+Type,Order creation,Candidate categorical,Allowed,Candidate categorical
+Days for shipping (real),After delivery,NOT an input (defines target),Forbidden (leakage),Known only after delivery
+Days for shipment (scheduled),Order creation (if mode chosen),Candidate (redundant with mode),Conditional,Candidate (redundant with mode)
+Benefit per order,Unknown,Reject (post-sale finance),Forbidden (unknown availability),Reject (post-sale finance)
+Sales per customer,Order creation,Use via order value,Allowed,Use via order value
+Delivery Status,After delivery,NOT an input (target source),Forbidden (leakage),Known only after delivery
+Late_delivery_risk,After delivery,TARGET (not an input),Forbidden (leakage),Known only after delivery
+Category Id,Order creation,Same as Product Category Id,Excluded,Same as Product Category Id
+Category Name,Order creation,Candidate categorical,Allowed,Candidate categorical
+Customer City,Order creation,Weak candidate,Allowed,Weak candidate
+Customer Country,Order creation,Low value (2 values),Excluded,Low value (2 values)
+Customer Email,n/a,Drop,Excluded,Drop
+Customer Fname,n/a,Drop (PII),Excluded,Drop (PII)
+Customer Id,Order creation,Key for history features only,Allowed,Key for history features only
+Customer Lname,n/a,Drop (PII),Excluded,Drop (PII)
+Customer Password,n/a,Drop,Excluded,Drop
+Customer Segment,Order creation,Candidate categorical,Allowed,Candidate categorical
+Customer State,Order creation,Weak candidate,Allowed,Weak candidate
+Customer Street,n/a,"Drop (PII, high cardinality)",Excluded,"Drop (PII, high cardinality)"
+Customer Zipcode,Order creation,Weak candidate,Allowed,Weak candidate
+Department Id,Order creation,Redundant with Department Name,Excluded,Redundant with Department Name
+Department Name,Order creation,Candidate categorical,Allowed,Candidate categorical
+Latitude,Order creation,Weak candidate,Allowed,Weak candidate
+Longitude,Order creation,Weak candidate,Allowed,Weak candidate
+Market,Order creation,Candidate categorical,Allowed,Candidate categorical
+Order City,Order creation,Candidate (high cardinality),Allowed,Candidate (high cardinality)
+Order Country,Order creation,Candidate categorical,Allowed,Candidate categorical
+Order Customer Id,Order creation,Redundant,Excluded,Redundant
+order date (DateOrders),Order creation,Source of month/weekday/hour,Allowed,Source of month/weekday/hour
+Order Id,Order creation,Prediction-unit key,Allowed,Prediction-unit key
+Order Item Cardprod Id,Order creation,Redundant,Excluded,Redundant
+Order Item Discount,Order creation (if discount known),Candidate numeric,Conditional,Candidate numeric
+Order Item Discount Rate,Order creation (if discount known),Candidate numeric,Conditional,Candidate numeric
+Order Item Id,Order creation,Identifier,Excluded,Identifier
+Order Item Product Price,Order creation,Candidate numeric,Allowed,Candidate numeric
+Order Item Profit Ratio,Unknown,Reject (post-sale finance),Forbidden (unknown availability),Reject (post-sale finance)
+Order Item Quantity,Order creation,Candidate (sum per order),Allowed,Candidate (sum per order)
+Sales,Order creation,Candidate via order value,Allowed,Candidate via order value
+Order Item Total,Order creation,Candidate via order value,Allowed,Candidate via order value
+Order Profit Per Order,Unknown,Reject,Forbidden (unknown availability),Reject
+Order Region,Order creation,Candidate (quality caveat),Allowed,Candidate (quality caveat)
+Order State,Order creation,Candidate (high cardinality),Allowed,Candidate (high cardinality)
+Order Status,After order creation,"Reject (post-order, partly leaks)",Forbidden (temporal leakage),Snapshot after order creation
+Order Zipcode,n/a,Reject (missing),Excluded,Reject (missing)
+Product Card Id,Order creation,Key,Excluded,Key
+Product Category Id,Order creation,Redundant,Excluded,Redundant
+Product Description,n/a,Drop,Excluded,Drop
+Product Image,n/a,Drop,Excluded,Drop
+Product Name,Order creation,Candidate (high cardinality),Allowed,Candidate (high cardinality)
+Product Price,Order creation,Candidate numeric,Allowed,Candidate numeric
+Product Status,n/a,Drop,Excluded,Drop
+shipping date (DateOrders),After delivery,NOT an input,Forbidden (leakage),Known only after delivery
+Shipping Mode,Order creation (if selected at checkout),Candidate categorical,Conditional,Candidate categorical

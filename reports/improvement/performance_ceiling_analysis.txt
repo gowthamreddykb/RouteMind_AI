@@ -1,0 +1,13 @@
+PERFORMANCE CEILING ANALYSIS (test period, eligible rows)
+======================================================================
+  AUC 0.7469  <- mode base rate only
+  AUC 0.7771  <- mode rate + perfect Same Day hour rule (ceiling for order-time features)
+
+Late shipments in test: 14,898.  Standard Class: 6,052 (40.6%) at a late rate of 0.394; all other modes: 8,846.
+Alerting ONLY non-Standard modes:  recall <= 0.594, precision ~ 0.843, alerts 40.6% of shipments.
+Alerting everything:                recall = 1.000, precision = 0.576, alerts 100%.
+Any extra Standard Class alert adds shipments that are late only 39.4% of the time (no feature can tell which ones).
+
+Therefore: recall 85-90% together with precision 75-85% is NOT reachable with the data columns available at order creation;
+reaching recall 0.85 requires alerting a large share of Standard Class shipments, which pushes precision towards ~0.62 (see threshold operating points).
+More signal would need NEW information (carrier, warehouse/dispatch events, weather, congestion) - not present in DataCo.

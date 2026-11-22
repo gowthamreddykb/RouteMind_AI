@@ -1,0 +1,22 @@
+{
+    "catboost_improved": {
+        "mae": 0.9649,
+        "mse": 1.5914,
+        "rmse": 1.2615,
+        "r2": 0.2861,
+        "pct_within_0_5_days": 36.72,
+        "pct_within_1_0_days": 52.65,
+        "pct_within_1_5_days": 68.17,
+        "pct_within_2_0_days": 83.8
+    },
+    "random_forest_regressor_best": {
+        "mae": 0.9668,
+        "mse": 1.6047,
+        "rmse": 1.2668,
+        "r2": 0.2802,
+        "pct_within_0_5_days": 36.74,
+        "pct_within_1_0_days": 52.79,
+        "pct_within_1_5_days": 68.15,
+        "pct_within_2_0_days": 84.15
+    }
+}

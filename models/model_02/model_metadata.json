@@ -1,0 +1,20 @@
+{
+    "model_id": "model_02_xgboost_classifier",
+    "version": "1.0.0",
+    "algorithm": "XGBClassifier (XGBoost)",
+    "training_timestamp": "2026-11-13T22:34:31.647684",
+    "best_hyperparameters": {
+        "max_depth": 4,
+        "learning_rate": 0.03,
+        "n_estimators": 200,
+        "subsample": 0.8
+    },
+    "features_used": [
+        "Days for shipment (scheduled)",
+        "Order Item Quantity",
+        "Shipping Mode",
+        "Order Region",
+        "Order Status"
+    ],
+    "leakage_audit_passed": true
+}

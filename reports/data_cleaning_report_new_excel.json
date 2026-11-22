@@ -1,0 +1,32 @@
+{
+  "dataset_key": "new_excel",
+  "initial_rows": 15000,
+  "final_rows": 15000,
+  "duplicates_removed": 0,
+  "initial_columns": 53,
+  "final_columns": 48,
+  "dropped_sensitive_columns": [
+    "Customer Email",
+    "Customer Password",
+    "Customer Fname",
+    "Customer Lname",
+    "Customer Street"
+  ],
+  "missing_values_per_column": {
+    "order date (DateOrders)": 435,
+    "Order State": 194,
+    "Order Status": 373,
+    "Order Zipcode": 12648,
+    "Product Card Id": 194,
+    "Product Category Id": 373,
+    "Product Description": 14433,
+    "shipping date (DateOrders)": 567,
+    "Shipping Mode": 567
+  },
+  "target_distribution": {
+    "0 (On Time / Advance)": 7194,
+    "1 (Late Delivery)": 7806,
+    "late_delivery_rate": 0.5204
+  },
+  "cleaned_at": "2026-11-14T14:04:38.983678Z"
+}
