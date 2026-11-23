@@ -55,3 +55,8 @@ data/processed/*/*.csv
 .catalyst/
 .catalyst-cache/
 node_modules/
+
+# Extracted doc assets
+extracted_images/
+extracted_ref_doc.txt
+
