@@ -12,7 +12,8 @@ from docx.enum.table import WD_TABLE_ALIGNMENT, WD_ALIGN_VERTICAL
 from docx.oxml import OxmlElement, parse_xml
 from docx.oxml.ns import nsdecls, qn
 
-OUTPUT_PATH = r"C:\gowtham_mithraz\control tower docement.docx"
+OUTPUT_PATH = r"C:\gowtham_mithraz\control tower docement_complete.docx"
+FINAL_TARGET = r"C:\gowtham_mithraz\control tower docement.docx"
 
 def set_cell_background(cell, fill_hex):
     tcPr = cell._tc.get_or_add_tcPr()
@@ -712,6 +713,13 @@ def build_full_documentation():
     # Save document
     doc.save(OUTPUT_PATH)
     print(f"Documentation successfully generated at: {OUTPUT_PATH}")
+    try:
+        import shutil
+        shutil.copy2(OUTPUT_PATH, FINAL_TARGET)
+        print(f"Successfully copied to final target: {FINAL_TARGET}")
+    except Exception as e:
+        print(f"Note: Could not immediately overwrite {FINAL_TARGET} (likely open in editor: {e}). Generated complete file at {OUTPUT_PATH}")
 
 if __name__ == "__main__":
     build_full_documentation()
+
