@@ -74,6 +74,26 @@ def create_app(config_name=None, db_path=None, **kwargs):
         static_folder=os.path.join(BASE_DIR, 'static')
     )
     app.config['BASE_DIR'] = BASE_DIR
+
+    # Bulletproof Jinja template resolution across local, Docker, and Render cloud environments
+    from jinja2 import ChoiceLoader, FileSystemLoader
+    candidate_template_dirs = [
+        os.path.join(BASE_DIR, 'templates'),
+        os.path.join(_curr, 'templates'),
+        os.path.abspath('templates'),
+        os.path.abspath(os.path.join(os.path.dirname(__file__), 'templates')),
+        os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'templates')),
+    ]
+    seen_dirs = set()
+    valid_loaders = []
+    for d in candidate_template_dirs:
+        norm = os.path.normpath(d)
+        if norm not in seen_dirs and os.path.isdir(norm):
+            seen_dirs.add(norm)
+            valid_loaders.append(FileSystemLoader(norm))
+    if app.jinja_loader:
+        valid_loaders.append(app.jinja_loader)
+    app.jinja_loader = ChoiceLoader(valid_loaders)
     if isinstance(config_name, str):
         app.config.from_object(config_by_name.get(config_name, config_by_name['default']))
     elif isinstance(config_name, type) or hasattr(config_name, '__dict__'):
@@ -317,6 +337,8 @@ def create_app(config_name=None, db_path=None, **kwargs):
         return jsonify({
             "status": overall_status,
             "system": "RouteMind AI Maritime Logistics Control Tower",
+            "version": "2.0.0",
+            "render_git_commit": os.environ.get('RENDER_GIT_COMMIT', 'latest'),
             "timestamp": dt.datetime.now(dt.timezone.utc).isoformat(),
             "database": db_status,
             "baseline_models": baseline_models,
