@@ -33,6 +33,8 @@ build/
 .vscode/
 *.swp
 *.bak
+~$*
+.DS_Store
 
 # ML / Training cache
 catboost_info/

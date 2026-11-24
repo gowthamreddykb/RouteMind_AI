@@ -115,12 +115,6 @@
         <i class="bi bi-shield-exclamation me-1"></i> Manage Exception
       </a>
       {% endif %}
-
-      {% if current_user.is_authenticated and current_user.is_admin() %}
-      <a href="/reports/export/shipment/{{ shipment.shipment_number }}" class="btn btn-rm-outline btn-sm text-decoration-none">
-        <i class="bi bi-download me-1"></i> Export Report
-      </a>
-      {% endif %}
     </div>
   </div>
 

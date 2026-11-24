@@ -429,8 +429,7 @@ class AIAssistantService:
             text = (
                 "> 💡 **Executive Summary:** Data export capabilities are available directly within RouteMind AI.\n\n"
                 "• **Export Active Visualizations:** You can click the **Export PNG** or **Export CSV** buttons on any dynamic chart card.\n"
-                "• **Export Shipment Records:** Navigate to **Shipments List** (`/shipments/`) to export full consignment datasets.\n"
-                "• **Audit Reports:** Go to **Reports & Analytics** (`/reports/`) to generate compliance summaries."
+                "• **Export Shipment Records:** Navigate to **Shipments List** (`/shipments/`) to export full consignment datasets."
             )
             return text, None, None, None
 

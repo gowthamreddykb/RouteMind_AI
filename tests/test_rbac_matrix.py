@@ -78,7 +78,6 @@ def run_rbac_suite():
         allowed_dispatcher = [
             ('/', 200),
             ('/dashboard', 200),
-            ('/reports/', 200),
             ('/shipments/', 200),
             ('/shipments/new', 200),
             ('/shipments/1', 200),
@@ -143,7 +142,6 @@ def run_rbac_suite():
         allowed_manager = [
             ('/', 200),
             ('/dashboard', 200),
-            ('/reports/', 200),
             ('/shipments/', 200),
             ('/shipments/1', 200),
             ('/exceptions/', 200),
@@ -199,7 +197,6 @@ def run_rbac_suite():
         allowed_admin = [
             ('/', 200),
             ('/dashboard', 200),
-            ('/reports/', 200),
             ('/shipments/', 200),
             ('/users/', 200),
             ('/users/new', 200),

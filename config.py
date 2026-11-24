@@ -13,6 +13,10 @@ class Config:
         f'sqlite:///{os.path.join(BASE_DIR, "instance", "routemind.db").replace(os.sep, "/")}'
     )
     SQLALCHEMY_TRACK_MODIFICATIONS = False
+    SQLALCHEMY_ENGINE_OPTIONS = {
+        'pool_pre_ping': True,
+        'pool_recycle': 280,
+    }
     DEFAULT_EXTERNAL_MODELS = r'C:\gowtham_mithraz\python\Logistics-Control-Tower\files\models'
     MODELS_DIR = os.environ.get(
         'MODELS_DIR',

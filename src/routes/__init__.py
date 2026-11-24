@@ -1,6 +1,5 @@
 from .auth_routes import auth_bp
 from .shipment_routes import shipment_bp
-from .report_routes import report_bp
 from .exception_routes import exception_bp
 from .ai_assistant_routes import ai_bp, api_chat, chat_history, clear_chat_session
 from .escalation_routes import escalation_bp
@@ -13,7 +12,6 @@ from .dashboard_routes import dashboard_bp
 def register_routes(app):
     app.register_blueprint(auth_bp, url_prefix='/auth')
     app.register_blueprint(shipment_bp, url_prefix='/shipments')
-    app.register_blueprint(report_bp, url_prefix='/reports')
     app.register_blueprint(exception_bp, url_prefix='/exceptions')
     app.register_blueprint(ai_bp, url_prefix='/ai/assistant')
     app.register_blueprint(escalation_bp, url_prefix='/escalations')

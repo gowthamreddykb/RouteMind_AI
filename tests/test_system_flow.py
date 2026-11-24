@@ -88,7 +88,6 @@ def test_routes_and_buttons():
         ('/api/models', 200),
         ('/shipments/', 200),
         ('/shipments/new', 200),
-        ('/reports/', 200),
         ('/exceptions/', 200),
         ('/ai/assistant', 200),
         ('/escalations/', 200),

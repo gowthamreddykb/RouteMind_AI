@@ -3,7 +3,7 @@ import sys
 import datetime as dt
 from werkzeug.security import generate_password_hash
 
-ROOT = r"C:\gowtham_mithraz\RouteMind_AI"
+ROOT = os.path.abspath(os.path.dirname(__file__))
 if ROOT not in sys.path:
     sys.path.insert(0, ROOT)
 
@@ -18,8 +18,9 @@ from src.models.exception_model import ShipmentException
 from src.models.exception_action_model import ExceptionAction
 from src.models.communication_model import CommunicationLog
 
-def seed_database():
-    app = create_app('development')
+def seed_database(config_env=None):
+    env = config_env or os.environ.get('FLASK_ENV', 'development')
+    app = create_app(env)
     with app.app_context():
         print("Seeding database tables with diverse, non-duplicate production records...")
 

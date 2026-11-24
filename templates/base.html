@@ -78,10 +78,10 @@
         {% endif %}
 
         {# 5. Reports (All authenticated roles) #}
-        <a href="/reports/" class="nav-tab-pill {% if '/reports' in request.path %}active{% endif %}">
+        <!-- <a href="/reports/" class="nav-tab-pill {% if '/reports' in request.path %}active{% endif %}">
           <i class="bi bi-file-earmark-bar-graph"></i>
           <span>Reports</span>
-        </a>
+        </a> -->
 
         {# 6. AI Assistant (All authenticated roles) #}
         <a href="/ai/assistant" class="nav-tab-pill {% if '/ai' in request.path %}active{% endif %}">
@@ -149,10 +149,10 @@
         <span>Escalations</span>
       </a>
       {% endif %}
-      <a href="/reports/" class="nav-tab-pill {% if '/reports' in request.path %}active{% endif %}">
+      <!-- <a href="/reports/" class="nav-tab-pill {% if '/reports' in request.path %}active{% endif %}">
         <i class="bi bi-file-earmark-bar-graph"></i>
         <span>Reports</span>
-      </a>
+      </a> -->
       <a href="/ai/assistant" class="nav-tab-pill {% if '/ai' in request.path %}active{% endif %}">
         <i class="bi bi-robot"></i>
         <span>AI Assistant</span>

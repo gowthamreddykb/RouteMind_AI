@@ -102,7 +102,6 @@
         'anomalies': '/anomalies/',
         'exceptions': '/exceptions/',
         'escalations': '/escalations/',
-        'reports': '/reports/',
         'ai_assistant': '/ai/assistant',
         'assistant': '/ai/assistant',
         'users': '/users/',
@@ -128,12 +127,6 @@
         if (a.getAttribute('data-screen') === screenId) a.classList.add('active');
         else a.classList.remove('active');
       });
-
-      // Lazy init charts on reports screen
-      if (screenId === 'reports' && !chartsInitialized) {
-        initReportsCharts();
-        chartsInitialized = true;
-      }
     }
 
     function openShipmentDetail(shipmentId) {
@@ -148,79 +141,6 @@
       document.querySelectorAll('#detailTabs .nav-link').forEach(b => b.classList.remove('active'));
       btn.classList.add('active');
       showToast(`Switched to ${btn.textContent.trim()} view`, 'info');
-    }
-
-    // Chart.js initializers matching dynamic database reports
-    async function initReportsCharts() {
-      const ctxBar = document.getElementById('chartDeliveryPerformance');
-      const ctxDonut = document.getElementById('chartShipmentStatus');
-      if (!ctxBar && !ctxDonut) return;
-      if (Chart.getChart(ctxBar) || Chart.getChart(ctxDonut)) return; // already initialized
-
-      try {
-        const res = await fetch('/reports/api/chart-data');
-        if (!res.ok) return;
-        const chartData = await res.json();
-
-        // 1. Delivery Performance Bar Chart
-        if (ctxBar && chartData.performance_chart && !Chart.getChart(ctxBar)) {
-          const perf = chartData.performance_chart;
-          new Chart(ctxBar, {
-            type: 'bar',
-            data: {
-              labels: perf.labels,
-              datasets: [
-                {
-                  label: 'Scheduled',
-                  data: perf.scheduled,
-                  backgroundColor: '#4F46E5',
-                  borderRadius: 4
-                },
-                {
-                  label: 'Delivered / On-Track',
-                  data: perf.delivered,
-                  backgroundColor: '#38BDF8',
-                  borderRadius: 4
-                }
-              ]
-            },
-            options: {
-              responsive: true,
-              maintainAspectRatio: false,
-              plugins: { legend: { display: false } },
-              scales: {
-                y: { beginAtZero: true, grid: { color: '#F1F5F9' }, ticks: { stepSize: 1 } },
-                x: { grid: { display: false } }
-              }
-            }
-          });
-        }
-
-        // 2. Shipment Status Donut Chart
-        if (ctxDonut && chartData.status_chart && !Chart.getChart(ctxDonut)) {
-          const st = chartData.status_chart;
-          new Chart(ctxDonut, {
-            type: 'doughnut',
-            data: {
-              labels: st.labels,
-              datasets: [{
-                data: st.data,
-                backgroundColor: ['#4F46E5', '#10B981', '#F59E0B', '#EF4444'],
-                borderWidth: 0,
-                hoverOffset: 4
-              }]
-            },
-            options: {
-              responsive: true,
-              maintainAspectRatio: false,
-              cutout: '72%',
-              plugins: { legend: { display: false } }
-            }
-          });
-        }
-      } catch (e) {
-        console.warn('Failed to load dynamic chart data:', e);
-      }
     }
 
     // Copilot Functions (Image 5)

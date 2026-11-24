@@ -75,6 +75,27 @@ def import_shipments():
 
     return render_template('shipment_import.html', import_logs=import_logs, result=result)
 
+def get_pagination_window(page: int, total_pages: int):
+    """Generate a clean, bounded pagination window with ellipsis for large page counts."""
+    if total_pages <= 7:
+        return list(range(1, total_pages + 1))
+    pages = [1]
+    if page <= 4:
+        pages.extend([2, 3, 4, 5])
+        pages.append('...')
+        pages.append(total_pages)
+    elif page >= total_pages - 3:
+        pages.append('...')
+        pages.extend(list(range(total_pages - 4, total_pages)))
+        pages.append(total_pages)
+    else:
+        pages.append('...')
+        pages.extend([page - 1, page, page + 1])
+        pages.append('...')
+        pages.append(total_pages)
+    return pages
+
+
 @shipment_bp.route('/', methods=['GET'])
 @login_required
 @roles_required(ROLE_DISPATCHER, ROLE_MANAGER, ROLE_ADMIN)
@@ -96,6 +117,7 @@ def list_shipments():
     )
 
     total_pages = max(1, math.ceil(filtered_total / per_page))
+    page_numbers = get_pagination_window(page, total_pages)
     total_db_count = ShipmentService.count_for_user(current_user)
     in_transit_count = ShipmentService.count_for_user(current_user, status_in=['IN_TRANSIT', 'PENDING', 'Ocean In-Transit'])
     high_risk_count = ShipmentService.count_for_user(current_user, risk_level=['HIGH', 'CRITICAL', 'CRITICAL_RISK'])
@@ -118,10 +140,12 @@ def list_shipments():
                            page=page,
                            per_page=per_page,
                            total_pages=total_pages,
+                           page_numbers=page_numbers,
                            search=search,
                            status=status,
                            vessel=vessel,
                            risk=risk,
+                           destination_region=destination_region,
                            vessels=vessels,
                            statuses=statuses,
                            can_create=can_create,

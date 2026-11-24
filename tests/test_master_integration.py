@@ -31,7 +31,6 @@ from src.services.prediction_service import PredictionService
 from src.services.exception_service import ExceptionService
 from src.services.escalation_service import EscalationService
 from src.services.ai_assistant_service import AIAssistantService
-from src.services.report_service import ReportService
 
 
 @pytest.fixture
@@ -350,30 +349,3 @@ def test_ai_logistics_chatbot(client, app):
             assert res.status_code == 200
             msg = res.get_json()['message']
             assert first_shp.shipment_number in msg
-
-
-# ==============================================================================
-# 8. REPORTS & CHART AGGREGATION
-# ==============================================================================
-def test_reports_and_chart_data(client, app):
-    with app.app_context():
-        client.get('/auth/quick-login/dispatcher')
-
-        # Reports page load
-        res = client.get('/reports/')
-        assert res.status_code == 200
-        assert b'Maritime Operations Overview' in res.data
-
-        # Chart Data API
-        res = client.get('/reports/api/chart-data')
-        assert res.status_code == 200
-        data = res.get_json()
-        assert 'status_chart' in data
-        assert 'performance_chart' in data
-        assert 'risk_distribution' in data
-        assert len(data['status_chart']['data']) == 4
-
-        # Export Report JSON
-        res = client.get('/reports/export')
-        assert res.status_code == 200
-        assert 'attachment;filename=RouteMind_Operations_Report.json' in res.headers.get('Content-Disposition', '')

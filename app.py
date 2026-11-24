@@ -83,22 +83,27 @@ def create_app(config_name=None, db_path=None, **kwargs):
     for k, v in kwargs.items():
         app.config[k.upper()] = v
 
-    # Resilient Database Connection: if MySQL is configured but unreachable, fall back to SQLite instance
+    # Resilient Database Connection: if MySQL/TiDB is configured, verify connectivity with cloud tolerance
     db_uri = str(app.config.get('SQLALCHEMY_DATABASE_URI', ''))
     if 'mysql' in db_uri.lower() and not db_path:
+        is_production = os.environ.get('FLASK_ENV') == 'production' or (isinstance(config_name, str) and config_name == 'production')
         try:
             import socket, urllib.parse
             parsed = urllib.parse.urlsplit(db_uri.replace('mysql+pymysql://', 'http://').replace('mysql://', 'http://'))
             host = parsed.hostname or '127.0.0.1'
             port = parsed.port or 3306
             sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-            sock.settimeout(0.5)
+            # 3.0s timeout to accommodate cloud gateway latency (e.g. TiDB Cloud Serverless)
+            sock.settimeout(3.0)
             check_result = sock.connect_ex((host, port))
             sock.close()
             if check_result != 0:
-                sqlite_fallback = os.path.abspath(os.path.join(BASE_DIR, "instance", "routemind.db")).replace(os.sep, "/")
-                logger.warning(f"MySQL server at {host}:{port} is unreachable. Falling back gracefully to SQLite at {sqlite_fallback}")
-                app.config['SQLALCHEMY_DATABASE_URI'] = f"sqlite:///{sqlite_fallback}"
+                if not is_production:
+                    sqlite_fallback = os.path.abspath(os.path.join(BASE_DIR, "instance", "routemind.db")).replace(os.sep, "/")
+                    logger.warning(f"Database server at {host}:{port} is unreachable. Falling back to local SQLite at {sqlite_fallback}")
+                    app.config['SQLALCHEMY_DATABASE_URI'] = f"sqlite:///{sqlite_fallback}"
+                else:
+                    logger.error(f"Configured production database at {host}:{port} was not reachable on port check (code {check_result}). Retaining URI for SQLAlchemy connection pool.")
         except Exception as check_err:
             logger.warning(f"Database availability check exception ({check_err}). Retaining URI.")
 
