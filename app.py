@@ -15,9 +15,11 @@ from flask_login import login_required, current_user, logout_user
 from sqlalchemy import text
 from dotenv import load_dotenv
 
-# Path resolutions
+# Path resolutions: Robust project root detection across local, Docker, and cloud hosts (e.g. Render /opt/render/project/src)
 _curr = os.path.abspath(os.path.dirname(__file__))
-if os.path.basename(_curr) == 'src':
+if os.path.exists(os.path.join(_curr, 'templates')):
+    BASE_DIR = _curr
+elif os.path.exists(os.path.join(os.path.dirname(_curr), 'templates')):
     BASE_DIR = os.path.dirname(_curr)
 else:
     BASE_DIR = _curr
@@ -71,6 +73,7 @@ def create_app(config_name=None, db_path=None, **kwargs):
         template_folder=os.path.join(BASE_DIR, 'templates'),
         static_folder=os.path.join(BASE_DIR, 'static')
     )
+    app.config['BASE_DIR'] = BASE_DIR
     if isinstance(config_name, str):
         app.config.from_object(config_by_name.get(config_name, config_by_name['default']))
     elif isinstance(config_name, type) or hasattr(config_name, '__dict__'):
