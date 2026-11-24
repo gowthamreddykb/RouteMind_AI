@@ -16,4 +16,3 @@ pymysql>=1.2.0
 catboost>=1.2.0
 cryptography>=50.0.0
 gunicorn>=21.2.0
-gunicorn
