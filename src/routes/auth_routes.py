@@ -407,43 +407,59 @@ def reset_password():
             flash(strength_err, 'warning')
             return render_template('reset_password.html', hide_nav=True, email=user.email), 400
 
-        # Update password hash in MySQL database using Werkzeug's secure hashing
-        user.set_password(new_password)
+        try:
+            # Update password hash in database using Werkzeug's secure hashing
+            user.set_password(new_password)
 
-        # Invalidate the verified OTP record in MySQL database
-        now_naive = dt.datetime.now(dt.timezone.utc).replace(tzinfo=None)
-        latest_reset_otp = PasswordResetOTP.query.filter_by(user_id=user.id, used_at=None).order_by(PasswordResetOTP.id.desc()).first()
-        if latest_reset_otp:
-            latest_reset_otp.used_at = now_naive
+            # Invalidate the verified OTP record in database
+            try:
+                now_naive = dt.datetime.now(dt.timezone.utc).replace(tzinfo=None)
+                latest_reset_otp = PasswordResetOTP.query.filter_by(user_id=user.id, used_at=None).order_by(PasswordResetOTP.id.desc()).first()
+                if latest_reset_otp:
+                    latest_reset_otp.used_at = now_naive
+            except Exception as otp_err:
+                # Do not block password reset if OTP invalidation encounters an issue
+                pass
 
-        # Record password reset in audit logs
-        AuditService.log(
-            action='PASSWORD_RESET',
-            entity='USER',
-            entity_id=user.id,
-            user_id=user.id,
-            details=f"Password successfully reset via email OTP verification for user '{user.username}' (email: {user.email}) from IP {request.remote_addr}."
-        )
+            # Record password reset in audit logs
+            try:
+                AuditService.log(
+                    action='PASSWORD_RESET',
+                    entity='USER',
+                    entity_id=user.id,
+                    user_id=user.id,
+                    details=f"Password successfully reset via email OTP verification for user '{user.username}' (email: {user.email}) from IP {request.remote_addr}."
+                )
+            except Exception as audit_err:
+                # Do not block password reset if audit logging encounters an issue
+                pass
 
-        db.session.commit()
+            db.session.commit()
 
-        # Invalidate pending reset session state
-        session.pop('reset_token', None)
-        session.pop('reset_user_id', None)
-        session.pop('reset_email', None)
-        session.pop('reset_purpose', None)
-        session.pop('reset_identifier', None)
+            # Invalidate pending reset session state
+            session.pop('reset_token', None)
+            session.pop('reset_user_id', None)
+            session.pop('reset_email', None)
+            session.pop('reset_purpose', None)
+            session.pop('reset_identifier', None)
+            session.pop('sandbox_otp_code', None)
+            session.pop('sandbox_otp_email', None)
 
-        # User requirement 6: Display "Your password has been reset successfully."
-        flash('Your password has been reset successfully.', 'success')
+            # Flash success notification
+            flash('Your password has been reset successfully. Please sign in with your new password.', 'success')
 
-        if request.is_json:
-            return jsonify({
-                'status': 'success',
-                'message': 'Your password has been reset successfully.',
-                'redirect': url_for('auth_bp.login')
-            }), 200
+            if request.is_json:
+                return jsonify({
+                    'status': 'success',
+                    'message': 'Your password has been reset successfully.',
+                    'redirect': url_for('auth_bp.login')
+                }), 200
 
-        return redirect(url_for('auth_bp.login'))
+            return redirect(url_for('auth_bp.login'))
+
+        except Exception as e:
+            db.session.rollback()
+            flash(f'An error occurred while updating your password: {str(e)}. Please try again.', 'danger')
+            return render_template('reset_password.html', hide_nav=True, email=user.email), 500
 
     return render_template('reset_password.html', hide_nav=True, email=user.email)

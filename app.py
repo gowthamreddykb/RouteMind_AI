@@ -128,7 +128,12 @@ def create_app(config_name=None, db_path=None, **kwargs):
                 else:
                     logger.error(f"Configured production database at {host}:{port} was not reachable on port check (code {check_result}). Retaining URI for SQLAlchemy connection pool.")
         except Exception as check_err:
-            logger.warning(f"Database availability check exception ({check_err}). Retaining URI.")
+            if not is_production:
+                sqlite_fallback = os.path.abspath(os.path.join(BASE_DIR, "instance", "routemind.db")).replace(os.sep, "/")
+                logger.warning(f"Database availability check exception ({check_err}). Falling back gracefully to local SQLite at {sqlite_fallback}")
+                app.config['SQLALCHEMY_DATABASE_URI'] = f"sqlite:///{sqlite_fallback}"
+            else:
+                logger.warning(f"Database availability check exception ({check_err}). Retaining URI.")
 
     if app.config.get('TESTING'):
         app.config['LOGIN_DISABLED'] = True

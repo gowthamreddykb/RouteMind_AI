@@ -16,6 +16,7 @@ class Config:
     SQLALCHEMY_ENGINE_OPTIONS = {
         'pool_pre_ping': True,
         'pool_recycle': 280,
+        'pool_timeout': 20
     }
     DEFAULT_EXTERNAL_MODELS = r'C:\gowtham_mithraz\python\Logistics-Control-Tower\files\models'
     MODELS_DIR = os.environ.get(

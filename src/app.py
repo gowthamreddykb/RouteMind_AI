@@ -123,7 +123,9 @@ def create_app(config_name=None, db_path=None, **kwargs):
                 logger.warning(f"MySQL server at {host}:{port} is unreachable. Falling back gracefully to SQLite at {sqlite_fallback}")
                 app.config['SQLALCHEMY_DATABASE_URI'] = f"sqlite:///{sqlite_fallback}"
         except Exception as check_err:
-            logger.warning(f"Database availability check exception ({check_err}). Retaining URI.")
+            sqlite_fallback = os.path.abspath(os.path.join(BASE_DIR, "instance", "routemind.db")).replace(os.sep, "/")
+            logger.warning(f"Database availability check exception ({check_err}). Falling back gracefully to local SQLite at {sqlite_fallback}")
+            app.config['SQLALCHEMY_DATABASE_URI'] = f"sqlite:///{sqlite_fallback}"
 
     if app.config.get('TESTING'):
         app.config['LOGIN_DISABLED'] = True
