@@ -12,6 +12,7 @@ from src.models.otp_model import PasswordResetOTP
 from src.services.otp_service import OTPService
 from src.services.audit_service import AuditService
 from src.security.permissions import normalize_role
+from typing import Tuple
 
 auth_bp = Blueprint('auth_bp', __name__)
 
