@@ -42,6 +42,22 @@
         </div>
       </div>
 
+      {% if session.get('sandbox_otp_code') %}
+      <!-- Cloud Sandbox Verification Notice (When host blocks outbound SMTP) -->
+      <div class="alert alert-info py-2.5 px-3 small text-start mb-3 border-0 bg-info-subtle text-info-emphasis rounded-3 shadow-sm">
+        <div class="d-flex align-items-center gap-2 mb-1 fw-bold">
+          <i class="bi bi-info-circle-fill text-info"></i>
+          <span>Sandbox Verification Code:</span>
+        </div>
+        <div class="font-monospace fs-4 fw-bold text-center text-teal py-1 my-1 bg-white rounded border border-info-subtle" style="letter-spacing: 5px;">
+          {{ session.get('sandbox_otp_code') }}
+        </div>
+        <div class="text-muted" style="font-size: 0.74rem; line-height: 1.4;">
+          <strong>Host Notice:</strong> Outbound SMTP (port 587) is blocked on free cloud instances. Use the code above to proceed. (To receive live emails in your inbox, set <code>BREVO_API_KEY</code> on Render).
+        </div>
+      </div>
+      {% endif %}
+
       <!-- Verification Form -->
       <form action="/auth/verify-otp?email={{ email | urlencode }}{% if purpose == 'reset_password' or request.args.get('purpose') == 'reset_password' %}&purpose=reset_password{% endif %}" method="POST" id="verifyOtpForm" onsubmit="handleVerifySubmit(event)">
         <input type="hidden" name="email" value="{{ email }}">

@@ -27,6 +27,8 @@ services:
         sync: false
       - key: MAIL_PASSWORD
         sync: false
+      - key: BREVO_API_KEY
+        sync: false
       - key: MAIL_DEFAULT_SENDER
         sync: false
       - key: ORDER_CREATION_THRESHOLD

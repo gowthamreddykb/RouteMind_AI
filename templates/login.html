@@ -80,6 +80,27 @@
           </button>
         </form>
 
+        <!-- One-Click Quick Demo Sign In Autofill -->
+        <div class="mb-3 p-2.5 rounded-3 bg-light border">
+          <div class="d-flex justify-content-between align-items-center mb-1.5">
+            <span class="small fw-bold text-secondary text-uppercase" style="font-size: 0.70rem; letter-spacing: 0.5px;">
+              <i class="bi bi-person-check-fill text-teal me-1"></i> Quick Demo Sign In
+            </span>
+            <span class="badge bg-secondary-subtle text-secondary" style="font-size: 0.65rem;">Click to Autofill</span>
+          </div>
+          <div class="d-flex flex-wrap gap-1.5">
+            <button type="button" class="btn btn-outline-secondary btn-sm py-1 px-2" style="font-size: 0.75rem;" onclick="fillDemo('dispatcher@routemind.ai', 'dispatcher123')">
+              <i class="bi bi-truck me-1"></i> Dispatcher
+            </button>
+            <button type="button" class="btn btn-outline-secondary btn-sm py-1 px-2" style="font-size: 0.75rem;" onclick="fillDemo('manager@routemind.ai', 'manager123')">
+              <i class="bi bi-briefcase me-1"></i> Manager
+            </button>
+            <button type="button" class="btn btn-outline-secondary btn-sm py-1 px-2" style="font-size: 0.75rem;" onclick="fillDemo('admin@routemind.ai', 'admin123')">
+              <i class="bi bi-shield-check me-1"></i> Admin
+            </button>
+          </div>
+        </div>
+
         <!-- Alternative OTP Link -->
         <div class="text-center mb-3">
           <a href="javascript:void(0)" onclick="requestOtpMode()" class="small text-decoration-none text-muted">
@@ -97,6 +118,17 @@
 </div>
 
 <script>
+function fillDemo(email, pass) {
+  const emailInput = document.getElementById('loginEmail');
+  const passInput = document.getElementById('loginPassword');
+  if (emailInput && passInput) {
+    emailInput.value = email;
+    passInput.value = pass;
+    const btn = document.getElementById('loginSubmitBtn');
+    if (btn) btn.focus();
+  }
+}
+
 function togglePasswordVisibility() {
   const pwd = document.getElementById('loginPassword');
   const icon = document.getElementById('togglePasswordIcon');
