@@ -19,10 +19,13 @@ class Config:
         'pool_timeout': 20
     }
     DEFAULT_EXTERNAL_MODELS = r'C:\gowtham_mithraz\python\Logistics-Control-Tower\files\models'
-    MODELS_DIR = os.environ.get(
-        'MODELS_DIR',
-        DEFAULT_EXTERNAL_MODELS if os.path.exists(DEFAULT_EXTERNAL_MODELS) else os.path.join(BASE_DIR, 'models')
-    )
+    _env_models = os.environ.get('MODELS_DIR')
+    if _env_models and os.path.isdir(_env_models):
+        MODELS_DIR = _env_models
+    elif os.path.isdir(DEFAULT_EXTERNAL_MODELS):
+        MODELS_DIR = DEFAULT_EXTERNAL_MODELS
+    else:
+        MODELS_DIR = os.path.join(BASE_DIR, 'models')
     REPORTS_DIR = os.path.join(BASE_DIR, 'reports')
     DATA_DIR = os.path.join(BASE_DIR, 'data')
     UPLOAD_FOLDER = os.path.join(BASE_DIR, 'data', 'raw')

@@ -106,6 +106,11 @@ def create_app(config_name=None, db_path=None, **kwargs):
     for k, v in kwargs.items():
         app.config[k.upper()] = v
 
+    # Ensure MODELS_DIR points to a valid on-disk directory (handles cloud platforms where Windows paths don't exist)
+    cfg_models = app.config.get('MODELS_DIR')
+    if not cfg_models or not os.path.isdir(str(cfg_models)):
+        app.config['MODELS_DIR'] = os.path.join(BASE_DIR, 'models')
+
     # Resilient Database Connection: if MySQL is configured but unreachable, fall back to SQLite instance
     db_uri = str(app.config.get('SQLALCHEMY_DATABASE_URI', ''))
     if 'mysql' in db_uri.lower() and not db_path:
