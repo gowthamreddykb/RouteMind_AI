@@ -88,6 +88,11 @@ class DashboardService:
                     Shipment.created_by_id == user_id,
                     Shipment.assigned_to_id == user_id
                 ])
+            # Include unassigned shipments so dispatchers have visibility of the open intake pool
+            conditions.extend([
+                Shipment.assigned_to_name.is_(None),
+                Shipment.assigned_to_name == ''
+            ])
             if conditions:
                 query = query.filter(or_(*conditions))
 
@@ -95,6 +100,10 @@ class DashboardService:
             conditions = []
             if username:
                 conditions.append(ShipmentException.assigned_to == username)
+            conditions.extend([
+                ShipmentException.assigned_to.is_(None),
+                ShipmentException.assigned_to == ''
+            ])
             if hasattr(ShipmentException, 'shipment') and (username or user_id):
                 ship_conds = []
                 if username:
@@ -107,6 +116,10 @@ class DashboardService:
                         Shipment.created_by_id == user_id,
                         Shipment.assigned_to_id == user_id
                     ])
+                ship_conds.extend([
+                    Shipment.assigned_to_name.is_(None),
+                    Shipment.assigned_to_name == ''
+                ])
                 if ship_conds:
                     query = query.join(Shipment, ShipmentException.shipment_id == Shipment.id).filter(
                         or_(or_(*conditions), or_(*ship_conds))

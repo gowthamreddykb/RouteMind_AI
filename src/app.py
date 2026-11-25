@@ -259,15 +259,21 @@ def create_app(config_name=None, db_path=None, **kwargs):
         # All unresolved exceptions for user's assigned/created shipments (OPEN, INVESTIGATING, IN_REVIEW)
         user_name = getattr(current_user, 'username', None)
         user_id = getattr(current_user, 'id', None)
+        user_role = normalize_role(getattr(current_user, 'role', ''))
         exceptions_query = ShipmentException.query.join(Shipment, ShipmentException.shipment_id == Shipment.id).filter(
             ShipmentException.status.in_(['OPEN', 'INVESTIGATING', 'IN_REVIEW'])
         )
-        if user_name or user_id:
+        if user_role not in [ROLE_MANAGER, ROLE_ADMIN] and (user_name or user_id):
             exceptions_query = exceptions_query.filter(
                 (Shipment.assigned_to_name == user_name) |
                 (Shipment.assigned_to_id == user_id) |
                 (Shipment.created_by_id == user_id) |
-                (Shipment.created_by_name == user_name)
+                (Shipment.created_by_name == user_name) |
+                (Shipment.assigned_to_name.is_(None)) |
+                (Shipment.assigned_to_name == '') |
+                (ShipmentException.assigned_to == user_name) |
+                (ShipmentException.assigned_to.is_(None)) |
+                (ShipmentException.assigned_to == '')
             )
         exceptions_count = exceptions_query.count()
         on_time_count = ShipmentService.count_for_user(current_user, risk_level='LOW')
